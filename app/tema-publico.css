@@ -1,0 +1,66 @@
+/*
+ * Tema del SITIO PUBLICO.
+ *
+ * Redefine las mismas variables que `globals.css` dentro de `.tema-publico`, y nada mas.
+ * Por eso ninguna pantalla tiene un condicional de tema: una clase `bg-lienzo` sigue
+ * diciendo `bg-lienzo` en las dos mitades del producto y es la VARIABLE la que cambia de
+ * valor. El marco publico pone la clase una vez, en su contenedor raiz.
+ *
+ * Por que dos paletas y no una: quien abre la raiz no es personal de urgencias operando
+ * bajo presion, sino un comite clinico, informatica o proteccion de datos leyendo parrafos
+ * largos en una sala de juntas. El lienzo calido y el verde azulado profundo separan de un
+ * vistazo "la propuesta" de "el sistema", sin que ninguna de las dos pierda su medicion.
+ *
+ * Razon de contraste CALCULADA por `npm run contraste` para ESTE tema:
+ *
+ *                            fondo   lienzo   lienzo-sutil
+ *   texto        #1c1917     17.49    16.37      14.75
+ *   texto-suave  #57534e      7.63     7.14       6.43
+ *   primario     #0f5257      8.88     8.31         —
+ *   atencion     #6d28d9      7.10       —          —
+ *   aviso        #92400e      7.09     6.63         —
+ *   info / foco  #1d4ed8      6.70     6.27         —
+ *   peligro      #b42318      6.57     6.15         —
+ *   exito        #067647      5.69     5.33         —
+ *
+ * Borde de control (#78716c): 4.80 / 4.49 / 4.19 — por encima del 3:1 de WCAG 1.4.11.
+ */
+
+.tema-publico {
+  --color-fondo: #ffffff;
+  --color-superficie: #f4efe7;
+  --color-lienzo: #faf7f2;
+  --color-lienzo-sutil: #f1ebe1;
+
+  --color-texto: #1c1917;
+  --color-texto-suave: #57534e;
+
+  --color-borde: #78716c;
+  --color-borde-suave: #d6d3d1;
+
+  --color-primario: #0f5257;
+  --color-primario-texto: #ffffff;
+  --color-primario-suave: #e4efef;
+  --color-primario-oscuro: #0a3a3d;
+
+  /*
+   * Los colores de estado NO cambian entre temas a proposito. Un bloque de error es rojo
+   * en las dos mitades del producto; cambiarle el tono al cruzar de la portada al sistema
+   * seria enseñarle a la gente dos vocabularios para la misma cosa.
+   */
+
+  background-color: var(--color-lienzo);
+  color: var(--color-texto);
+}
+
+/*
+ * La sombra tambien se retiñe: tintada con el verde azulado publico y no con el azul del
+ * sistema. Una sombra del otro tema sobre lienzo calido se ve gris sucia.
+ */
+.tema-publico .sombra-publica {
+  box-shadow: 0 4px 12px rgba(15, 82, 87, 0.08);
+}
+
+.tema-publico .sombra-publica-elevada {
+  box-shadow: 0 12px 32px rgba(15, 82, 87, 0.1);
+}

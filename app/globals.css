@@ -1,0 +1,281 @@
+@import 'tailwindcss';
+
+/*
+ * Capa de PALETA del sitio publico. Solo redefine variables dentro de `.tema-publico`; el
+ * panel administrado —todo lo que cuelga de `app/(app)`— conserva el azul clinico de mas
+ * abajo. Va aqui arriba porque un `@import` debe preceder a cualquier regla.
+ */
+@import './tema-publico.css';
+
+/*
+ * Paleta de "Codigo Infarto".
+ *
+ * Estos valores NO se eligieron a ojo: viven en `lib/estilos/paleta.ts` y `npm run
+ * contraste` recorre cada par y CALCULA su razon. Los numeros de los comentarios de abajo
+ * son la salida de ese comando.
+ *
+ * Un solo esquema, claro. No hay variante oscura porque no esta medida, e inventarla
+ * romperia en silencio la garantia de contraste.
+ *
+ * Razon de contraste CALCULADA (WCAG 2.1) de cada color de primer plano contra los tres
+ * fondos del sistema. Ninguno esta estimado:
+ *
+ *                            fondo   lienzo   lienzo-sutil
+ *   texto        #0f172a     17.85    16.80      15.49
+ *   texto-suave  #475569      7.58     7.13       6.57
+ *   primario     #0b4f6c      8.94     8.41         —
+ *   atencion     #6d28d9      7.10       —          —
+ *   aviso        #92400e      7.09     6.67         —
+ *   info / foco  #1d4ed8      6.70     6.31         —
+ *   peligro      #b42318      6.57     6.19         —
+ *   exito        #067647      5.69     5.36         —   <- el mas justo, y aun asi pasa
+ *
+ * Todos por encima del 4.5:1 que WCAG 2.1 AA exige para texto normal. El borde de control
+ * (#64748b) queda en 4.76 / 4.48 / 4.34, por encima del 3:1 de WCAG 1.4.11.
+ */
+@theme {
+  --color-fondo: #ffffff;
+  --color-superficie: #f1f5f9;
+  --color-lienzo: #f7f8fa;
+  --color-lienzo-sutil: #eceff4;
+
+  --color-texto: #0f172a;
+  --color-texto-suave: #475569;
+
+  /* 3:1 sobre cualquier fondo — limite perceptible (WCAG 1.4.11). */
+  --color-borde: #64748b;
+  /* Solo separadores DECORATIVOS (filas de tabla). Nunca el borde de un control. */
+  --color-borde-suave: #cbd5e1;
+
+  --color-primario: #0b4f6c;
+  --color-primario-texto: #ffffff;
+  --color-primario-suave: #e7f0f4;
+  --color-primario-oscuro: #083b52;
+
+  --color-peligro: #b42318;
+  --color-peligro-suave: #fef3f2;
+  --color-aviso: #92400e;
+  --color-aviso-suave: #fffbeb;
+  --color-exito: #067647;
+  --color-exito-suave: #ecfdf5;
+  --color-info: #1d4ed8;
+  --color-info-suave: #eff6ff;
+  --color-atencion: #6d28d9;
+  --color-atencion-suave: #f5f3ff;
+
+  --color-foco: #1d4ed8;
+
+  --radius-base: 0.375rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+
+  /*
+   * Escala tipografica 12 / 14 / 16 / 18 / 22 / 28 / 36 / 48. Sustituye la de Tailwind
+   * (que salta 20 / 24 / 30 / 36) para que toda la aplicacion respire con el mismo compas.
+   * En `rem` a proposito: la raiz es `100%`, asi que si la persona subio la tipografia del
+   * navegador, toda la escala sube con ella (WCAG 1.4.4).
+   */
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1.4;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.45;
+  --text-base: 1rem;
+  --text-base--line-height: 1.55;
+  --text-lg: 1.125rem;
+  --text-lg--line-height: 1.55;
+  --text-xl: 1.375rem;
+  --text-xl--line-height: 1.35;
+  --text-2xl: 1.75rem;
+  --text-2xl--line-height: 1.25;
+  --text-3xl: 2.25rem;
+  --text-3xl--line-height: 1.15;
+  --text-4xl: 3rem;
+  --text-4xl--line-height: 1.05;
+
+  --leading-ajustado: 1.15;
+  --leading-comodo: 1.35;
+  --leading-llano: 1.55;
+  --leading-relajado: 1.7;
+
+  --tracking-titulo: -0.015em;
+
+  /*
+   * Serif de SISTEMA. No se carga ninguna fuente por red: esto se enseña en salas de
+   * hospital donde a veces no hay internet, y una fuente que no llega deja el titulo
+   * saltando de tipografia a media demostracion.
+   */
+  --font-serif: 'Source Serif 4', Georgia, 'Times New Roman', Times, serif;
+
+  /*
+   * Sombras TINTADAS con el azul institucional (#0b4f6c), no grises neutras. Una sombra
+   * gris sobre un lienzo calido se ve sucia; tintada, la tarjeta parece levantada del
+   * mismo papel.
+   */
+  --shadow-suave: 0 1px 2px rgba(11, 79, 108, 0.06);
+  --shadow-tarjeta: 0 4px 12px rgba(11, 79, 108, 0.08);
+  --shadow-elevada: 0 12px 32px rgba(11, 79, 108, 0.1);
+
+  --spacing-seccion: 4rem;
+  --spacing-seccion-lg: 5rem;
+
+  /* 2.75rem = 44 px con la tipografia raiz de 16 px. Minimo de WCAG 2.5.5/2.5.8. */
+  --spacing-control: 2.75rem;
+}
+
+:root {
+  color-scheme: light;
+
+  /*
+   * WCAG 1.4.4 — Tipografia raiz RELATIVA. `100%` hereda la preferencia del navegador:
+   * 16 px por omision, 20 px si la persona la subio. Un valor absoluto en pixeles la
+   * pisaria y cada `rem` del sistema encogeria con ella.
+   */
+  font-size: 100%;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+
+  /*
+   * El encabezado del sitio publico es fijo. Sin este margen, saltar a `#alcance` deja el
+   * titulo de la seccion debajo de la barra y la persona cree que el enlace no hizo nada.
+   */
+  scroll-padding-top: 6.5rem;
+}
+
+/* El desplazamiento suave es una cortesia, no un requisito: se apaga con `reduce`. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  background-color: var(--color-lienzo);
+  color: var(--color-texto);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
+}
+
+/*
+ * Titulos en SERIF. El alcance es deliberadamente estrecho: `h1` —que es siempre el titulo
+ * de la pantalla— y lo que se marque a mano con `.titulo`, que son los encabezados de
+ * SECCION del sitio publico. Un `h2, h3` global habria convertido en serif los rotulos de
+ * tarjeta de las pantallas internas ("Cronologia del ECG", "Candidatos"), que no son voz
+ * institucional sino etiquetas de datos y se leen mejor en sans.
+ *
+ * Va en `@layer base` A PROPOSITO: en CSS moderno una regla sin capa le gana a TODA
+ * utilidad de Tailwind sin importar la especificidad, de modo que un `font-bold` suelto en
+ * un `h1` quedaria mudo y nadie entenderia por que.
+ */
+@layer base {
+  h1,
+  .titulo {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    letter-spacing: var(--tracking-titulo);
+  }
+
+  /*
+   * Excepcion: la etiqueta de brazalete es un FACSIMIL de lo que sale de la impresora de
+   * urgencias. No hereda la voz del sistema de diseño.
+   */
+  .hoja h1,
+  .hoja .titulo {
+    font-family: inherit;
+    letter-spacing: normal;
+  }
+}
+
+/* Rotulo en versalitas por encima del titulo de seccion. */
+.rotulo {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-texto-suave);
+}
+
+/*
+ * WCAG 2.4.7 — El foco es SIEMPRE visible. Regla global, para que un control nuevo nazca
+ * con anillo aunque quien lo escriba se olvide de pedirlo. En este archivo no existe ni
+ * existira una supresion del contorno de foco.
+ */
+:focus-visible {
+  outline: 2px solid var(--color-foco);
+  outline-offset: 2px;
+}
+
+/*
+ * WCAG 2.5.5 — Area tactil minima. Enfermeria y medicos trabajan de pie, con guantes y a
+ * veces sobre tablet. 44 px, no los 36 px que traen por omision la mayoria de las
+ * librerias de componentes.
+ */
+button,
+[role='button'],
+a.control,
+input,
+select,
+textarea {
+  min-height: 2.75rem;
+}
+
+/* WCAG 2.3.3 — Movimiento reducido. Gana a cualquier utilidad de transicion o animacion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Los `<summary>` se maquetan con flex y llevan su propio chevron; Safari no retira el suyo. */
+summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Enlace de salto: primer elemento enfocable de cada pagina. */
+.salto-contenido {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  background-color: var(--color-primario);
+  color: var(--color-primario-texto);
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-base);
+}
+.salto-contenido:focus {
+  left: 0.5rem;
+  top: 0.5rem;
+}
+
+/*
+ * Hoja de impresion. El sistema no elimina el papel de urgencias, lo genera: la etiqueta
+ * de brazalete sale en tamaño etiqueta. Todo lo que sea navegacion desaparece.
+ */
+@media print {
+  .no-imprimir {
+    display: none !important;
+  }
+  .solo-impresion {
+    display: block !important;
+  }
+  body {
+    background: #fff;
+  }
+  .hoja {
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+}
+
+.solo-impresion {
+  display: none;
+}
