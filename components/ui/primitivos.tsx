@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import { CircleCheck, Info, LoaderCircle, OctagonAlert, TriangleAlert, type LucideIcon } from 'lucide-react';
 import type { EncounterState, IdentityState, TriagePriority } from '@/lib/datos/tipos';
 
 /**
@@ -125,11 +126,17 @@ export function Boton({
   title,
   type = 'button',
   className,
+  cargando = false,
 }: {
   children: ReactNode;
   onClick?: () => void;
   tono?: Tono;
   disabled?: boolean;
+  /**
+   * Accion en curso. El boton se deshabilita (un doble clic no envia dos veces) y el
+   * texto se conserva junto al indicador: un boton que solo gira no dice que esta haciendo.
+   */
+  cargando?: boolean;
   title?: string;
   // `type` explicito: el valor por omision de HTML es `submit`, y un boton secundario
   // dentro de un formulario lo enviaria sin que nadie lo pidiera.
@@ -140,7 +147,8 @@ export function Boton({
     <button
       type={type}
       onClick={onClick}
-      disabled={disabled}
+      disabled={disabled || cargando}
+      aria-busy={cargando || undefined}
       title={title}
       className={cx(
         'inline-flex min-h-control items-center justify-center gap-2 rounded-md border px-4 py-2',
@@ -151,6 +159,7 @@ export function Boton({
         className,
       )}
     >
+      {cargando && <LoaderCircle className="size-4 animate-spin" aria-hidden />}
       {children}
     </button>
   );
@@ -351,6 +360,140 @@ export function Tabla({ cabeceras, children }: { cabeceras: readonly string[]; c
         </thead>
         <tbody>{children}</tbody>
       </table>
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------- Banda */
+
+type TonoBanda = 'info' | 'exito' | 'aviso' | 'peligro';
+
+const ESTILO_BANDA: Record<TonoBanda, { clase: string; Icono: LucideIcon }> = {
+  info: { clase: 'border-info bg-info-suave text-info', Icono: Info },
+  exito: { clase: 'border-exito bg-exito-suave text-exito', Icono: CircleCheck },
+  aviso: { clase: 'border-aviso bg-aviso-suave text-aviso', Icono: TriangleAlert },
+  peligro: { clase: 'border-peligro bg-peligro-suave text-peligro', Icono: OctagonAlert },
+};
+
+/**
+ * Mensaje en linea con borde lateral, icono y texto. `alerta` lo anuncia de inmediato
+ * (`role="alert"`): se reserva para errores que la persona tiene que leer AHORA, como un
+ * acceso rechazado. El resto se anuncia con cortesia (`role="status"`).
+ */
+export function Banda({
+  tono = 'info',
+  titulo,
+  Icono,
+  alerta = false,
+  children,
+  className,
+}: {
+  tono?: TonoBanda;
+  titulo?: string;
+  Icono?: LucideIcon;
+  alerta?: boolean;
+  children: ReactNode;
+  className?: string;
+}) {
+  const estilo = ESTILO_BANDA[tono];
+  const Simbolo = Icono ?? estilo.Icono;
+  return (
+    <div
+      role={alerta ? 'alert' : 'status'}
+      className={cx('flex items-start gap-3 rounded-lg border-l-4 px-4 py-3 text-sm', estilo.clase, className)}
+    >
+      <Simbolo className="mt-0.5 size-5 shrink-0" aria-hidden />
+      <div className="min-w-0 leading-llano">
+        {titulo && <p className="font-semibold">{titulo}</p>}
+        <div className={titulo ? 'mt-0.5' : ''}>{children}</div>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------- Avatar */
+
+export function iniciales(nombre: string): string {
+  const partes = nombre
+    .replace(/^(dra?|dr)\.\s*/i, '')
+    .split(/[\s.]+/)
+    .filter(Boolean);
+  const texto = (partes[0]?.[0] ?? '') + (partes.length > 1 ? partes[partes.length - 1][0] : '');
+  return texto.toUpperCase() || '?';
+}
+
+/** Iniciales en circulo. Decorativo: el nombre siempre va escrito al lado. */
+export function Avatar({ nombre, className }: { nombre: string; className?: string }) {
+  return (
+    <span
+      aria-hidden
+      className={cx(
+        'grid size-9 shrink-0 place-items-center rounded-full bg-primario text-xs font-bold tracking-wide text-primario-texto',
+        className,
+      )}
+    >
+      {iniciales(nombre)}
+    </span>
+  );
+}
+
+/* --------------------------------------------------------- Estados de carga */
+
+/**
+ * Bloque de esqueleto. Reserva el espacio de lo que viene para que la pagina no salte al
+ * hidratar. El pulso se apaga con movimiento reducido (regla global de `globals.css`).
+ */
+export function Esqueleto({ className }: { className?: string }) {
+  return <span aria-hidden className={cx('block animate-pulse rounded-md bg-lienzo-sutil', className)} />;
+}
+
+/**
+ * Espera de pagina completa: el mensaje se anuncia y el esqueleto dibuja la forma del
+ * panel, en vez de una linea de texto suelta sobre un fondo vacio que parece un fallo.
+ */
+export function PantallaCarga({ mensaje }: { mensaje: string }) {
+  return (
+    <main className="mx-auto flex max-w-5xl flex-col gap-5 px-4 py-10">
+      <p role="status" aria-live="polite" className="flex items-center gap-2 text-sm text-texto-suave">
+        <LoaderCircle className="size-4 animate-spin text-primario" aria-hidden />
+        {mensaje}
+      </p>
+      <Esqueleto className="h-9 w-2/3 max-w-md" />
+      <div className="grid gap-3 sm:grid-cols-3">
+        <Esqueleto className="h-24" />
+        <Esqueleto className="h-24" />
+        <Esqueleto className="h-24" />
+      </div>
+      <Esqueleto className="h-56" />
+    </main>
+  );
+}
+
+/* ------------------------------------------------------------- Estado vacio */
+
+/**
+ * Estado vacio con proxima accion. Una lista vacia sin explicacion parece un fallo de
+ * carga; con una frase y un boton parece lo que es: todavia no hay nada.
+ */
+export function EstadoVacio({
+  Icono = Info,
+  titulo,
+  children,
+  accion,
+}: {
+  Icono?: LucideIcon;
+  titulo: string;
+  children?: ReactNode;
+  accion?: ReactNode;
+}) {
+  return (
+    <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-borde-suave bg-lienzo px-6 py-10 text-center">
+      <span className="grid size-12 place-items-center rounded-full bg-primario-suave">
+        <Icono className="size-6 text-primario-oscuro" aria-hidden />
+      </span>
+      <p className="text-base font-semibold text-texto">{titulo}</p>
+      {children && <div className="max-w-prose text-sm text-texto-suave">{children}</div>}
+      {accion && <div className="mt-2">{accion}</div>}
     </div>
   );
 }

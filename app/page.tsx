@@ -4,6 +4,8 @@ import Link from 'next/link';
 import {
   Activity,
   ArrowRight,
+  ChevronDown,
+  LockKeyhole,
   ClipboardCheck,
   Fingerprint,
   Gauge,
@@ -18,6 +20,8 @@ import {
   TriangleAlert,
 } from 'lucide-react';
 import { DECISIONES_ABIERTAS, INSTITUCION, METAS } from '@/lib/datos/institucion';
+import { TODOS_LOS_ROLES } from '@/lib/datos/rutas';
+import { VistaPrevia } from '@/components/dominio/vista-previa';
 import {
   AvisoPrototipo,
   BandaPublica,
@@ -52,7 +56,44 @@ const ANCLAS: readonly AnclaPublica[] = [
   { id: 'identidad', etiqueta: 'Limite de identidad' },
   { id: 'prototipo', etiqueta: 'Que se demuestra' },
   { id: 'pendiente', etiqueta: 'Que falta decidir' },
+  { id: 'preguntas', etiqueta: 'Preguntas' },
 ];
+
+/**
+ * Franja de cifras, al estilo de la "franja de confianza" de URIS-CITAS. Todas salen de
+ * `lib/datos`: ninguna se escribe a mano aqui, para que la portada no pueda contradecir
+ * al sistema.
+ */
+const CIFRAS = [
+  { valor: String(METAS.ecgMinutos), unidad: 'min', etiqueta: 'Meta de llegada a ECG' },
+  { valor: String(METAS.pciMinutos), unidad: 'min', etiqueta: 'Meta puerta-balon' },
+  { valor: String(METAS.fibrinolisisMinutos), unidad: 'min', etiqueta: 'Meta puerta-aguja' },
+  { valor: String(TODOS_LOS_ROLES.length), unidad: '', etiqueta: 'Perfiles con permisos propios' },
+] as const;
+
+/** Las preguntas que se repiten en cada reunion, con respuesta corta. */
+const PREGUNTAS = [
+  {
+    p: '¿Se puede atender a alguien que llega sin documentos ni telefono?',
+    r: 'Si. El episodio nace con un identificador temporal y una etiqueta de brazalete. Triage, ECG y activacion avanzan sin esperar a la identidad, que se concilia despues.',
+  },
+  {
+    p: '¿La biometria decide algo clinico?',
+    r: 'No. Un resultado biometrico solo propone candidatos. El diagnostico, la hora cero y la activacion del Codigo Infarto son acciones explicitas del medico.',
+  },
+  {
+    p: '¿Que pasa si se cae el expediente o el motor biometrico?',
+    r: 'El ingreso sigue funcionando. Las escrituras al expediente se encolan con llave idempotente y se reintentan sin duplicarse. Se comprueba con el simulador de fallos del encabezado.',
+  },
+  {
+    p: '¿Quien puede ver el resumen clinico?',
+    r: 'Solo los perfiles autorizados y solo con identidad confirmada. Fuera de eso existe el acceso de emergencia, que exige motivo escrito y queda marcado en la bitacora.',
+  },
+  {
+    p: '¿El acceso del prototipo es seguro?',
+    r: 'No pretende serlo. Las credenciales de demostracion se validan en el navegador para enseñar la conducta: intentos, bloqueo y vencimiento de turno. En el sistema real la identidad del personal se verifica en el servidor con MFA.',
+  },
+] as const;
 
 const PASOS = [
   {
@@ -133,7 +174,7 @@ const DEMOSTRABLE = [
     Icono: ListChecks,
     titulo: 'Permisos por actor',
     detalle:
-      'Cambie de perfil en el encabezado: enfermeria no activa el codigo, recepcion no abre el resumen clinico, traslados no ve la historia clinica.',
+      'Entre con otra cuenta de demostracion o use "ver como" en el menu de usuario: enfermeria no activa el codigo, recepcion no abre el resumen clinico, traslados no ve la historia clinica.',
     prueba: 'RF-22, seccion 2',
   },
   {
@@ -152,44 +193,81 @@ const NO_DEMOSTRABLE = [
   'No hay autorizacion institucional de la sede propuesta ni evaluacion de impacto en privacidad.',
   'Las latencias de las presentaciones (menos de 2 s de captura, menos de 5 s de identificacion) no se miden: requieren hardware y poblacion reales.',
   'Los ahorros, el retorno y la reduccion del 84 % son hipotesis de linea base, no resultados.',
-  'No existe autenticacion. El selector de perfil es una simulacion de permisos, no un control de acceso.',
+  'La autenticacion es simulada: las cuentas de demostracion se validan en el navegador, sin servidor ni MFA. Sirve para enseñar la conducta, no protege nada.',
 ] as const;
 
 export default function SitioPublico() {
   return (
     <MarcoPublico anclas={ANCLAS}>
       {/* ------------------------------------------------------------------ hero */}
-      <section aria-labelledby="hero-titulo" className="bg-lienzo">
-        <div className="mx-auto max-w-6xl px-4 py-16 sm:py-seccion-lg">
-          <p className="rotulo">Especificacion de requerimientos · {INSTITUCION.documentoFuente}</p>
+      <section aria-labelledby="hero-titulo" className="relative overflow-hidden bg-lienzo">
+        {/* Halo decorativo: da profundidad al hero sin cargar ninguna imagen por red. */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -top-40 -right-40 size-[36rem] rounded-full bg-primario-suave blur-3xl"
+        />
+        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-4 py-14 sm:py-seccion-lg lg:grid-cols-12">
+          <div className="aparecer lg:col-span-7">
+            <p className="rotulo">Especificacion de requerimientos · {INSTITUCION.documentoFuente}</p>
 
-          <h1 id="hero-titulo" className="mt-4 max-w-4xl text-3xl text-texto sm:text-4xl">
-            Identificar a la persona no puede retrasar la atencion del infarto.
-          </h1>
+            <h1 id="hero-titulo" className="mt-4 max-w-3xl text-3xl text-texto sm:text-4xl">
+              Identificar a la persona no puede retrasar la atencion del infarto.
+            </h1>
 
-          <p className="mt-6 max-w-2xl text-lg leading-relajado text-texto-suave">
-            Una plataforma de urgencias que reduce el tiempo administrativo de identificacion, recupera
-            informacion clinica cuando hay una correspondencia <strong>confirmada</strong>, apoya la
-            activacion del Codigo Infarto por personal clinico y mide cada intervalo del proceso.
-            Tiene que funcionar tambien cuando la persona esta inconsciente, sin documentos ni telefono,
-            cuando no hay coincidencia biometrica y cuando falla una integracion.
-          </p>
+            <p className="mt-6 max-w-2xl text-lg leading-relajado text-texto-suave">
+              Una plataforma de urgencias que reduce el tiempo administrativo de identificacion, recupera
+              informacion clinica cuando hay una correspondencia <strong>confirmada</strong>, apoya la
+              activacion del Codigo Infarto por personal clinico y mide cada intervalo del proceso. Tambien
+              cuando la persona esta inconsciente, sin documentos, sin coincidencia biometrica o con una
+              integracion caida.
+            </p>
 
-          <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Link
-              href="/acceso"
-              className="control inline-flex items-center gap-2 rounded-lg border border-primario bg-primario px-5 text-base font-semibold text-primario-texto hover:bg-primario-oscuro"
-            >
-              Abrir el prototipo
-              <ArrowRight className="size-4" aria-hidden />
-            </Link>
-            <a href="#pendiente" className="control inline-flex items-center px-2 text-base text-primario underline">
-              Ver que falta decidir
-            </a>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <Link
+                href="/acceso"
+                className="control inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-primario bg-primario px-6 text-base font-semibold text-primario-texto shadow-tarjeta transition-shadow hover:bg-primario-oscuro hover:shadow-elevada"
+              >
+                <LockKeyhole className="size-5" aria-hidden />
+                Entrar al prototipo
+                <ArrowRight className="size-4" aria-hidden />
+              </Link>
+              <a
+                href="#recorrido"
+                className="control inline-flex min-h-12 items-center justify-center rounded-xl border border-borde bg-fondo px-6 text-base font-semibold text-texto hover:bg-superficie"
+              >
+                Ver como opera
+              </a>
+            </div>
+
+            <p className="mt-6 text-sm text-texto-suave">
+              ¿Prefiere empezar por los riesgos?{' '}
+              <a href="#pendiente" className="font-semibold text-primario underline">
+                Ver que falta decidir
+              </a>
+            </p>
           </div>
 
-          <AvisoPrototipo className="mt-10 max-w-3xl" />
+          <div className="lg:col-span-5">
+            <VistaPrevia />
+          </div>
         </div>
+
+        <div className="relative mx-auto max-w-6xl px-4 pb-10">
+          <AvisoPrototipo className="max-w-3xl" />
+        </div>
+
+        {/* Franja de cifras. `flex-col-reverse`: se lee la etiqueta antes que el numero. */}
+        <dl className="relative grid grid-cols-2 gap-px border-y border-borde-suave bg-borde-suave sm:grid-cols-4">
+          {CIFRAS.map((c) => (
+            <div key={c.etiqueta} className="flex flex-col-reverse items-center bg-lienzo-sutil px-3 py-8 text-center">
+              <dt className="mt-1 text-sm text-texto-suave">{c.etiqueta}</dt>
+              <dd className="titulo text-3xl text-primario-oscuro sm:text-4xl">
+                <span className="tabular-nums">{c.valor}</span>
+                {c.unidad && <span className="ml-1 text-lg text-texto-suave">{c.unidad}</span>}
+              </dd>
+            </div>
+          ))}
+        </dl>
       </section>
 
       {/* ------------------------------------------------------- regla invariable */}
@@ -355,22 +433,55 @@ export default function SitioPublico() {
           ))}
         </ol>
 
-        <div className="mt-10 flex flex-wrap items-center gap-3">
-          <Link
-            href="/acceso"
-            className="control inline-flex items-center gap-2 rounded-lg border border-primario bg-primario px-5 text-base font-semibold text-primario-texto hover:bg-primario-oscuro"
-          >
-            Entrar al prototipo
-            <ArrowRight className="size-4" aria-hidden />
-          </Link>
-          <p className="text-sm text-texto-suave">
-            {INSTITUCION.puntosDeControl} puntos de control propuestos ·{' '}
-            {INSTITUCION.lectoresEscritorio} lectores de escritorio y{' '}
-            {INSTITUCION.camarasAltaConcurrencia} camara de alta concurrencia, sin compra ni prueba de
-            compatibilidad.
-          </p>
+      </BandaPublica>
+
+      {/* ------------------------------------------------------------ preguntas */}
+      <BandaPublica
+        id="preguntas"
+        rotulo="preguntas frecuentes"
+        titulo="Lo que preguntan en la primera reunion"
+        descripcion="Respuestas cortas. El detalle de cada una esta en la ERS y en la trazabilidad por requisito."
+      >
+        <div className="divide-y divide-borde-suave overflow-hidden rounded-xl border border-borde-suave bg-fondo">
+          {PREGUNTAS.map((q) => (
+            <details key={q.p} className="group">
+              <summary className="flex min-h-control cursor-pointer items-center justify-between gap-4 px-5 py-4 text-left text-base font-semibold text-texto hover:bg-superficie">
+                {q.p}
+                <ChevronDown
+                  className="size-5 shrink-0 text-texto-suave transition-transform duration-200 group-open:rotate-180"
+                  aria-hidden
+                />
+              </summary>
+              <p className="px-5 pb-5 text-sm leading-llano text-texto-suave">{q.r}</p>
+            </details>
+          ))}
         </div>
       </BandaPublica>
+
+      {/* --------------------------------------------------------------- cierre */}
+      <section aria-labelledby="cierre-titulo" className="bg-primario-oscuro text-primario-texto">
+        <div className="mx-auto flex max-w-6xl flex-col items-start gap-6 px-4 py-14 sm:py-seccion md:flex-row md:items-center md:justify-between">
+          <div className="max-w-2xl">
+            <h2 id="cierre-titulo" className="titulo text-2xl">
+              Recorra el sistema con el perfil que le toca revisar
+            </h2>
+            <p className="mt-3 text-base leading-llano text-primario-texto/85">
+              {TODOS_LOS_ROLES.length} cuentas de demostracion, una por actor de la ERS.{' '}
+              {INSTITUCION.puntosDeControl} puntos de control propuestos: {INSTITUCION.lectoresEscritorio}{' '}
+              lectores de escritorio y {INSTITUCION.camarasAltaConcurrencia} camara de alta concurrencia, sin
+              compra ni prueba de compatibilidad.
+            </p>
+          </div>
+          <Link
+            href="/acceso"
+            className="control inline-flex min-h-12 shrink-0 items-center gap-2 rounded-xl bg-fondo px-6 text-base font-semibold text-primario-oscuro shadow-tarjeta hover:bg-superficie"
+          >
+            <LockKeyhole className="size-5" aria-hidden />
+            Iniciar sesion
+            <ArrowRight className="size-4" aria-hidden />
+          </Link>
+        </div>
+      </section>
     </MarcoPublico>
   );
 }

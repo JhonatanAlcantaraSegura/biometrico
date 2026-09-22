@@ -40,7 +40,15 @@ import {
   newTemporaryId,
 } from "@/lib/ids";
 import { nowIso } from "@/lib/tiempo";
-import { CLAVE_SESION, borrar, escribir, leer } from "@/lib/estado/persistencia";
+import {
+  borrarSesion,
+  guardarSesion,
+  leerSesion,
+  nuevaSesion,
+  validarCredenciales,
+  type ResultadoLogin,
+  type Sesion,
+} from "@/lib/estado/sesion";
 import {
   ALGORITMO_SIMULADO,
   PERFILES,
@@ -95,13 +103,22 @@ export interface Aviso {
 
 export interface AppState {
   /**
-   * `null` = sin sesion. La guarda de `app/(app)/layout.tsx` manda a `/acceso`.
-   *
-   * ESTO NO ES AUTENTICACION. Es un selector de perfil que hace visible la matriz de
-   * permisos de `lib/datos/rutas.ts`; la garantia real vive en el servidor (RF-22), que
-   * aqui no existe. Un login falso invita a confiar en controles que no hay.
+   * Perfil con el que se opera (el actor de la bitacora). `null` = sin sesion; la guarda de
+   * `app/(app)/layout.tsx` manda a `/acceso`. Es `sesion.perfilId`, duplicado aqui porque
+   * todas las pantallas ya lo leen.
    */
   currentUserId: string | null;
+  /**
+   * Sesion SIMULADA: quien se autentico, con que perfil ve el sistema y cuando vence.
+   * No es control de acceso — la garantia real vive en el servidor (RF-22), que aqui no
+   * existe, y la pantalla de acceso lo dice. Ver `lib/estado/sesion.ts`.
+   */
+  sesion: Sesion | null;
+  /**
+   * Por que se termino la ultima sesion. La guarda lo pasa a `/acceso` para que la
+   * pantalla diga "su turno vencio" en vez de aparecer sin explicacion.
+   */
+  motivoSalida: "manual" | "expirada" | null;
   avisos: Aviso[];
   users: User[];
   patients: Patient[];
@@ -164,6 +181,8 @@ export interface IntentoBiometrico {
 function initialState(): AppState {
   return {
     currentUserId: null,
+    sesion: null,
+    motivoSalida: null,
     avisos: [],
     users: USERS,
     patients: PATIENTS,
@@ -223,8 +242,7 @@ export function useAppState(): AppState | null {
  * a media presentacion quiere los cuatro casos de nuevo, no volver a la pantalla de acceso.
  */
 export function resetDemo(): void {
-  const sesion = state?.currentUserId ?? null;
-  state = { ...initialState(), currentUserId: sesion };
+  state = { ...initialState(), currentUserId: state?.currentUserId ?? null, sesion: state?.sesion ?? null };
   listeners.forEach((l) => l());
 }
 
@@ -305,47 +323,87 @@ function enqueue(
 
 // --- acciones -----------------------------------------------------------------
 
+/** El registro de entrada se hace con el perfil nuevo como actor, no con el anterior. */
+function abrirSesion(sesion: Sesion): void {
+  setState((s) => ({
+    ...s,
+    currentUserId: sesion.perfilId,
+    sesion,
+    motivoSalida: null,
+    audit: appendAudit(
+      { ...s, currentUserId: sesion.perfilId },
+      { action: "sesion.iniciada", resource: sesion.userId },
+    ),
+  }));
+}
+
 export const actions = {
   /**
-   * Entrar como un perfil. No hay contraseña, y la pantalla de acceso lo dice en voz alta.
-   * La sesion se guarda en `localStorage` para que recargar no expulse a media demostracion
-   * — es lo UNICO que se persiste; el estado clinico nunca (ver `persistencia.ts`).
+   * Valida credenciales de demostracion y abre la sesion. Devuelve el resultado completo
+   * para que la pantalla de acceso pueda explicar el fallo (intentos restantes, bloqueo,
+   * cuenta desactivada). La sesion es lo UNICO que se persiste; el estado clinico nunca
+   * (ver `persistencia.ts`).
    */
-  iniciarSesion(userId: string) {
-    setState((s) => ({
-      ...s,
-      currentUserId: userId,
-      audit: appendAudit({ ...s, currentUserId: userId }, { action: "sesion.iniciada", resource: userId }),
-    }));
-    escribir(CLAVE_SESION, userId);
+  autenticar(correo: string, contrasena: string): ResultadoLogin {
+    const r = validarCredenciales(correo, contrasena);
+    if (r.ok) abrirSesion(r.sesion);
+    return r;
   },
 
-  cerrarSesion() {
+  /** Abre sesion directamente con un usuario, sin credenciales. Lo usan los scripts de prueba. */
+  iniciarSesion(userId: string) {
+    const sesion = nuevaSesion(userId);
+    guardarSesion(sesion);
+    abrirSesion(sesion);
+  },
+
+  cerrarSesion(motivo: "manual" | "expirada" = "manual") {
     setState((s) => ({
       ...s,
       currentUserId: null,
+      sesion: null,
+      motivoSalida: motivo,
       avisos: [],
-      audit: appendAudit(s, { action: "sesion.cerrada", resource: s.currentUserId ?? "sin-sesion" }),
+      audit: appendAudit(s, {
+        action: motivo === "expirada" ? "sesion.expirada" : "sesion.cerrada",
+        resource: s.sesion?.userId ?? s.currentUserId ?? "sin-sesion",
+      }),
     }));
-    borrar(CLAVE_SESION);
+    borrarSesion();
   },
 
   /** Rehidrata la sesion despues del primer render. Nunca durante el render. */
   restaurarSesion(): string | null {
-    const guardado = leer<string>(CLAVE_SESION);
-    if (!guardado) return null;
-    const existe = getState().users.some((u) => u.user_id === guardado);
+    const { sesion: guardada, vencida } = leerSesion();
+    if (vencida) setState((s) => ({ ...s, motivoSalida: "expirada" }));
+    if (!guardada) return null;
+    const users = getState().users;
+    const existe =
+      users.some((u) => u.user_id === guardada.userId) && users.some((u) => u.user_id === guardada.perfilId);
     if (!existe) {
-      borrar(CLAVE_SESION);
+      borrarSesion();
       return null;
     }
-    setState((s) => ({ ...s, currentUserId: guardado }));
-    return guardado;
+    setState((s) => ({ ...s, currentUserId: guardada.perfilId, sesion: guardada, motivoSalida: null }));
+    return guardada.perfilId;
   },
 
+  /**
+   * "Ver como": cambia el perfil con el que se ve el sistema SIN cambiar quien se
+   * autentico. La bitacora guarda el cambio con el usuario real como origen.
+   */
   setCurrentUser(userId: string) {
-    setState((s) => ({ ...s, currentUserId: userId }));
-    escribir(CLAVE_SESION, userId);
+    setState((s) => {
+      if (!s.sesion) return { ...s, currentUserId: userId };
+      const sesion = { ...s.sesion, perfilId: userId };
+      guardarSesion(sesion);
+      return {
+        ...s,
+        currentUserId: userId,
+        sesion,
+        audit: appendAudit(s, { action: "sesion.ver_como", resource: userId, reason: `origen ${s.sesion.userId}` }),
+      };
+    });
   },
 
   avisar(texto: string, tono: Aviso["tono"] = "info") {

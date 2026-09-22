@@ -149,8 +149,8 @@ export default function Calidad() {
             no se miden aqui: requieren hardware, poblacion y condiciones reales.
           </li>
           <li>
-            No existe autenticacion. El selector de perfil es una simulacion de permisos, no un control de
-            acceso.
+            La autenticacion es simulada en el navegador, con cuentas de demostracion y sin servidor. El
+            "ver como" es una simulacion de permisos, no un control de acceso.
           </li>
         </ul>
       </Tarjeta>

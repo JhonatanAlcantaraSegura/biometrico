@@ -37,7 +37,7 @@ ERSBiometria/
 │   ├── globals.css             Tokens del panel + reglas WCAG globales + hoja de impresión
 │   ├── tema-publico.css        Paleta del sitio público, sobre los mismos nombres de token
 │   ├── page.tsx                LANDING — la propuesta, sus límites y lo que falta decidir
-│   ├── acceso/page.tsx         Selección de perfil, sin contraseña y diciéndolo
+│   ├── acceso/page.tsx         Inicio de sesión simulado con cuentas de demostración
 │   └── (app)/                  PANEL ADMINISTRADO
 │       ├── layout.tsx          Guarda de sesión + Shell; themeColor azul institucional
 │       ├── triage/             Ingreso rápido y triage

@@ -25,6 +25,14 @@ export const VERSION_ESTADO = 1;
 
 export const CLAVE_SESION = `${CLAVE_ALMACEN}:sesion`;
 export const CLAVE_MENU = `${CLAVE_ALMACEN}:menu-abierto`;
+export const CLAVE_INTENTOS = `${CLAVE_ALMACEN}:intentos`;
+
+/**
+ * La sesion paso de ser un `user_id` suelto (selector de perfil) a un objeto con
+ * expiracion. La version propia hace que una sesion guardada con el formato viejo se
+ * descarte sola en vez de colarse como sesion sin vencimiento.
+ */
+export const VERSION_SESION = 2;
 
 interface Sobre<T> {
   version: number;

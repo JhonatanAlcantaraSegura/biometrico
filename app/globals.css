@@ -222,6 +222,59 @@ textarea {
   min-height: 2.75rem;
 }
 
+/*
+ * Movimiento del sitio publico y de la pantalla de acceso, tomado de los bocetos de CURA
+ * (`cardIn`, `breathe`, `arcDraw`). Es poco y lento a proposito: acompaña la lectura, no
+ * la compite. Todo muere con la regla de movimiento reducido de abajo, y como las tres
+ * animaciones terminan en el estado normal del elemento, sin animacion se ve igual.
+ */
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes latido {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.12);
+    opacity: 1;
+  }
+}
+@keyframes trazo {
+  from {
+    stroke-dashoffset: 600;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.aparecer {
+  animation: aparecer 480ms ease-out both;
+}
+.aparecer-2 {
+  animation: aparecer 480ms ease-out 120ms both;
+}
+.aparecer-3 {
+  animation: aparecer 480ms ease-out 240ms both;
+}
+.latido {
+  animation: latido 3200ms ease-in-out infinite;
+}
+.trazo-ecg {
+  stroke-dasharray: 600;
+  animation: trazo 2400ms ease-out both;
+}
+
 /* WCAG 2.3.3 — Movimiento reducido. Gana a cualquier utilidad de transicion o animacion. */
 @media (prefers-reduced-motion: reduce) {
   *,

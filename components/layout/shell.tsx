@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import {
   Activity,
@@ -22,12 +22,13 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { INSTITUCION } from '@/lib/datos/institucion';
-import { NOMBRE_ROL, TODOS_LOS_ROLES, menuPorGrupo } from '@/lib/datos/rutas';
+import { menuPorGrupo } from '@/lib/datos/rutas';
 import type { GrupoMenu, RutaProtegida } from '@/lib/datos/rutas';
 import type { Rol } from '@/lib/datos/tipos';
 import { CLAVE_MENU, escribir, leer } from '@/lib/estado/persistencia';
 import { actions, useAppState, userById, type IntegrationHealth, type IntegrationStatus } from '@/lib/estado/tienda';
-import { Boton, Insignia, cx } from '@/components/ui/primitivos';
+import { Boton, Insignia, PantallaCarga, cx } from '@/components/ui/primitivos';
+import { AvisoVerComo, MenuUsuario } from '@/components/layout/menu-usuario';
 import { RelojLocal } from '@/components/dominio/relojes';
 
 /**
@@ -88,7 +89,6 @@ function contiene(rutas: readonly RutaProtegida[], ruta: string): boolean {
 export function Shell({ children }: { children: React.ReactNode }) {
   const state = useAppState();
   const ruta = usePathname();
-  const router = useRouter();
   const [menuAbierto, setMenuAbierto] = useState(false);
   const [gruposAbiertos, setGruposAbiertos] = useState<Record<string, boolean>>({});
 
@@ -129,17 +129,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
     setGruposAbiertos((previo) => (previo[clave] ? previo : { ...previo, [clave]: true }));
   }, [ruta, rol, gruposOrdenados]);
 
-  if (!state) {
-    return (
-      <main className="mx-auto max-w-5xl px-4 py-10">
-        <p role="status" aria-live="polite" className="text-sm text-texto-suave">
-          Cargando el estado local del prototipo...
-        </p>
-      </main>
-    );
-  }
-
-  const usuario = userById(state, state.currentUserId ?? undefined);
+  if (!state) return <PantallaCarga mensaje="Cargando el estado local del prototipo..." />;
 
   function alternarGrupo(grupo: GrupoMenu) {
     const clave = claveDe(rol, grupo);
@@ -151,8 +141,9 @@ export function Shell({ children }: { children: React.ReactNode }) {
   }
 
   function salir() {
+    // La guarda redirige a `/acceso?motivo=salida` al ver la sesion cerrada; navegar
+    // tambien desde aqui dejaria dos `replace` compitiendo por la URL final.
     actions.cerrarSesion();
-    router.replace('/acceso');
   }
 
   return (
@@ -165,6 +156,9 @@ export function Shell({ children }: { children: React.ReactNode }) {
       <p className="no-imprimir bg-aviso-suave px-4 py-1.5 text-center text-xs font-semibold text-aviso">
         {INSTITUCION.avisoPrototipo}
       </p>
+      <div className="no-imprimir">
+        <AvisoVerComo state={state} />
+      </div>
 
       <header className="no-imprimir sticky top-0 z-30 border-b border-borde-suave bg-fondo shadow-suave">
         <div className="flex flex-wrap items-center gap-3 px-4 py-2.5">
@@ -195,31 +189,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
           <div className="ml-auto flex flex-wrap items-center gap-2">
             <RelojLocal />
 
-            <div className="flex items-center gap-2 rounded-md border border-borde-suave px-2.5 py-1">
-              <div className="hidden text-right leading-tight sm:block">
-                <span className="block text-xs font-semibold text-texto">{usuario?.name ?? 'Sin sesion'}</span>
-                <span className="block text-xs text-texto-suave">Perfil: {NOMBRE_ROL[rol]}</span>
-              </div>
-              <label className="sr-only" htmlFor="sel-rol">
-                Ver el sistema con otro perfil
-              </label>
-              <select
-                id="sel-rol"
-                value={state.currentUserId ?? ''}
-                onChange={(e) => actions.setCurrentUser(e.target.value)}
-                className="min-h-control rounded border-0 bg-transparent text-sm font-semibold text-primario"
-              >
-                {TODOS_LOS_ROLES.map((r) => {
-                  const u = state.users.find((x) => x.role === r);
-                  if (!u) return null;
-                  return (
-                    <option key={r} value={u.user_id}>
-                      {NOMBRE_ROL[r]}
-                    </option>
-                  );
-                })}
-              </select>
-            </div>
+            <MenuUsuario state={state} onSalir={salir} />
 
             {/* Cerrar sesion SIEMPRE visible: es la salida de emergencia de un equipo
                 compartido, donde quien se levanta no debe dejar su sesion abierta. */}

@@ -24,7 +24,7 @@ export const INSTITUCION = {
 
   documentoFuente: 'ERS v1.1 — 17 de septiembre de 2026',
   avisoPrototipo:
-    'Prototipo de propuesta. Datos sinteticos, sin expediente clinico real, sin biometria real y sin autenticacion. No usar con pacientes.',
+    'Prototipo de propuesta. Datos sinteticos, sin expediente clinico real, sin biometria real y con autenticacion simulada. No usar con pacientes.',
 } as const;
 
 /** Metas de referencia del protocolo IMSS. Configurables por sede (RF-28). */

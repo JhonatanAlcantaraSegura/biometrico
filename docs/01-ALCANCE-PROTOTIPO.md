@@ -19,7 +19,7 @@ medirlas.
 | Pantalla | Ruta | Estado |
 |---|---|---|
 | Sitio de la propuesta (landing) | `/` | Funcional. No está en la ERS: se añadió porque la raíz no debe ser el tablero de urgencias |
-| Selección de perfil | `/acceso` | Funcional, sin contraseña y declarándolo |
+| Inicio de sesión | `/acceso` | Simulado en el navegador: credenciales de demostración, bloqueo con cuenta regresiva, cuenta desactivada, vencimiento de 12 h y "ver como" en el menú de usuario |
 | Ingreso rápido y triage | `/triage` | Funcional con datos locales |
 | Identidad y conciliación | `/casos/[id]/identidad` | Funcional, proveedores simulados |
 | Resumen clínico | `/casos/[id]/resumen` | Funcional, ECE simulado |
@@ -53,7 +53,7 @@ Reglas implementadas en el comportamiento, no sólo en el texto:
 | ECE | `readSnapshot` y la cola devuelven datos sintéticos | API autorizada del ISSSTE, catálogos y sandbox (RF-32) |
 | Notificaciones | Se crean en memoria, el acuse se pulsa a mano | Canal real con acuse, reintento y escalamiento (RF-18) |
 | Evidencia criptográfica | La bitácora es sólo anexable en memoria | Firma, sello de tiempo y verificación independiente (RF-35) |
-| Autenticación | Pantalla `/acceso` sin contraseña + selector de perfil en el encabezado + guarda de rutas en el cliente | Identidad de personal, MFA, privilegio mínimo y verificación en el servidor (RNF-04, RF-22) |
+| Autenticación | Login simulado en `/acceso` (validación en el cliente, `lib/estado/sesion.ts`) + "ver como" en el menú de usuario + guarda de rutas en el cliente | Identidad de personal, MFA, privilegio mínimo y verificación en el servidor (RNF-04, RF-22) |
 
 ## Fuera de alcance
 

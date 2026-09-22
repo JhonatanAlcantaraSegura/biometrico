@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { Activity, Menu, TriangleAlert, X, type LucideIcon } from 'lucide-react';
+import { Activity, LockKeyhole, Menu, TriangleAlert, X, type LucideIcon } from 'lucide-react';
 import { INSTITUCION } from '@/lib/datos/institucion';
 import { cx } from '@/components/ui/primitivos';
 
@@ -128,9 +128,10 @@ export function MarcoPublico({
             ))}
             <Link
               href="/acceso"
-              className="control ml-1 flex items-center rounded-md border border-primario bg-primario px-4 text-sm font-semibold text-primario-texto hover:bg-primario-oscuro"
+              className="control ml-1 flex items-center gap-2 rounded-md border border-primario bg-primario px-4 text-sm font-semibold text-primario-texto hover:bg-primario-oscuro"
             >
-              Abrir el prototipo
+              <LockKeyhole className="size-4" aria-hidden />
+              Acceso del personal
             </Link>
           </nav>
         </div>
@@ -160,7 +161,7 @@ export function AvisoPrototipo({ className }: { className?: string }) {
       <TriangleAlert className="mt-0.5 size-5 shrink-0 text-aviso" aria-hidden />
       <p className="text-sm leading-llano text-aviso">
         <strong>Prototipo de propuesta, no producto.</strong> Datos sinteticos, sin expediente
-        clinico real, sin motor biometrico y sin autenticacion. La sede, las cifras y el alcance son
+        clinico real, sin motor biometrico y con un acceso simulado en el navegador. La sede, las cifras y el alcance son
         propuestas por validar.
       </p>
     </div>

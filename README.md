@@ -15,7 +15,7 @@ SMDIF Lerma): estructura y decisiones en `docs/00-ESTRUCTURA.md`.
 | Ruta | Qué es | Para quién |
 |---|---|---|
 | `/` | Sitio de la propuesta: qué se plantea, el límite de la identidad biométrica, qué demuestra el prototipo y las cinco decisiones que siguen abiertas | Comité clínico, informática del hospital, protección de datos |
-| `/acceso` | Selección de perfil, sin contraseña y diciéndolo en la pantalla | Quien va a hacer el recorrido |
+| `/acceso` | Inicio de sesión simulado: cuentas de demostración (contraseña `infarto2026`), bloqueo tras 3 intentos, cuenta desactivada y vencimiento por turno | Quien va a hacer el recorrido |
 | `/(app)/…` | Panel administrado: 9 pantallas con guarda de rol, relojes clínicos y simulador de fallos | Personal de urgencias |
 
 Cada mitad tiene su propia paleta sobre **los mismos nombres de token**, así que ninguna pantalla

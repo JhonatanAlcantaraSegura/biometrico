@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { ShieldAlert } from 'lucide-react';
 import { NOMBRE_ROL, inicioDe, puedeVerRuta, rutaDe } from '@/lib/datos/rutas';
 import { actions, useAppState, userById } from '@/lib/estado/tienda';
-import { Boton, Tarjeta } from '@/components/ui/primitivos';
+import { Boton, PantallaCarga, Tarjeta } from '@/components/ui/primitivos';
 
 /**
  * Guarda del panel administrado.
@@ -39,29 +39,39 @@ export function GuardaSesion({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!restaurada || !state) return;
-    if (!state.currentUserId) router.replace('/acceso');
+    if (state.currentUserId) return;
+    const motivo = state.motivoSalida === 'manual' ? 'salida' : state.motivoSalida;
+    router.replace(motivo ? `/acceso?motivo=${motivo}` : '/acceso');
   }, [restaurada, state, router]);
+
+  /*
+   * Vencimiento del turno. Se revisa cada 30 s y al volver a la pestaña: un equipo de
+   * urgencias se queda abierto horas, y una sesion vencida que sigue operando es
+   * justamente lo que la expiracion quiere evitar.
+   */
+  const expiraEn = state?.sesion?.expiraEn;
+  useEffect(() => {
+    if (!expiraEn) return;
+    const revisar = () => {
+      if (new Date(expiraEn).getTime() > Date.now()) return;
+      // La redireccion la hace el efecto de arriba, con el motivo que deja esta accion.
+      actions.cerrarSesion('expirada');
+    };
+    revisar();
+    const id = setInterval(revisar, 30_000);
+    document.addEventListener('visibilitychange', revisar);
+    return () => {
+      clearInterval(id);
+      document.removeEventListener('visibilitychange', revisar);
+    };
+  }, [expiraEn, router]);
 
   // Hasta que la sesion se restaura no se decide nada: mostrar la pantalla de acceso
   // durante un instante a quien ya tenia sesion es un parpadeo que parece un fallo.
-  if (!state || !restaurada) {
-    return (
-      <main className="mx-auto max-w-5xl px-4 py-10">
-        <p role="status" aria-live="polite" className="text-sm text-texto-suave">
-          Restaurando la sesion del prototipo...
-        </p>
-      </main>
-    );
-  }
+  if (!state || !restaurada) return <PantallaCarga mensaje="Verificando la sesion..." />;
 
   if (!state.currentUserId || !usuario) {
-    return (
-      <main className="mx-auto max-w-5xl px-4 py-10">
-        <p role="status" aria-live="polite" className="text-sm text-texto-suave">
-          Sin sesion. Redirigiendo a la pantalla de acceso...
-        </p>
-      </main>
-    );
+    return <PantallaCarga mensaje="Sin sesion. Redirigiendo a la pantalla de acceso..." />;
   }
 
   const regla = rutaDe(ruta);
