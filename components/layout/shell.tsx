@@ -150,20 +150,21 @@ export function Shell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="min-h-dvh bg-lienzo">
+    <div className="min-h-dvh bg-lienzo-sutil">
       <a href="#contenido" className="salto-contenido">
         Saltar al contenido
       </a>
 
       {/* Banner permanente: este entorno no es apto para datos reales. */}
-      <p className="no-imprimir bg-aviso-suave px-4 py-1.5 text-center text-xs font-semibold text-aviso">
+      <p className="no-imprimir bg-aviso-suave px-4 py-1.5 text-center text-xs font-medium text-aviso">
         {INSTITUCION.avisoPrototipo}
       </p>
       <div className="no-imprimir">
         <AvisoVerComo state={state} />
       </div>
 
-      <header className="no-imprimir sticky top-0 z-30 border-b border-borde-suave bg-fondo shadow-suave">
+      {/* Sin borde ni sombra: el blanco del encabezado contra el lienzo Ceniza basta. */}
+      <header className="no-imprimir sticky top-0 z-30 bg-fondo">
         <div className="flex flex-wrap items-center gap-3 px-4 py-2.5">
           <button
             onClick={() => setMenuAbierto((v) => !v)}
@@ -178,11 +179,9 @@ export function Shell({ children }: { children: React.ReactNode }) {
               propuesta y quien esta con un paciente enfrente no debe salirse del sistema
               por tocar el encabezado. */}
           <Link href="/tablero" className="flex items-center gap-2.5">
-            <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-primario-suave">
-              <Activity className="size-5 text-primario-oscuro" aria-hidden />
-            </span>
+            <Activity className="size-5 shrink-0 text-texto" aria-hidden />
             <span className="leading-tight">
-              <span className="block text-sm font-bold text-texto">{INSTITUCION.marca}</span>
+              <span className="block text-base font-medium text-texto">{INSTITUCION.marca}</span>
               <span className="block text-xs text-texto-suave">
                 {INSTITUCION.sedeCodigo} · {INSTITUCION.sedeDependencia}
               </span>
@@ -211,7 +210,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         <nav
           aria-label="Navegacion principal"
           className={cx(
-            'no-imprimir w-72 shrink-0 border-r border-borde-suave bg-fondo p-3',
+            'no-imprimir w-72 shrink-0 bg-fondo p-3',
             'fixed inset-y-0 left-0 z-40 mt-[7.5rem] overflow-y-auto lg:sticky lg:top-[7.5rem] lg:mt-0 lg:block lg:h-[calc(100dvh-7.5rem)]',
             menuAbierto ? 'block' : 'hidden',
           )}
@@ -229,18 +228,18 @@ export function Shell({ children }: { children: React.ReactNode }) {
                     onClick={() => alternarGrupo(g.grupo)}
                     aria-expanded={abierto}
                     aria-controls={idLista}
-                    className="flex min-h-control w-full items-center gap-2 rounded-lg px-3 text-xs font-bold uppercase tracking-wider text-texto-suave hover:bg-superficie"
+                    className="flex min-h-control w-full items-center gap-2 rounded px-3 text-xs font-medium text-texto-suave transition-colors hover:bg-superficie hover:text-texto"
                   >
                     <ChevronDown
-                      className={cx('size-4 shrink-0 transition-transform duration-200', abierto ? '' : '-rotate-90')}
+                      className={cx('size-4 shrink-0 transition-transform', abierto ? '' : '-rotate-90')}
                       aria-hidden
                     />
                     {g.grupo}
                     {/* Cuantos renglones hay dentro: plegado, el grupo no se vuelve opaco. */}
-                    <span className="ml-auto text-xs font-semibold tabular-nums">{g.rutas.length}</span>
+                    <span className="ml-auto text-xs font-medium tabular-nums">{g.rutas.length}</span>
                   </button>
                 ) : (
-                  <p className="px-3 pb-1 text-xs font-bold uppercase tracking-wider text-texto-suave">{g.grupo}</p>
+                  <p className="px-3 pb-1 text-xs font-medium text-texto-suave">{g.grupo}</p>
                 )}
 
                 <ul id={idLista} className={abierto ? 'block' : 'hidden'}>
@@ -256,11 +255,11 @@ export function Shell({ children }: { children: React.ReactNode }) {
                           href={m.patron}
                           aria-current={activo ? 'page' : undefined}
                           className={cx(
-                            'flex min-h-control items-center gap-2.5 rounded-lg px-3 text-sm',
-                            plegable ? 'ml-3 border-l border-borde-suave' : '',
+                            'flex min-h-control items-center gap-2.5 rounded px-3 text-sm transition-colors',
+                            plegable ? 'ml-3' : '',
                             activo
-                              ? 'bg-primario-suave font-semibold text-primario-oscuro'
-                              : 'text-texto hover:bg-superficie',
+                              ? 'bg-superficie font-medium text-texto'
+                              : 'text-texto-suave hover:bg-superficie hover:text-texto',
                           )}
                         >
                           <Icono className="size-4 shrink-0" aria-hidden />
@@ -279,22 +278,22 @@ export function Shell({ children }: { children: React.ReactNode }) {
             pantallas se ven; que un rol no vea el resumen clinico no es un error de la
             demostracion, es la seccion 2 de la ERS aplicada.
           */}
-          <p className="mt-4 rounded-lg bg-superficie px-3 py-2 text-xs leading-comodo text-texto-suave">
+          <p className="mt-6 px-3 text-xs leading-comodo text-texto-suave">
             El menu se filtra por perfil segun la matriz de la ERS. Esto es presentacion: en el
             sistema real la garantia de acceso vive en el servidor (RF-22).
           </p>
         </nav>
 
-        <main id="contenido" className="min-w-0 flex-1 p-4 lg:p-6">
-          <div className="mx-auto flex max-w-7xl flex-col gap-5">{children}</div>
+        <main id="contenido" className="min-w-0 flex-1 p-4 lg:p-8">
+          <div className="mx-auto flex max-w-7xl flex-col gap-6">{children}</div>
 
-          <footer className="no-imprimir mx-auto mt-10 max-w-7xl border-t border-borde-suave pt-4 text-xs text-texto-suave">
+          <footer className="no-imprimir mx-auto mt-16 max-w-7xl text-xs text-texto-suave">
             <p>
               {INSTITUCION.sedeNombre} — {INSTITUCION.sedeDependencia}. {INSTITUCION.sedeNota}
             </p>
             <p className="mt-1">
               Derivado de la {INSTITUCION.documentoFuente} ·{' '}
-              <Link className="text-primario underline" href="/">
+              <Link className="text-texto-suave underline hover:text-texto" href="/">
                 Volver al sitio de la propuesta
               </Link>
             </p>
@@ -308,21 +307,24 @@ export function Shell({ children }: { children: React.ReactNode }) {
         className="no-imprimir fixed bottom-4 right-4 z-50 flex w-full max-w-sm flex-col gap-2"
       >
         {state.avisos.map((a) => (
-          <div
-            key={a.id}
-            className={cx(
-              'flex items-start gap-2 rounded-lg border-l-4 bg-fondo p-3 text-sm shadow-elevada',
-              a.tono === 'exito' && 'border-exito',
-              a.tono === 'aviso' && 'border-aviso',
-              a.tono === 'peligro' && 'border-peligro',
-              a.tono === 'info' && 'border-primario',
-            )}
-          >
-            <span className="flex-1 text-texto">{a.texto}</span>
+          // Carbon sobre el contenido: la capa se distingue por el cambio de superficie, no
+          // por una sombra. El punto de color acompaña; el texto del aviso es el que informa.
+          <div key={a.id} className="flex items-start gap-3 rounded bg-texto p-4 text-sm text-primario-texto">
+            <span
+              aria-hidden
+              className={cx(
+                'mt-1.5 size-2 shrink-0 rounded-full',
+                a.tono === 'exito' && 'bg-exito-suave',
+                a.tono === 'aviso' && 'bg-aviso-suave',
+                a.tono === 'peligro' && 'bg-peligro-suave',
+                a.tono === 'info' && 'bg-primario',
+              )}
+            />
+            <span className="flex-1">{a.texto}</span>
             <button
               onClick={() => actions.descartarAviso(a.id)}
               aria-label="Descartar aviso"
-              className="rounded p-1 text-texto-suave hover:bg-superficie"
+              className="rounded p-1 text-primario-texto transition-colors hover:bg-primario-texto/10"
             >
               <X className="size-4" aria-hidden />
             </button>
@@ -352,8 +354,8 @@ const ESTADOS: IntegrationStatus[] = ['ok', 'lento', 'caido'];
  */
 function BarraIntegraciones({ salud }: { salud: IntegrationHealth }) {
   return (
-    <div className="flex flex-wrap items-center gap-3 border-t border-borde-suave bg-superficie px-4 py-2">
-      <span className="text-xs font-bold uppercase tracking-wider text-texto-suave">
+    <div className="flex flex-wrap items-center gap-3 border-t border-borde-suave bg-fondo px-4 py-2">
+      <span className="text-xs font-medium text-texto-suave">
         <ClipboardList className="mr-1 inline size-3.5" aria-hidden />
         Simulador de fallos
       </span>
@@ -369,7 +371,7 @@ function BarraIntegraciones({ salud }: { salud: IntegrationHealth }) {
               id={`int-${clave}`}
               value={valor}
               onChange={(e) => actions.setIntegration(clave, e.target.value as IntegrationStatus)}
-              className="min-h-control rounded border border-borde bg-fondo px-1.5 text-xs text-texto"
+              className="min-h-control rounded border border-borde bg-fondo px-2 text-xs text-texto"
             >
               {ESTADOS.map((s) => (
                 <option key={s} value={s}>

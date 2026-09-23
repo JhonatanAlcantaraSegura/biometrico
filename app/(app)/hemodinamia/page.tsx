@@ -25,7 +25,7 @@ export default function HemodinamiaPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold">Hemodinamia y traslado</h1>
+          <h1 className="text-2xl text-texto">Hemodinamia y traslado</h1>
           <p className="text-sm text-texto-suave">
             Solicitudes abiertas: {requests.length}. Rechazar no bloquea la atencion; obliga a documentar el escalamiento.
           </p>
@@ -63,7 +63,7 @@ export default function HemodinamiaPage() {
           >
             <div className="space-y-4">
               {/* Datos minimos: el equipo receptor no necesita el expediente completo. */}
-              <div className="rounded border border-borde-suave bg-superficie px-3 py-2 text-sm">
+              <div className="rounded bg-superficie px-3 py-2 text-sm">
                 <p className="text-texto-suave">Conjunto minimo compartido</p>
                 <p className="mt-1">
                   Episodio {encounter.temporary_id} · triage {encounter.triage?.priority ?? "sin dato"} · diagnostico{" "}
@@ -99,7 +99,7 @@ export default function HemodinamiaPage() {
               </Campo>
 
               <div>
-                <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-texto-suave">Hitos del procedimiento o traslado</h3>
+                <h3 className="mb-2 text-xs font-medium text-texto-suave">Hitos del procedimiento o traslado</h3>
                 <div className="flex flex-wrap gap-2">
                   {MILESTONES.map((t) => {
                     const m = c.milestones.find((x) => x.type === t);

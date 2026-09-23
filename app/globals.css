@@ -8,49 +8,55 @@
 @import './tema-publico.css';
 
 /*
- * Paleta de "Codigo Infarto".
+ * Paleta de "Codigo Infarto" — sistema de diseño de `DESIGN.md`.
  *
- * Estos valores NO se eligieron a ojo: viven en `lib/estilos/paleta.ts` y `npm run
- * contraste` recorre cada par y CALCULA su razon. Los numeros de los comentarios de abajo
- * son la salida de ese comando.
+ * Monocromo mas un azul: blanco, tres grises de texto y el Azul Electrico (#3e6ae1)
+ * reservado a la accion primaria. Sin sombras, sin degradados, sin bordes de tarjeta: la
+ * separacion la da el espacio en blanco y el cambio sutil a Ceniza Clara (#f4f4f4).
  *
- * Un solo esquema, claro. No hay variante oscura porque no esta medida, e inventarla
- * romperia en silencio la garantia de contraste.
+ * Excepcion deliberada a `DESIGN.md`: los colores de ESTADO (peligro, aviso, exito, info,
+ * atencion) se conservan. Un sitio de autos puede prescindir de ellos; urgencias no. Solo
+ * aparecen para comunicar estado clinico o de identidad, siempre acompañados de texto.
  *
- * Razon de contraste CALCULADA (WCAG 2.1) de cada color de primer plano contra los tres
- * fondos del sistema. Ninguno esta estimado:
+ * Estos valores viven en `lib/estilos/paleta.ts` y `npm run contraste` CALCULA cada par.
+ * Un solo esquema, claro: no hay variante oscura medida.
+ *
+ * Razon de contraste CALCULADA (WCAG 2.1):
  *
  *                            fondo   lienzo   lienzo-sutil
- *   texto        #0f172a     17.85    16.80      15.49
- *   texto-suave  #475569      7.58     7.13       6.57
- *   primario     #0b4f6c      8.94     8.41         —
+ *   texto        #171a20     17.43    17.43      15.84
+ *   texto-suave  #5c5e62      6.50     6.50       5.91
+ *   primario     #3e6ae1      4.82     4.82         —     (texto blanco encima: 4.82)
  *   atencion     #6d28d9      7.10       —          —
- *   aviso        #92400e      7.09     6.67         —
- *   info / foco  #1d4ed8      6.70     6.31         —
- *   peligro      #b42318      6.57     6.19         —
- *   exito        #067647      5.69     5.36         —   <- el mas justo, y aun asi pasa
+ *   aviso        #92400e      7.09     7.09         —
+ *   info         #2f55c0      6.60       —          —
+ *   peligro      #b42318      6.57     6.57         —
+ *   exito        #067647      5.69     5.69         —
  *
- * Todos por encima del 4.5:1 que WCAG 2.1 AA exige para texto normal. El borde de control
- * (#64748b) queda en 4.76 / 4.48 / 4.34, por encima del 3:1 de WCAG 1.4.11.
+ * Todos por encima del 4.5:1 de WCAG 2.1 AA. El borde de control (#808285) queda en
+ * 3.85 / 3.85 / 3.50, por encima del 3:1 de WCAG 1.4.11.
  */
 @theme {
+  /* Superficies: Blanco Puro y Ceniza Clara. */
   --color-fondo: #ffffff;
-  --color-superficie: #f1f5f9;
-  --color-lienzo: #f7f8fa;
-  --color-lienzo-sutil: #eceff4;
+  --color-superficie: #f4f4f4;
+  --color-lienzo: #ffffff;
+  --color-lienzo-sutil: #f4f4f4;
 
-  --color-texto: #0f172a;
-  --color-texto-suave: #475569;
+  /* Carbon (titulos) y Peltre (texto secundario). */
+  --color-texto: #171a20;
+  --color-texto-suave: #5c5e62;
 
   /* 3:1 sobre cualquier fondo — limite perceptible (WCAG 1.4.11). */
-  --color-borde: #64748b;
-  /* Solo separadores DECORATIVOS (filas de tabla). Nunca el borde de un control. */
-  --color-borde-suave: #cbd5e1;
+  --color-borde: #808285;
+  /* Gris Nube: solo separadores DECORATIVOS (filas de tabla). Nunca el borde de un control. */
+  --color-borde-suave: #eeeeee;
 
-  --color-primario: #0b4f6c;
+  /* Azul Electrico: exclusivo de la accion primaria. */
+  --color-primario: #3e6ae1;
   --color-primario-texto: #ffffff;
-  --color-primario-suave: #e7f0f4;
-  --color-primario-oscuro: #083b52;
+  --color-primario-suave: #eef2fc;
+  --color-primario-oscuro: #2f55c0;
 
   --color-peligro: #b42318;
   --color-peligro-suave: #fef3f2;
@@ -58,66 +64,64 @@
   --color-aviso-suave: #fffbeb;
   --color-exito: #067647;
   --color-exito-suave: #ecfdf5;
-  --color-info: #1d4ed8;
-  --color-info-suave: #eff6ff;
+  --color-info: #2f55c0;
+  --color-info-suave: #eef2fc;
   --color-atencion: #6d28d9;
   --color-atencion-suave: #f5f3ff;
 
-  --color-foco: #1d4ed8;
-
-  --radius-base: 0.375rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
-  --radius-2xl: 1.5rem;
+  --color-foco: #3e6ae1;
 
   /*
-   * Escala tipografica 12 / 14 / 16 / 18 / 22 / 28 / 36 / 48. Sustituye la de Tailwind
-   * (que salta 20 / 24 / 30 / 36) para que toda la aplicacion respire con el mismo compas.
-   * En `rem` a proposito: la raiz es `100%`, asi que si la persona subio la tipografia del
+   * Radios: 0 por omision, 4 px en todo lo interactivo, 12 px en superficies grandes. Se
+   * redefine la escala de Tailwind para que `rounded-md` y `rounded-lg` caigan en los 4 px y
+   * `rounded-xl` / `rounded-2xl` en los 12 px, sin ningun valor intermedio.
+   */
+  --radius-base: 0.25rem;
+  --radius-md: 0.25rem;
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 0.75rem;
+
+  /*
+   * Tipografia sans de SISTEMA, sin carga por red: esto se enseña en salas de hospital
+   * donde a veces no hay internet. Dos pesos nada mas, 400 y 500; tracking normal siempre.
+   */
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  /*
+   * Escala 12 / 14 / 16 / 17 / 22 / 28 / 32 / 40. Casi todo vive en 14 px; el titulo de
+   * portada no pasa de 40 px. En `rem` a proposito: si la persona subio la tipografia del
    * navegador, toda la escala sube con ella (WCAG 1.4.4).
    */
   --text-xs: 0.75rem;
   --text-xs--line-height: 1.4;
   --text-sm: 0.875rem;
-  --text-sm--line-height: 1.45;
+  --text-sm--line-height: 1.43;
   --text-base: 1rem;
-  --text-base--line-height: 1.55;
-  --text-lg: 1.125rem;
-  --text-lg--line-height: 1.55;
+  --text-base--line-height: 1.5;
+  --text-lg: 1.0625rem;
+  --text-lg--line-height: 1.5;
   --text-xl: 1.375rem;
-  --text-xl--line-height: 1.35;
+  --text-xl--line-height: 1.3;
   --text-2xl: 1.75rem;
-  --text-2xl--line-height: 1.25;
-  --text-3xl: 2.25rem;
-  --text-3xl--line-height: 1.15;
-  --text-4xl: 3rem;
-  --text-4xl--line-height: 1.05;
+  --text-2xl--line-height: 1.2;
+  --text-3xl: 2rem;
+  --text-3xl--line-height: 1.2;
+  --text-4xl: 2.5rem;
+  --text-4xl--line-height: 1.2;
 
-  --leading-ajustado: 1.15;
+  --leading-ajustado: 1.2;
   --leading-comodo: 1.35;
-  --leading-llano: 1.55;
-  --leading-relajado: 1.7;
+  --leading-llano: 1.5;
+  --leading-relajado: 1.65;
 
-  --tracking-titulo: -0.015em;
+  /* Un solo tiempo para todo cambio de estado: 0.33 s. Solo color, nunca desplazamiento. */
+  --default-transition-duration: 330ms;
+  --default-transition-timing-function: cubic-bezier(0.5, 0, 0, 0.75);
 
-  /*
-   * Serif de SISTEMA. No se carga ninguna fuente por red: esto se enseña en salas de
-   * hospital donde a veces no hay internet, y una fuente que no llega deja el titulo
-   * saltando de tipografia a media demostracion.
-   */
-  --font-serif: 'Source Serif 4', Georgia, 'Times New Roman', Times, serif;
-
-  /*
-   * Sombras TINTADAS con el azul institucional (#0b4f6c), no grises neutras. Una sombra
-   * gris sobre un lienzo calido se ve sucia; tintada, la tarjeta parece levantada del
-   * mismo papel.
-   */
-  --shadow-suave: 0 1px 2px rgba(11, 79, 108, 0.06);
-  --shadow-tarjeta: 0 4px 12px rgba(11, 79, 108, 0.08);
-  --shadow-elevada: 0 12px 32px rgba(11, 79, 108, 0.1);
-
-  --spacing-seccion: 4rem;
-  --spacing-seccion-lg: 5rem;
+  --spacing-seccion: 5rem;
+  --spacing-seccion-lg: 7.5rem;
 
   /* 2.75rem = 44 px con la tipografia raiz de 16 px. Minimo de WCAG 2.5.5/2.5.8. */
   --spacing-control: 2.75rem;
@@ -155,46 +159,36 @@ html {
 body {
   background-color: var(--color-lienzo);
   color: var(--color-texto);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
-  line-height: 1.6;
+  line-height: 1.5;
 }
 
 /*
- * Titulos en SERIF. El alcance es deliberadamente estrecho: `h1` —que es siempre el titulo
- * de la pantalla— y lo que se marque a mano con `.titulo`, que son los encabezados de
- * SECCION del sitio publico. Un `h2, h3` global habria convertido en serif los rotulos de
- * tarjeta de las pantallas internas ("Cronologia del ECG", "Candidatos"), que no son voz
- * institucional sino etiquetas de datos y se leen mejor en sans.
+ * Titulos: la misma sans, peso 500, tracking normal. `h1` es siempre el titulo de pantalla;
+ * `.titulo` marca a mano los encabezados de seccion del sitio publico.
  *
  * Va en `@layer base` A PROPOSITO: en CSS moderno una regla sin capa le gana a TODA
- * utilidad de Tailwind sin importar la especificidad, de modo que un `font-bold` suelto en
- * un `h1` quedaria mudo y nadie entenderia por que.
+ * utilidad de Tailwind sin importar la especificidad.
  */
 @layer base {
   h1,
   .titulo {
-    font-family: var(--font-serif);
     font-weight: 500;
-    letter-spacing: var(--tracking-titulo);
+    letter-spacing: normal;
   }
 
-  /*
-   * Excepcion: la etiqueta de brazalete es un FACSIMIL de lo que sale de la impresora de
-   * urgencias. No hereda la voz del sistema de diseño.
-   */
-  .hoja h1,
-  .hoja .titulo {
-    font-family: inherit;
-    letter-spacing: normal;
+  /* Dos pesos en todo el sistema. El enfasis de `<strong>` se queda en 500. */
+  strong,
+  b {
+    font-weight: 500;
   }
 }
 
-/* Rotulo en versalitas por encima del titulo de seccion. */
+/* Rotulo sobre el titulo de seccion. Sin versalitas: minusculas tranquilas. */
 .rotulo {
-  font-size: var(--text-xs);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: var(--text-sm);
+  font-weight: 500;
   color: var(--color-texto-suave);
 }
 
@@ -223,29 +217,25 @@ textarea {
 }
 
 /*
- * Movimiento del sitio publico y de la pantalla de acceso, tomado de los bocetos de CURA
- * (`cardIn`, `breathe`, `arcDraw`). Es poco y lento a proposito: acompaña la lectura, no
- * la compite. Todo muere con la regla de movimiento reducido de abajo, y como las tres
- * animaciones terminan en el estado normal del elemento, sin animacion se ve igual.
+ * Movimiento del sitio publico y de la pantalla de acceso. Solo opacidad y trazo: nada se
+ * desplaza ni se escala (`DESIGN.md`). Todo muere con la regla de movimiento reducido de
+ * abajo, y como las animaciones terminan en el estado normal del elemento, sin animacion se
+ * ve igual.
  */
 @keyframes aparecer {
   from {
     opacity: 0;
-    transform: translateY(8px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 @keyframes latido {
   0%,
   100% {
-    transform: scale(1);
-    opacity: 0.85;
+    opacity: 0.55;
   }
   50% {
-    transform: scale(1.12);
     opacity: 1;
   }
 }

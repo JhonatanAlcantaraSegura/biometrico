@@ -82,7 +82,7 @@ export function CapturaBiometrica({ encounterId, conscious }: { encounterId: str
     >
       {/* El aviso va primero y no al final: es lo que impide leer esta pantalla como una
           capacidad disponible. */}
-      <div className="mb-4 flex items-start gap-3 rounded-lg border border-aviso/40 bg-aviso-suave p-3">
+      <div className="mb-4 flex items-start gap-3 rounded bg-aviso-suave p-3">
         <TriangleAlert className="mt-0.5 size-5 shrink-0 text-aviso" aria-hidden />
         <p className="text-sm leading-llano text-aviso">
           <strong>Simulador.</strong> No hay motor 1:N contratado, validado ni autorizado: RF-09 sigue
@@ -92,7 +92,7 @@ export function CapturaBiometrica({ encounterId, conscious }: { encounterId: str
       </div>
 
       {!conscious && (
-        <p className="mb-4 rounded-lg border border-primario/30 bg-primario-suave p-3 text-sm leading-llano text-primario-oscuro">
+        <p className="mb-4 rounded bg-superficie p-3 text-sm leading-llano text-texto">
           Este episodio está marcado como <strong>no puede participar</strong>. Es precisamente el caso
           que World ID no cubre y el que justifica evaluar un motor 1:N. Aun así, el mejor resultado
           posible aquí es <strong>provisional</strong>: la regla 4 de la ERS exige corroboración antes de
@@ -181,7 +181,7 @@ export function CapturaBiometrica({ encounterId, conscious }: { encounterId: str
       {/* WCAG 4.1.3: el avance de la captura se anuncia, no sólo se ve. */}
       <div aria-live="polite" className="mt-4">
         {ocupado && (
-          <p role="status" className="text-sm font-semibold text-primario">
+          <p role="status" className="text-sm font-medium text-texto">
             {fase === 'capturando'
               ? `Capturando ${NOMBRE_MODALIDAD[modalidad].toLowerCase()} en ${punto?.nombre}…`
               : 'Comparando contra la galería (1:N)…'}
@@ -197,13 +197,13 @@ function EscenarioActivo({ escenario }: { escenario: EscenarioBiometrico }) {
   const d = ESCENARIOS.find((e) => e.clave === escenario);
   if (!d) return null;
   return (
-    <div className="mt-4 rounded-lg border border-borde-suave bg-superficie p-3">
+    <div className="mt-4 rounded bg-superficie p-3">
       <p className="text-sm text-texto">
-        <span className="font-semibold">{d.nombre}. </span>
+        <span className="font-medium">{d.nombre}. </span>
         {d.detalle}
       </p>
       <p className="mt-1.5 text-sm leading-llano text-texto-suave">
-        <span className="font-semibold text-texto">Lo que debe hacer el sistema: </span>
+        <span className="font-medium text-texto">Lo que debe hacer el sistema: </span>
         {d.esperado}
       </p>
     </div>
@@ -227,7 +227,7 @@ function ResultadoIntento() {
           : 'neutro';
 
   return (
-    <div className="space-y-3 rounded-lg border border-borde-suave bg-fondo p-3">
+    <div className="space-y-3 rounded bg-fondo p-3">
       <div className="flex flex-wrap items-center gap-2">
         <Insignia tono={tono}>{intento.resultado.replace(/_/g, ' ')}</Insignia>
         {intento.fallo && <Insignia tono="peligro">{NOMBRE_FALLO[intento.fallo]}</Insignia>}
@@ -260,13 +260,13 @@ function ResultadoIntento() {
       </div>
 
       <p className="text-sm leading-llano text-texto-suave">
-        <CircleAlert className="mr-1 inline size-4 text-primario" aria-hidden />
+        <CircleAlert className="mr-1 inline size-4 text-texto" aria-hidden />
         {intento.motivo}
       </p>
 
       {/* Lo que un motor real NO dice, dicho aquí a propósito y sólo después del resultado. */}
       {intento.escenario === 'falso_positivo' && intento.resultado === 'provisional' && (
-        <p className="rounded-lg border border-peligro/40 bg-peligro-suave p-3 text-sm leading-llano text-peligro">
+        <p className="rounded bg-peligro-suave p-3 text-sm leading-llano text-peligro">
           <strong>Este resultado es un falso positivo.</strong> El candidato propuesto no es la persona que
           se capturó, y nada en la respuesta del motor lo delata: puntaje alto, margen amplio y una sola
           coincidencia. Un motor real tampoco lo sabría. Es el escenario que justifica que la
@@ -275,7 +275,7 @@ function ResultadoIntento() {
       )}
 
       {intento.fallo === 'prueba_de_vida' && (
-        <p className="rounded-lg border border-aviso/40 bg-aviso-suave p-3 text-sm leading-llano text-aviso">
+        <p className="rounded bg-aviso-suave p-3 text-sm leading-llano text-aviso">
           La prueba de vida rechazó la captura. Apagarla en la consola biométrica haría que este mismo
           intento pasara — junto con una fotografía impresa. Si en un piloto alguien la apaga &quot;para que
           funcione&quot;, eso es un hallazgo, no una configuración.
@@ -283,7 +283,7 @@ function ResultadoIntento() {
       )}
 
       {intento.fallo && intento.fallo !== 'prueba_de_vida' && (
-        <p className="rounded-lg border border-borde-suave bg-superficie p-3 text-sm leading-llano text-texto-suave">
+        <p className="rounded bg-superficie p-3 text-sm leading-llano text-texto-suave">
           No se comparó nada, así que esto <strong>no</strong> significa que la persona no esté enrolada.
           La ruta manual supervisada sigue disponible y el reloj clínico no se detuvo (RF-08, RNF-03).
         </p>
@@ -304,10 +304,10 @@ function Etapa({
   ausente?: string;
 }) {
   return (
-    <div className="rounded border border-borde-suave bg-superficie px-2.5 py-2">
-      <dt className="text-xs font-semibold uppercase tracking-wide text-texto-suave">{nombre}</dt>
+    <div className="rounded bg-superficie px-2.5 py-2">
+      <dt className="text-xs font-medium text-texto-suave">{nombre}</dt>
       <dd className="mt-0.5 font-mono text-base tabular-nums text-texto">
-        {ms === undefined ? <span className="text-sm italic text-texto-suave">{ausente}</span> : `${ms} ms`}
+        {ms === undefined ? <span className="text-sm text-texto-suave">{ausente}</span> : `${ms} ms`}
       </dd>
       <dd className="mt-0.5 text-xs text-texto-suave">{responsable}</dd>
     </div>
@@ -316,9 +316,9 @@ function Etapa({
 
 function Dato({ etiqueta, valor }: { etiqueta: string; valor: string }) {
   return (
-    <p className={cx('rounded border border-borde-suave bg-superficie px-2.5 py-1.5')}>
+    <p className={cx('rounded bg-superficie px-2.5 py-1.5')}>
       <span className="text-texto-suave">{etiqueta}: </span>
-      <span className="font-mono font-semibold tabular-nums text-texto">{valor}</span>
+      <span className="font-mono font-medium tabular-nums text-texto">{valor}</span>
     </p>
   );
 }

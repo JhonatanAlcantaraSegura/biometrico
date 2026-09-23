@@ -17,7 +17,7 @@ function ItemList({ items, emphasis }: { items: ClinicalItem[]; emphasis?: boole
   return (
     <ul className="space-y-1.5">
       {items.map((it, i) => (
-        <li key={i} className={`rounded border border-borde-suave px-3 py-2 ${emphasis ? "bg-peligro/10" : "bg-superficie"}`}>
+        <li key={i} className={`rounded px-3 py-2 ${emphasis ? "bg-peligro-suave" : "bg-superficie"}`}>
           <p className="text-sm font-medium">{it.label}</p>
           <p className="text-xs text-texto-suave">
             {it.detail ? `${it.detail} · ` : ""}
@@ -155,7 +155,7 @@ export default function ResumenPage() {
               {state.legal
                 .filter((l) => l.encounter_id === encounter.encounter_id)
                 .map((l) => (
-                  <li key={l.record_id} className="rounded border border-borde-suave bg-superficie px-3 py-2 text-sm">
+                  <li key={l.record_id} className="rounded bg-superficie px-3 py-2 text-sm">
                     <p className="font-medium">{l.kind.replace(/_/g, " ")}</p>
                     <p className="text-xs text-texto-suave">
                       {l.purpose} · version {l.version} · {localDateTime(l.at)}

@@ -108,7 +108,7 @@ export function GuardaSesion({ children }: { children: React.ReactNode }) {
                 <Boton tono="primario" onClick={() => router.replace(inicioDe(usuario.role))}>
                   Ir a mi inicio
                 </Boton>
-                <Link href="/" className="control inline-flex items-center px-2 text-sm text-primario underline">
+                <Link href="/" className="control inline-flex items-center px-2 text-sm text-texto underline">
                   Salir al sitio de la propuesta
                 </Link>
               </div>

@@ -114,13 +114,13 @@ export default function Integraciones() {
           {DESCRIPCION_CONECTOR.map((c) => {
             const estado = state.integrations[c.clave];
             return (
-              <li key={c.clave} className="rounded-lg border border-borde-suave bg-superficie px-3 py-3">
+              <li key={c.clave} className="rounded bg-superficie px-3 py-3">
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h3 className="text-sm font-semibold text-texto">{c.nombre}</h3>
+                  <h3 className="text-sm font-medium text-texto">{c.nombre}</h3>
                   <Insignia tono={TONO_ESTADO[estado]}>{estado}</Insignia>
                 </div>
                 <p className="mt-1.5 text-sm leading-llano text-texto-suave">
-                  <span className="font-semibold text-texto">Contrato: </span>
+                  <span className="font-medium text-texto">Contrato: </span>
                   {c.contrato}
                 </p>
                 <p className="mt-1 text-sm leading-llano text-aviso">{c.estadoReal}</p>
@@ -142,7 +142,7 @@ export default function Integraciones() {
             {state.outbox.map((o) => (
               <li
                 key={o.idempotency_key}
-                className="rounded-lg border border-borde-suave bg-superficie px-3 py-2"
+                className="rounded bg-superficie px-3 py-2"
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <span className="font-mono text-sm text-texto">{o.event.event_type}</span>
@@ -174,7 +174,7 @@ export default function Integraciones() {
           La bitacora tambien es efimera aqui, y hay una advertencia de diseño que conviene no perder:
           en el sistema real la auditoria se genera en el servidor a partir de la peticion recibida, no a
           partir de lo que el cliente declare haber hecho. Ver{' '}
-          <Link className="text-primario underline" href="/bitacora">
+          <Link className="text-texto underline" href="/bitacora">
             la bitacora
           </Link>{' '}
           y <code className="text-texto">docs/03-ARQUITECTURA.md</code>.

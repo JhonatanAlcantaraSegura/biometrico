@@ -26,7 +26,7 @@ export default function CasosPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold">Casos activos</h1>
+          <h1 className="text-2xl text-texto">Casos activos</h1>
           <p className="text-sm text-texto-suave">
             {encounters.length} episodios en piso · el estado de identidad no detiene ninguna transicion clinica.
           </p>
@@ -48,11 +48,11 @@ export default function CasosPage() {
             <Link
               key={e.encounter_id}
               href={`/casos/${e.encounter_id}`}
-              className="block rounded-lg border border-borde-suave bg-fondo p-4 transition hover:border-info"
+              className="block rounded-xl bg-fondo p-5 transition-colors hover:bg-borde-suave"
             >
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div>
-                  <p className="font-mono text-sm font-bold">{e.temporary_id}</p>
+                  <p className="font-mono text-sm font-medium">{e.temporary_id}</p>
                   <p className="text-sm text-texto-suave">
                     {patient ? patient.display_name : "Paciente sin identificar"}
                     {!e.conscious && <span className="ml-2 text-aviso">· no puede participar</span>}

@@ -62,8 +62,8 @@ export default function Bitacora() {
         ) : (
           <ul className="space-y-2">
             {accesosDeEmergencia.map((a) => (
-              <li key={a.audit_id} className="rounded-lg border border-atencion/40 bg-atencion-suave px-3 py-2">
-                <p className="text-sm font-semibold text-texto">{a.resource}</p>
+              <li key={a.audit_id} className="rounded bg-atencion-suave px-3 py-2">
+                <p className="text-sm font-medium text-texto">{a.resource}</p>
                 <p className="mt-0.5 text-xs text-texto-suave">
                   {userById(state, a.actor_id)?.name ?? a.actor_id} · {NOMBRE_ROL[a.actor_role]} ·{' '}
                   {localDateTime(a.at)}

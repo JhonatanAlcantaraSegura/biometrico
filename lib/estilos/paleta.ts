@@ -1,43 +1,43 @@
 /**
- * Paleta de la interfaz — fuente unica de verdad.
+ * Paleta de la interfaz — fuente unica de verdad. Sigue `DESIGN.md`.
  *
- * Dos temas, no dos sistemas: `SISTEMA` es el panel administrado (todo lo que cuelga de
- * `app/(app)`) y `PUBLICO` es el sitio institucional de la raiz. Los dos usan los MISMOS
- * nombres de token, asi que una clase `bg-lienzo` significa lo propio de cada mitad y no
- * hace falta un condicional en tiempo de ejecucion: el cambio lo hace la clase
- * `.tema-publico` de `app/tema-publico.css`.
+ * Monocromo mas un azul: blanco, Ceniza Clara, tres grises de texto y el Azul Electrico
+ * reservado a la accion primaria. Los colores de ESTADO se conservan como excepcion
+ * deliberada: urgencias necesita decir "codigo activo" o "identidad provisional" de un
+ * vistazo, y siempre lo dice tambien con texto.
  *
  * Los valores no se eligieron a ojo. `npm run contraste` recorre cada par de
  * `PARES_DE_CONTRASTE` y CALCULA su razon; si uno baja del umbral, el comando falla.
  *
- * Un solo esquema, claro. No hay variante oscura porque no esta medida, e inventarla
- * romperia en silencio la garantia de contraste. Urgencias trabaja con luz alta y las
- * pantallas se leen de pie y a distancia.
+ * Un solo esquema, claro. No hay variante oscura porque no esta medida.
  */
 
 export const SISTEMA = {
-  /** Superficies elevadas: tarjetas, encabezado, barra lateral, modales. */
+  /** Superficies elevadas: tarjetas, encabezado, barra lateral, modales. Blanco Puro. */
   fondo: '#ffffff',
-  /** Fondo de filas alternas y de controles deshabilitados. */
-  superficie: '#f1f5f9',
-  /** El papel sobre el que se apoya todo. */
-  lienzo: '#f7f8fa',
-  /** Banda que separa una seccion de la siguiente sin linea dura. */
-  lienzoSutil: '#eceff4',
+  /** Fondo de controles secundarios, hover y controles deshabilitados. Ceniza Clara. */
+  superficie: '#f4f4f4',
+  /** El lienzo de la pagina: blanco, como todo lo que no es contenido. */
+  lienzo: '#ffffff',
+  /** Banda que separa una seccion de la siguiente sin linea dura. Ceniza Clara. */
+  lienzoSutil: '#f4f4f4',
 
-  texto: '#0f172a',
-  textoSuave: '#475569',
+  /** Carbon: titulos y texto principal. */
+  texto: '#171a20',
+  /** Peltre: texto secundario y enlaces terciarios. */
+  textoSuave: '#5c5e62',
 
   /** Borde de CONTROL. Debe alcanzar 3:1 para ser un limite perceptible (WCAG 1.4.11). */
-  borde: '#64748b',
-  /** Solo separadores DECORATIVOS (filas de tabla). Nunca el borde de un control. */
-  bordeSuave: '#cbd5e1',
+  borde: '#808285',
+  /** Gris Nube: solo separadores DECORATIVOS (filas de tabla). Nunca el borde de un control. */
+  bordeSuave: '#eeeeee',
 
-  /** Azul clinico institucional: accion primaria y enlaces. */
-  primario: '#0b4f6c',
+  /** Azul Electrico: exclusivo de la accion primaria. */
+  primario: '#3e6ae1',
   primarioTexto: '#ffffff',
-  primarioSuave: '#e7f0f4',
-  primarioOscuro: '#083b52',
+  primarioSuave: '#eef2fc',
+  /** Hover del boton primario: el mismo azul, un paso mas oscuro. */
+  primarioOscuro: '#2f55c0',
 
   /** Codigo activo, triage rojo, error y accion destructiva. */
   peligro: '#b42318',
@@ -49,52 +49,21 @@ export const SISTEMA = {
   exito: '#067647',
   exitoSuave: '#ecfdf5',
   /** Estado clinico informativo y reloj dentro de meta. */
-  info: '#1d4ed8',
-  infoSuave: '#eff6ff',
+  info: '#2f55c0',
+  infoSuave: '#eef2fc',
   /** Acceso de emergencia (break glass) y triage amarillo. */
   atencion: '#6d28d9',
   atencionSuave: '#f5f3ff',
 
-  foco: '#1d4ed8',
+  foco: '#3e6ae1',
 } as const;
 
 /**
- * Tema del sitio publico. Mismos nombres, valores mas calidos: quien entra a la raiz no
- * es personal de urgencias sino un comite que va a leer parrafos largos en una sala.
- *
- * El primario cambia a verde azulado profundo para que las dos mitades del producto se
- * distingan de un vistazo sin que ninguna pierda su medicion.
+ * Tema del sitio publico. Desde la adopcion de `DESIGN.md` es la MISMA paleta: un sistema
+ * monocromo no tiene margen para dos acentos. Se conserva el nombre para que
+ * `npm run contraste` siga recorriendo los dos temas si algun dia vuelven a separarse.
  */
-export const PUBLICO = {
-  fondo: '#ffffff',
-  superficie: '#f4efe7',
-  lienzo: '#faf7f2',
-  lienzoSutil: '#f1ebe1',
-
-  texto: '#1c1917',
-  textoSuave: '#57534e',
-
-  borde: '#78716c',
-  bordeSuave: '#d6d3d1',
-
-  primario: '#0f5257',
-  primarioTexto: '#ffffff',
-  primarioSuave: '#e4efef',
-  primarioOscuro: '#0a3a3d',
-
-  peligro: '#b42318',
-  peligroSuave: '#fef3f2',
-  aviso: '#92400e',
-  avisoSuave: '#fffbeb',
-  exito: '#067647',
-  exitoSuave: '#ecfdf5',
-  info: '#1d4ed8',
-  infoSuave: '#eff6ff',
-  atencion: '#6d28d9',
-  atencionSuave: '#f5f3ff',
-
-  foco: '#1d4ed8',
-} as const;
+export const PUBLICO = SISTEMA;
 
 export type TokenDeColor = keyof typeof SISTEMA;
 
@@ -123,7 +92,8 @@ export const PARES_DE_CONTRASTE: readonly ParDeContraste[] = [
   { frente: 'primarioTexto', fondo: 'primario', minimo: 4.5, motivo: 'texto del boton primario' },
   { frente: 'primario', fondo: 'fondo', minimo: 4.5, motivo: 'enlace sobre tarjeta' },
   { frente: 'primario', fondo: 'lienzo', minimo: 4.5, motivo: 'enlace sobre pagina' },
-  { frente: 'primarioOscuro', fondo: 'primarioSuave', minimo: 4.5, motivo: 'renglon activo del menu' },
+  { frente: 'primarioOscuro', fondo: 'primarioSuave', minimo: 4.5, motivo: 'seleccion dentro de una lista' },
+  { frente: 'primarioTexto', fondo: 'primarioOscuro', minimo: 4.5, motivo: 'boton primario en hover' },
   { frente: 'peligro', fondo: 'fondo', minimo: 4.5, motivo: 'codigo activo sobre tarjeta' },
   { frente: 'peligro', fondo: 'lienzo', minimo: 4.5, motivo: 'codigo activo sobre pagina' },
   { frente: 'peligro', fondo: 'peligroSuave', minimo: 4.5, motivo: 'error dentro de su bloque' },
