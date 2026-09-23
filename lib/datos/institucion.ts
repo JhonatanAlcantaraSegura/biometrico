@@ -22,7 +22,7 @@ export const INSTITUCION = {
   lectoresEscritorio: 4,
   camarasAltaConcurrencia: 1,
 
-  documentoFuente: 'ERS v1.1 — 17 de septiembre de 2026',
+  documentoFuente: 'ERS v1.1, 17 de septiembre de 2026',
   avisoPrototipo:
     'Prototipo de propuesta. Datos sinteticos, sin expediente clinico real, sin biometria real y con autenticacion simulada. No usar con pacientes.',
 } as const;

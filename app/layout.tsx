@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { INSTITUCION } from '@/lib/datos/institucion';
 
@@ -26,9 +27,17 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
+/*
+ * Geist para el sitio publico (ver `.tema-publico` en `app/tema-publico.css`). `next/font` la
+ * descarga al compilar y la sirve desde el propio dominio: el navegador no pide nada a
+ * Google, asi que la portada sigue funcionando en una sala sin internet.
+ */
+const geist = Geist({ subsets: ['latin'], variable: '--font-geist', display: 'swap' });
+const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono', display: 'swap' });
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="es-MX">
+    <html lang="es-MX" className={`${geist.variable} ${geistMono.variable}`}>
       <body>{children}</body>
     </html>
   );
