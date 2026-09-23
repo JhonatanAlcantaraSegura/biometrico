@@ -10,3 +10,8 @@ next-env.d.ts
 .env.*.local
 .DS_Store
 npm-debug.log*
+
+# El proyecto usa npm (package-lock.json). Estos archivos los genera pnpm cuando se
+# ejecuta localmente con `npm` como alias de `pnpm`; no forman parte del repositorio.
+pnpm-lock.yaml
+pnpm-workspace.yaml
