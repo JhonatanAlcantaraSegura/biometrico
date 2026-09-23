@@ -160,14 +160,12 @@ export default function Acceso() {
       <main id="contenido" className="flex min-h-dvh flex-col px-4 py-6 sm:px-8 lg:py-10">
         <div className="flex items-center justify-between gap-3">
           <Link href="/" className="flex items-center gap-2.5 lg:hidden">
-            <span className="grid size-10 place-items-center rounded-lg bg-primario-suave">
-              <Activity className="size-5 text-primario-oscuro" aria-hidden />
-            </span>
-            <span className="text-sm font-bold text-texto">{INSTITUCION.marca}</span>
+            <Activity className="size-5 text-texto" aria-hidden />
+            <span className="text-sm font-medium text-texto">{INSTITUCION.marca}</span>
           </Link>
           <Link
             href="/"
-            className="control ml-auto inline-flex items-center gap-1.5 rounded-md px-2 text-sm text-primario underline-offset-4 hover:underline"
+            className="control ml-auto inline-flex items-center gap-1.5 rounded px-2 text-sm text-texto-suave underline-offset-4 transition-colors hover:text-texto hover:underline"
           >
             <ArrowLeft className="size-4" aria-hidden />
             Volver a la propuesta
@@ -187,7 +185,7 @@ export default function Acceso() {
           <form
             onSubmit={entrar}
             noValidate
-            className="aparecer-2 mt-6 flex flex-col gap-4 rounded-2xl border border-borde-suave bg-fondo p-5 shadow-tarjeta sm:p-6"
+            className="aparecer-2 mt-8 flex flex-col gap-5"
           >
             {aviso && <Banda tono="info">{aviso}</Banda>}
 
@@ -259,7 +257,7 @@ export default function Acceso() {
                 </button>
               </div>
               {mayusculas && (
-                <span id="aviso-mayusculas" className="mt-1 block text-sm font-semibold text-aviso">
+                <span id="aviso-mayusculas" className="mt-1 block text-sm font-medium text-aviso">
                   Bloq Mayus esta activado.
                 </span>
               )}
@@ -285,16 +283,16 @@ export default function Acceso() {
               type="submit"
               disabled={bloqueado || validando}
               aria-busy={validando || undefined}
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-primario bg-primario px-4 text-base font-semibold text-primario-texto shadow-suave transition-colors hover:border-primario-oscuro hover:bg-primario-oscuro disabled:cursor-not-allowed disabled:border-borde disabled:bg-superficie disabled:text-texto-suave"
+              className="inline-flex min-h-control items-center justify-center gap-2 rounded bg-primario px-4 text-sm font-medium text-primario-texto transition-colors hover:bg-primario-oscuro disabled:cursor-not-allowed disabled:bg-superficie disabled:text-texto-suave"
             >
               {validando ? (
                 <>
-                  <LoaderCircle className="size-5 animate-spin" aria-hidden />
+                  <LoaderCircle className="size-4 animate-spin" aria-hidden />
                   Validando...
                 </>
               ) : (
                 <>
-                  <LockKeyhole className="size-5" aria-hidden />
+                  <LockKeyhole className="size-4" aria-hidden />
                   Iniciar sesion
                 </>
               )}
@@ -322,13 +320,11 @@ export default function Acceso() {
  */
 function PanelMarca() {
   return (
-    <aside className="relative hidden overflow-hidden bg-primario-oscuro text-primario-texto lg:flex lg:flex-col lg:justify-between lg:p-10">
+    <aside className="relative hidden overflow-hidden bg-texto text-primario-texto lg:flex lg:flex-col lg:justify-between lg:p-10">
       <Link href="/" className="relative z-10 flex items-center gap-3">
-        <span className="grid size-11 place-items-center rounded-xl bg-primario-texto/10 ring-1 ring-primario-texto/20">
-          <Activity className="size-6" aria-hidden />
-        </span>
+        <Activity className="size-6" aria-hidden />
         <span className="leading-tight">
-          <span className="block text-base font-bold">{INSTITUCION.marca}</span>
+          <span className="block text-base font-medium">{INSTITUCION.marca}</span>
           <span className="block text-sm text-primario-texto/80">
             {INSTITUCION.sedeNombre} · {INSTITUCION.sedeDependencia}
           </span>
@@ -387,14 +383,14 @@ function CuentasDemo({
   activa: string;
 }) {
   return (
-    <details className="aparecer-3 group mt-4 rounded-2xl border border-borde-suave bg-fondo shadow-suave" open>
-      <summary className="flex min-h-control cursor-pointer items-center justify-between gap-2 px-5 py-3 text-sm font-semibold text-texto">
+    <details className="aparecer-3 group mt-8 rounded-xl bg-lienzo-sutil" open>
+      <summary className="flex min-h-control cursor-pointer items-center justify-between gap-2 px-5 py-3 text-sm font-medium text-texto">
         Cuentas de demostracion
         <span className="text-xs font-normal text-texto-suave">
-          contraseña <code className="rounded bg-superficie px-1.5 py-0.5 font-mono text-texto">{CONTRASENA_DEMO}</code>
+          contraseña <code className="rounded bg-fondo px-1.5 py-0.5 font-mono text-texto">{CONTRASENA_DEMO}</code>
         </span>
       </summary>
-      <div className="border-t border-borde-suave px-3 pt-2 pb-3">
+      <div className="px-3 pb-3">
         <p className="px-2 pb-2 text-xs leading-llano text-texto-suave">
           Elija un perfil para llenar el formulario. Cada uno ve pantallas y acciones distintas segun la
           matriz de actores de la ERS.
@@ -410,13 +406,13 @@ function CuentasDemo({
                   onClick={() => alElegir(c)}
                   aria-pressed={elegida}
                   className={cx(
-                    'flex w-full items-center gap-2.5 rounded-lg border px-2.5 py-2 text-left transition-colors hover:bg-superficie',
-                    elegida ? 'border-primario bg-primario-suave' : 'border-borde-suave',
+                    'flex w-full items-center gap-2.5 rounded px-2.5 py-2 text-left transition-colors',
+                    elegida ? 'bg-fondo ring-2 ring-inset ring-texto' : 'hover:bg-fondo',
                   )}
                 >
                   <Avatar nombre={usuario?.name ?? 'Cuenta baja'} className={c.activa ? '' : 'bg-texto-suave'} />
                   <span className="min-w-0 leading-tight">
-                    <span className="block truncate text-sm font-semibold text-texto">
+                    <span className="block truncate text-sm font-medium text-texto">
                       {usuario ? NOMBRE_ROL[usuario.role] : 'Cuenta desactivada'}
                     </span>
                     <span className="block truncate text-xs text-texto-suave">{c.correo}</span>

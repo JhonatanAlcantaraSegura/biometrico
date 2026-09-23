@@ -18,15 +18,10 @@ export const viewport: Viewport = {
    */
   colorScheme: 'light',
   /*
-   * La barra del navegador en Android y la de iOS en modo standalone toman este color. Es el
-   * verde azulado del sitio publico, porque quien abre esta direccion sin contexto ve la
-   * propuesta, no el sistema.
-   *
-   * El panel administrado lo pisa con el azul institucional en `app/(app)/layout.tsx`: un
-   * `viewport` de segmento anidado gana sobre el de la raiz. Sin eso, urgencias tendria el
-   * marco del navegador en verde sobre una aplicacion azul.
+   * La barra del navegador en Android y la de iOS en modo standalone toman este color:
+   * blanco, como la barra de navegacion de las dos mitades del producto.
    */
-  themeColor: '#0f5257',
+  themeColor: '#ffffff',
   width: 'device-width',
   initialScale: 1,
 };

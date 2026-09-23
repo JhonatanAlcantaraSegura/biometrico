@@ -68,11 +68,11 @@ export function MenuUsuario({ state, onSalir }: { state: AppState; onSalir: () =
         onClick={() => setAbierto((v) => !v)}
         aria-expanded={abierto}
         aria-controls="menu-usuario"
-        className="flex items-center gap-2 rounded-lg border border-borde-suave py-1 pr-2 pl-1 hover:bg-superficie"
+        className="flex items-center gap-2 rounded py-1 pr-2 pl-1 transition-colors hover:bg-superficie"
       >
         <Avatar nombre={perfil.name} className={viendoComo ? 'bg-atencion' : ''} />
         <span className="hidden text-left leading-tight sm:block">
-          <span className="block text-xs font-semibold text-texto">{perfil.name}</span>
+          <span className="block text-xs font-medium text-texto">{perfil.name}</span>
           <span className="block text-xs text-texto-suave">{NOMBRE_ROL[perfil.role]}</span>
         </span>
         <ChevronDown
@@ -85,12 +85,12 @@ export function MenuUsuario({ state, onSalir }: { state: AppState; onSalir: () =
       {abierto && (
         <div
           id="menu-usuario"
-          className="aparecer absolute right-0 z-50 mt-2 w-80 max-w-[calc(100vw-2rem)] rounded-xl border border-borde-suave bg-fondo p-2 shadow-elevada"
+          className="aparecer absolute right-0 z-50 mt-2 w-80 max-w-[calc(100vw-2rem)] rounded-xl bg-fondo p-2 shadow-[0_8px_24px_rgba(0,0,0,0.05),0_0_0_1px_rgba(0,0,0,0.05)]"
         >
           <div className="flex items-center gap-3 rounded-lg px-2 py-2">
             <Avatar nombre={(real ?? perfil).name} className="size-11" />
             <div className="min-w-0 leading-tight">
-              <p className="truncate text-sm font-semibold text-texto">{(real ?? perfil).name}</p>
+              <p className="truncate text-sm font-medium text-texto">{(real ?? perfil).name}</p>
               <p className="truncate text-xs text-texto-suave">
                 {cuentaDeUsuario((real ?? perfil).user_id)?.correo ?? NOMBRE_ROL[(real ?? perfil).role]}
               </p>
@@ -105,7 +105,7 @@ export function MenuUsuario({ state, onSalir }: { state: AppState; onSalir: () =
           )}
 
           <div className="mt-1 border-t border-borde-suave px-2 pt-3 pb-2">
-            <label htmlFor="sel-rol" className="flex items-center gap-1.5 text-xs font-semibold text-texto">
+            <label htmlFor="sel-rol" className="flex items-center gap-1.5 text-xs font-medium text-texto">
               <UserRound className="size-3.5" aria-hidden />
               Ver el sistema como
             </label>
@@ -139,7 +139,7 @@ export function MenuUsuario({ state, onSalir }: { state: AppState; onSalir: () =
             <button
               type="button"
               onClick={onSalir}
-              className="flex min-h-control w-full items-center gap-2 rounded-lg px-2 text-sm font-semibold text-peligro hover:bg-peligro-suave"
+              className="flex min-h-control w-full items-center gap-2 rounded px-2 text-sm font-medium text-peligro hover:bg-peligro-suave"
             >
               <LogOut className="size-4" aria-hidden />
               Cerrar sesion
@@ -160,7 +160,7 @@ export function AvisoVerComo({ state }: { state: AppState }) {
   const perfil = state.users.find((u) => u.user_id === state.currentUserId);
   if (!real || !perfil || real.user_id === perfil.user_id) return null;
   return (
-    <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 border-t border-atencion/30 bg-atencion-suave px-4 py-1.5 text-xs text-atencion">
+    <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 bg-atencion-suave px-4 py-1.5 text-xs text-atencion">
       <span>
         Viendo el sistema como <strong>{NOMBRE_ROL[perfil.role]}</strong>. Su sesion es de {real.name} (
         {NOMBRE_ROL[real.role]}).
@@ -168,7 +168,7 @@ export function AvisoVerComo({ state }: { state: AppState }) {
       <button
         type="button"
         onClick={() => actions.setCurrentUser(real.user_id)}
-        className="font-semibold underline underline-offset-2"
+        className="font-medium underline underline-offset-2"
       >
         Volver a mi perfil
       </button>

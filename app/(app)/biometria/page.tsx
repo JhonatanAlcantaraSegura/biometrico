@@ -102,7 +102,7 @@ export default function ConsolaBiometrica() {
         requisitos={['RF-09', 'RF-31', 'RNF-02', 'RNF-10']}
       />
 
-      <div className="flex items-start gap-3 rounded-xl border border-aviso/40 bg-aviso-suave p-4">
+      <div className="flex items-start gap-3 rounded-xl bg-aviso-suave p-4">
         <TriangleAlert className="mt-0.5 size-5 shrink-0 text-aviso" aria-hidden />
         <div className="text-sm leading-llano text-aviso">
           <p>
@@ -140,7 +140,7 @@ export default function ConsolaBiometrica() {
       </div>
 
       {sinCalibrar.length > 0 && (
-        <p className="rounded-lg border border-aviso/40 bg-aviso-suave px-3 py-2 text-sm text-aviso">
+        <p className="rounded bg-aviso-suave px-3 py-2 text-sm text-aviso">
           {sinCalibrar.length} punto(s) sin calibración vigente. CA-13 exige que se reporte y que ninguna
           caída bloquee urgencias: la ruta manual supervisada sigue disponible.
         </p>
@@ -154,10 +154,10 @@ export default function ConsolaBiometrica() {
       >
         <ul className="space-y-3">
           {puntos.map((p) => (
-            <li key={p.punto_id} className="rounded-lg border border-borde-suave bg-superficie p-3">
+            <li key={p.punto_id} className="rounded bg-superficie p-3">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <h3 className="text-sm font-semibold text-texto">
+                  <h3 className="text-sm font-medium text-texto">
                     {p.nombre}
                     <span className="ml-2 font-normal text-texto-suave">
                       · {p.tipo === 'escritorio' ? 'escritorio' : 'alta concurrencia'}
@@ -230,7 +230,7 @@ export default function ConsolaBiometrica() {
               </Campo>
             ))}
 
-            <div className="rounded-lg border border-borde-suave bg-superficie p-3">
+            <div className="rounded bg-superficie p-3">
               <label className="flex items-start gap-3 text-sm">
                 <input
                   type="checkbox"
@@ -239,7 +239,7 @@ export default function ConsolaBiometrica() {
                   className="mt-0.5 size-5 shrink-0"
                 />
                 <span>
-                  <span className="font-semibold text-texto">Prueba de vida activa</span>
+                  <span className="font-medium text-texto">Prueba de vida activa</span>
                   <span className="mt-0.5 block leading-llano text-texto-suave">
                     Apagarla sube la tasa de aceptación y deja pasar una fotografía impresa. Si en un
                     piloto alguien la apaga “para que funcione”, eso es un hallazgo, no una configuración.
@@ -247,7 +247,7 @@ export default function ConsolaBiometrica() {
                 </span>
               </label>
               {!umbrales.pruebaDeVida && (
-                <p className="mt-2 rounded border border-peligro/40 bg-peligro-suave px-2.5 py-1.5 text-sm font-semibold text-peligro">
+                <p className="mt-2 rounded bg-peligro-suave px-2.5 py-1.5 text-sm font-medium text-peligro">
                   Prueba de vida APAGADA.
                 </p>
               )}
@@ -262,10 +262,10 @@ export default function ConsolaBiometrica() {
         >
           <ul className="space-y-3">
             {perfiles.map((p) => (
-              <li key={p.modalidad} className="rounded-lg border border-borde-suave bg-superficie p-3">
+              <li key={p.modalidad} className="rounded bg-superficie p-3">
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h3 className="text-sm font-semibold text-texto">
-                    <Fingerprint className="mr-1.5 inline size-4 text-primario" aria-hidden />
+                  <h3 className="text-sm font-medium text-texto">
+                    <Fingerprint className="mr-1.5 inline size-4 text-texto" aria-hidden />
                     {NOMBRE_MODALIDAD[p.modalidad]}
                   </h3>
                   <label className="flex items-center gap-2 text-sm text-texto">
@@ -281,18 +281,18 @@ export default function ConsolaBiometrica() {
 
                 <dl className="mt-2 grid gap-1.5 text-xs">
                   <div>
-                    <dt className="inline font-semibold text-texto">FAR declarado: </dt>
+                    <dt className="inline font-medium text-texto">FAR declarado: </dt>
                     <dd className="inline text-texto-suave">{p.farDeclarado}</dd>
                   </div>
                   <div>
-                    <dt className="inline font-semibold text-texto">FRR declarado: </dt>
+                    <dt className="inline font-medium text-texto">FRR declarado: </dt>
                     <dd className="inline text-texto-suave">{p.frrDeclarado}</dd>
                   </div>
                   <div>
-                    <dt className="inline font-semibold text-texto">Medido en sede: </dt>
+                    <dt className="inline font-medium text-texto">Medido en sede: </dt>
                     <dd className="inline">
                       {p.farMedido === null && p.frrMedido === null ? (
-                        <span className="font-semibold text-aviso">sin medir</span>
+                        <span className="font-medium text-aviso">sin medir</span>
                       ) : (
                         <span className="text-texto-suave">
                           FAR {p.farMedido} · FRR {p.frrMedido}
@@ -326,24 +326,24 @@ export default function ConsolaBiometrica() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[44rem] text-left text-sm">
-              <thead className="border-b border-borde-suave text-xs uppercase tracking-wide text-texto-suave">
+              <thead className="border-b border-borde-suave text-xs text-texto-suave">
                 <tr>
-                  <th scope="col" className="py-2 pr-3 font-semibold">
+                  <th scope="col" className="py-2 pr-3 font-medium">
                     Etapa
                   </th>
-                  <th scope="col" className="py-2 pr-3 font-semibold">
+                  <th scope="col" className="py-2 pr-3 font-medium">
                     n
                   </th>
-                  <th scope="col" className="py-2 pr-3 font-semibold">
+                  <th scope="col" className="py-2 pr-3 font-medium">
                     p50
                   </th>
-                  <th scope="col" className="py-2 pr-3 font-semibold">
+                  <th scope="col" className="py-2 pr-3 font-medium">
                     p95
                   </th>
-                  <th scope="col" className="py-2 pr-3 font-semibold">
+                  <th scope="col" className="py-2 pr-3 font-medium">
                     p99
                   </th>
-                  <th scope="col" className="py-2 font-semibold">
+                  <th scope="col" className="py-2 font-medium">
                     De quién depende
                   </th>
                 </tr>
@@ -358,11 +358,11 @@ export default function ConsolaBiometrica() {
                   const p99 = percentil(valores, 0.99);
                   return (
                     <tr key={etapa} className="border-t border-borde-suave">
-                      <td className="py-2 pr-3 font-semibold text-texto">{NOMBRE_ETAPA[etapa]}</td>
+                      <td className="py-2 pr-3 font-medium text-texto">{NOMBRE_ETAPA[etapa]}</td>
                       <td className="py-2 pr-3 tabular-nums text-texto-suave">{valores.length}</td>
                       {[p50, p95, p99].map((v, i) => (
                         <td key={i} className="py-2 pr-3 font-mono tabular-nums text-texto">
-                          {v === null ? <span className="italic text-texto-suave">sin dato</span> : `${Math.round(v)} ms`}
+                          {v === null ? <span className="text-texto-suave">sin dato</span> : `${Math.round(v)} ms`}
                         </td>
                       ))}
                       <td className="py-2 text-xs text-texto-suave">{RESPONSABLE_ETAPA[etapa]}</td>
@@ -375,7 +375,7 @@ export default function ConsolaBiometrica() {
         )}
 
         <p className="mt-3 flex items-start gap-2 text-sm leading-llano text-texto-suave">
-          <Gauge className="mt-0.5 size-4 shrink-0 text-primario" aria-hidden />
+          <Gauge className="mt-0.5 size-4 shrink-0 text-texto" aria-hidden />
           La consulta al expediente aparece “sin dato” mientras no se lea un ECE en un episodio con
           identidad resuelta. Es correcto que esté vacía: reportar un total sin esa etapa sería reportar
           un recorrido que nadie recorrió.
@@ -461,14 +461,14 @@ export default function ConsolaBiometrica() {
               key={e.clave}
               className={
                 e.clave === escenario
-                  ? 'rounded-lg border border-primario/40 bg-primario-suave p-3'
-                  : 'rounded-lg border border-borde-suave bg-superficie p-3'
+                  ? 'rounded bg-fondo p-3 ring-2 ring-inset ring-texto'
+                  : 'rounded bg-superficie p-3'
               }
             >
-              <p className="text-sm font-semibold text-texto">{e.nombre}</p>
+              <p className="text-sm font-medium text-texto">{e.nombre}</p>
               <p className="mt-0.5 text-sm leading-llano text-texto-suave">{e.detalle}</p>
               <p className="mt-1 text-sm leading-llano text-texto-suave">
-                <span className="font-semibold text-texto">Debe hacer: </span>
+                <span className="font-medium text-texto">Debe hacer: </span>
                 {e.esperado}
               </p>
             </li>

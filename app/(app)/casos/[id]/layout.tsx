@@ -23,7 +23,7 @@ export default function CaseLayout({ children }: { children: ReactNode }) {
   const encounter = encounterById(state, id);
   if (!encounter) {
     return (
-      <div className="rounded-lg border border-borde-suave bg-fondo p-6">
+      <div className="rounded-xl bg-fondo p-6">
         <p className="text-sm text-texto-suave">Episodio no encontrado en el estado local del prototipo.</p>
         <Link href="/tablero" className="mt-3 inline-block text-sm text-info">
           Volver al tablero
@@ -37,10 +37,10 @@ export default function CaseLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="space-y-5">
-      <header className="rounded-lg border border-borde-suave bg-fondo p-4">
+      <header className="rounded-xl bg-fondo p-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="font-mono text-lg font-bold">{encounter.temporary_id}</p>
+            <p className="font-mono text-lg font-medium">{encounter.temporary_id}</p>
             <p className="text-sm text-texto-suave">
               {patient ? patient.display_name : "Paciente sin identificar"} · llegada {localDateTime(encounter.arrival_at)}
             </p>
@@ -55,7 +55,7 @@ export default function CaseLayout({ children }: { children: ReactNode }) {
 
         {/* Regla 4: aviso permanente mientras la identidad no este confirmada. */}
         {encounter.identity_state !== "confirmada" && (
-          <p className="mt-3 rounded border border-aviso/50 bg-aviso/10 px-3 py-2 text-sm text-aviso">
+          <p className="mt-3 rounded bg-aviso-suave px-3 py-2 text-sm text-aviso">
             Identidad no confirmada. No se abre ningun expediente de forma automatica y no se escriben datos sobre un
             expediente candidato. La atencion continua con identificador temporal.
           </p>
@@ -71,8 +71,8 @@ export default function CaseLayout({ children }: { children: ReactNode }) {
               key={t.label}
               href={href}
               title={t.rf}
-              className={`-mb-px rounded-t-md border-b-2 px-4 py-2 text-sm font-medium transition ${
-                active ? "border-info text-info" : "border-transparent text-texto-suave hover:text-texto"
+              className={`-mb-px border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
+                active ? "border-texto text-texto" : "border-transparent text-texto-suave hover:text-texto"
               }`}
             >
               {t.label}

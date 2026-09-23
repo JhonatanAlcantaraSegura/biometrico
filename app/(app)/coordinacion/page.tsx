@@ -24,7 +24,7 @@ export default function CoordinacionPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold">Coordinacion del Codigo Infarto</h1>
+          <h1 className="text-2xl text-texto">Coordinacion del Codigo Infarto</h1>
           <p className="text-sm text-texto-suave">{activeCases.length} codigos activos · avisos con datos minimos, acuse y escalamiento.</p>
         </div>
         <Requisito ids={["RF-18", "RF-19", "RF-21"]} />
@@ -55,7 +55,7 @@ export default function CoordinacionPage() {
           >
             <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
               <div className="space-y-3">
-                <h3 className="text-xs font-semibold uppercase tracking-wide text-texto-suave">Avisos enviados</h3>
+                <h3 className="text-xs font-medium text-texto-suave">Avisos enviados</h3>
                 {alerts.length === 0 ? (
                   <Vacio>Sin avisos registrados.</Vacio>
                 ) : (
@@ -63,7 +63,7 @@ export default function CoordinacionPage() {
                     {alerts.map((a) => {
                       const overdue = !a.acknowledged_at && minutesBetween(a.sent_at) > ACK_WINDOW_MIN;
                       return (
-                        <li key={a.alert_id} className="flex flex-wrap items-center justify-between gap-3 rounded border border-borde-suave bg-superficie px-3 py-2">
+                        <li key={a.alert_id} className="flex flex-wrap items-center justify-between gap-3 rounded bg-superficie px-3 py-2">
                           <div>
                             <p className="text-sm font-medium">{a.recipient_label}</p>
                             <p className="text-xs text-texto-suave">
@@ -96,7 +96,7 @@ export default function CoordinacionPage() {
                   </ul>
                 )}
 
-                <h3 className="pt-2 text-xs font-semibold uppercase tracking-wide text-texto-suave">Recursos</h3>
+                <h3 className="pt-2 text-xs font-medium text-texto-suave">Recursos</h3>
                 {resources.length === 0 ? (
                   <Vacio>Sin respuesta de sala, equipo ni ambulancia.</Vacio>
                 ) : (
@@ -113,7 +113,7 @@ export default function CoordinacionPage() {
                 )}
               </div>
 
-              <div className="space-y-4 rounded border border-borde-suave bg-superficie p-3">
+              <div className="space-y-4 rounded bg-superficie p-3">
                 <Cronometro from={encounter.arrival_at} etiqueta="desde la llegada" />
                 {c.diagnosis_at && <Cronometro from={c.diagnosis_at} goalMinutes={90} etiqueta="desde la hora cero" />}
                 <p className="text-xs text-texto-suave">

@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import {
   Activity,
-  ArrowRight,
   ChevronDown,
   LockKeyhole,
   ClipboardCheck,
@@ -200,13 +199,8 @@ export default function SitioPublico() {
   return (
     <MarcoPublico anclas={ANCLAS}>
       {/* ------------------------------------------------------------------ hero */}
-      <section aria-labelledby="hero-titulo" className="relative overflow-hidden bg-lienzo">
-        {/* Halo decorativo: da profundidad al hero sin cargar ninguna imagen por red. */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -top-40 -right-40 size-[36rem] rounded-full bg-primario-suave blur-3xl"
-        />
-        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-4 py-14 sm:py-seccion-lg lg:grid-cols-12">
+      <section aria-labelledby="hero-titulo" className="bg-lienzo">
+        <div className="mx-auto grid max-w-6xl lg:min-h-[calc(100dvh-4.5rem)] items-center gap-12 px-4 py-16 sm:py-seccion lg:grid-cols-12">
           <div className="aparecer lg:col-span-7">
             <p className="rotulo">Especificacion de requerimientos · {INSTITUCION.documentoFuente}</p>
 
@@ -214,7 +208,7 @@ export default function SitioPublico() {
               Identificar a la persona no puede retrasar la atencion del infarto.
             </h1>
 
-            <p className="mt-6 max-w-2xl text-lg leading-relajado text-texto-suave">
+            <p className="mt-6 max-w-2xl text-base leading-relajado text-texto-suave">
               Una plataforma de urgencias que reduce el tiempo administrativo de identificacion, recupera
               informacion clinica cuando hay una correspondencia <strong>confirmada</strong>, apoya la
               activacion del Codigo Infarto por personal clinico y mide cada intervalo del proceso. Tambien
@@ -222,18 +216,19 @@ export default function SitioPublico() {
               integracion caida.
             </p>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+            {/* El par de acciones de `DESIGN.md`: Azul Electrico para la primaria, Ceniza
+                Clara para la secundaria, 200 px de ancho y 4 px de radio. */}
+            <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
               <Link
                 href="/acceso"
-                className="control inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-primario bg-primario px-6 text-base font-semibold text-primario-texto shadow-tarjeta transition-shadow hover:bg-primario-oscuro hover:shadow-elevada"
+                className="control inline-flex items-center justify-center gap-2 rounded bg-primario px-6 text-sm font-medium text-primario-texto transition-colors hover:bg-primario-oscuro sm:w-52"
               >
-                <LockKeyhole className="size-5" aria-hidden />
+                <LockKeyhole className="size-4" aria-hidden />
                 Entrar al prototipo
-                <ArrowRight className="size-4" aria-hidden />
               </Link>
               <a
                 href="#recorrido"
-                className="control inline-flex min-h-12 items-center justify-center rounded-xl border border-borde bg-fondo px-6 text-base font-semibold text-texto hover:bg-superficie"
+                className="control inline-flex items-center justify-center rounded bg-superficie px-6 text-sm font-medium text-texto transition-colors hover:bg-borde-suave sm:w-52"
               >
                 Ver como opera
               </a>
@@ -241,7 +236,7 @@ export default function SitioPublico() {
 
             <p className="mt-6 text-sm text-texto-suave">
               ¿Prefiere empezar por los riesgos?{' '}
-              <a href="#pendiente" className="font-semibold text-primario underline">
+              <a href="#pendiente" className="font-medium text-texto underline">
                 Ver que falta decidir
               </a>
             </p>
@@ -252,16 +247,17 @@ export default function SitioPublico() {
           </div>
         </div>
 
-        <div className="relative mx-auto max-w-6xl px-4 pb-10">
+        <div className="mx-auto max-w-6xl px-4 pb-16">
           <AvisoPrototipo className="max-w-3xl" />
         </div>
 
-        {/* Franja de cifras. `flex-col-reverse`: se lee la etiqueta antes que el numero. */}
-        <dl className="relative grid grid-cols-2 gap-px border-y border-borde-suave bg-borde-suave sm:grid-cols-4">
+        {/* Franja de cifras. `flex-col-reverse`: se lee la etiqueta antes que el numero. Sin
+            lineas entre columnas: el aire las separa. */}
+        <dl className="grid grid-cols-2 bg-lienzo-sutil sm:grid-cols-4">
           {CIFRAS.map((c) => (
-            <div key={c.etiqueta} className="flex flex-col-reverse items-center bg-lienzo-sutil px-3 py-8 text-center">
+            <div key={c.etiqueta} className="flex flex-col-reverse items-center px-3 py-12 text-center">
               <dt className="mt-1 text-sm text-texto-suave">{c.etiqueta}</dt>
-              <dd className="titulo text-3xl text-primario-oscuro sm:text-4xl">
+              <dd className="titulo text-3xl text-texto sm:text-4xl">
                 <span className="tabular-nums">{c.valor}</span>
                 {c.unidad && <span className="ml-1 text-lg text-texto-suave">{c.unidad}</span>}
               </dd>
@@ -314,11 +310,9 @@ export default function SitioPublico() {
           {PASOS.map((p) => (
             <li key={p.n}>
               <TarjetaPublica className="flex flex-wrap items-start gap-4">
-                <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-primario-suave">
-                  <p.Icono className="size-5 text-primario-oscuro" aria-hidden />
-                </span>
+                <p.Icono className="mt-0.5 size-5 shrink-0 text-texto" aria-hidden />
                 <div className="min-w-0 flex-1">
-                  <h3 className="text-base font-semibold text-texto">
+                  <h3 className="text-base font-medium text-texto">
                     <span className="mr-2 tabular-nums text-texto-suave">{p.n}.</span>
                     {p.titulo}
                   </h3>
@@ -381,9 +375,9 @@ export default function SitioPublico() {
               {DEMOSTRABLE.map((d) => (
                 <li key={d.titulo}>
                   <TarjetaPublica className="flex items-start gap-3">
-                    <d.Icono className="mt-0.5 size-5 shrink-0 text-primario" aria-hidden />
+                    <d.Icono className="mt-0.5 size-5 shrink-0 text-texto" aria-hidden />
                     <div>
-                      <h4 className="text-sm font-semibold text-texto">{d.titulo}</h4>
+                      <h4 className="text-sm font-medium text-texto">{d.titulo}</h4>
                       <p className="mt-1 text-sm leading-llano text-texto-suave">{d.detalle}</p>
                       <p className="mt-1.5 font-mono text-xs text-texto-suave">{d.prueba}</p>
                     </div>
@@ -398,7 +392,7 @@ export default function SitioPublico() {
             <ul className="space-y-3">
               {NO_DEMOSTRABLE.map((n) => (
                 <li key={n}>
-                  <div className="flex items-start gap-3 rounded-xl border border-aviso/40 bg-aviso-suave p-4">
+                  <div className="flex items-start gap-3 rounded bg-aviso-suave p-4">
                     <TriangleAlert className="mt-0.5 size-5 shrink-0 text-aviso" aria-hidden />
                     <p className="text-sm leading-llano text-aviso">{n}</p>
                   </div>
@@ -421,11 +415,11 @@ export default function SitioPublico() {
           {DECISIONES_ABIERTAS.map((d, i) => (
             <li key={d.clave}>
               <TarjetaPublica className="flex flex-wrap items-start gap-4">
-                <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-aviso-suave font-bold tabular-nums text-aviso">
+                <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-aviso-suave font-medium tabular-nums text-aviso">
                   {i + 1}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <h3 className="text-base font-semibold text-texto">{d.titulo}</h3>
+                  <h3 className="text-base font-medium text-texto">{d.titulo}</h3>
                   <p className="mt-1.5 text-sm leading-llano text-texto-suave">{d.detalle}</p>
                 </div>
               </TarjetaPublica>
@@ -442,27 +436,27 @@ export default function SitioPublico() {
         titulo="Lo que preguntan en la primera reunion"
         descripcion="Respuestas cortas. El detalle de cada una esta en la ERS y en la trazabilidad por requisito."
       >
-        <div className="divide-y divide-borde-suave overflow-hidden rounded-xl border border-borde-suave bg-fondo">
+        <div className="divide-y divide-borde-suave border-y border-borde-suave">
           {PREGUNTAS.map((q) => (
             <details key={q.p} className="group">
-              <summary className="flex min-h-control cursor-pointer items-center justify-between gap-4 px-5 py-4 text-left text-base font-semibold text-texto hover:bg-superficie">
+              <summary className="flex min-h-control cursor-pointer items-center justify-between gap-4 py-5 text-left text-base font-medium text-texto transition-colors hover:text-texto-suave">
                 {q.p}
                 <ChevronDown
-                  className="size-5 shrink-0 text-texto-suave transition-transform duration-200 group-open:rotate-180"
+                  className="size-5 shrink-0 text-texto-suave transition-transform group-open:rotate-180"
                   aria-hidden
                 />
               </summary>
-              <p className="px-5 pb-5 text-sm leading-llano text-texto-suave">{q.r}</p>
+              <p className="max-w-3xl pb-5 text-sm leading-llano text-texto-suave">{q.r}</p>
             </details>
           ))}
         </div>
       </BandaPublica>
 
       {/* --------------------------------------------------------------- cierre */}
-      <section aria-labelledby="cierre-titulo" className="bg-primario-oscuro text-primario-texto">
-        <div className="mx-auto flex max-w-6xl flex-col items-start gap-6 px-4 py-14 sm:py-seccion md:flex-row md:items-center md:justify-between">
+      <section aria-labelledby="cierre-titulo" className="bg-texto text-primario-texto">
+        <div className="mx-auto flex max-w-6xl flex-col items-start gap-8 px-4 py-16 sm:py-seccion-lg md:flex-row md:items-center md:justify-between">
           <div className="max-w-2xl">
-            <h2 id="cierre-titulo" className="titulo text-2xl">
+            <h2 id="cierre-titulo" className="titulo text-3xl">
               Recorra el sistema con el perfil que le toca revisar
             </h2>
             <p className="mt-3 text-base leading-llano text-primario-texto/85">
@@ -474,11 +468,10 @@ export default function SitioPublico() {
           </div>
           <Link
             href="/acceso"
-            className="control inline-flex min-h-12 shrink-0 items-center gap-2 rounded-xl bg-fondo px-6 text-base font-semibold text-primario-oscuro shadow-tarjeta hover:bg-superficie"
+            className="control inline-flex shrink-0 items-center justify-center gap-2 rounded bg-primario px-6 text-sm font-medium text-primario-texto transition-colors hover:bg-primario-oscuro sm:w-52"
           >
-            <LockKeyhole className="size-5" aria-hidden />
+            <LockKeyhole className="size-4" aria-hidden />
             Iniciar sesion
-            <ArrowRight className="size-4" aria-hidden />
           </Link>
         </div>
       </section>
