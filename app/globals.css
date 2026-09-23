@@ -242,8 +242,8 @@ select,
 }
 
 /*
- * Aparicion por opacidad (acceso, menu de usuario, avisos). Nada se desplaza ni se escala
- * (`DESIGN.md`). Todo muere con la regla de movimiento reducido de
+ * Aparicion por opacidad (acceso, menu de usuario, avisos) y el trazo de ECG de la pantalla
+ * de acceso. Nada se desplaza ni se escala (`DESIGN.md`). Todo muere con la regla de movimiento reducido de
  * abajo, y como las animaciones terminan en el estado normal del elemento, sin animacion se
  * ve igual.
  */
@@ -255,6 +255,14 @@ select,
     opacity: 1;
   }
 }
+@keyframes trazo {
+  from {
+    stroke-dashoffset: 600;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
 
 .aparecer {
   animation: aparecer 480ms ease-out both;
@@ -264,6 +272,10 @@ select,
 }
 .aparecer-3 {
   animation: aparecer 480ms ease-out 240ms both;
+}
+.trazo-ecg {
+  stroke-dasharray: 600;
+  animation: trazo 2400ms ease-out both;
 }
 
 /* WCAG 2.3.3 — Movimiento reducido. Gana a cualquier utilidad de transicion o animacion. */

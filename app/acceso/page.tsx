@@ -330,7 +330,6 @@ function PanelMarca() {
         src={retinaBiometrica}
         alt=""
         fill
-        preload
         placeholder="blur"
         sizes="42vw"
         className="-z-20 object-cover object-[70%_center]"
@@ -365,6 +364,24 @@ function PanelMarca() {
           </li>
         </ul>
       </div>
+
+      {/* Trazo de ECG decorativo: se dibuja una vez y se queda quieto. */}
+      <svg
+        aria-hidden
+        viewBox="0 0 400 80"
+        className="pointer-events-none absolute inset-x-0 top-1/3 h-24 w-full text-primario-texto"
+        strokeOpacity={0.22}
+        fill="none"
+      >
+        <path
+          className="trazo-ecg"
+          d="M0 40 H120 L135 40 L145 18 L155 62 L165 8 L178 70 L188 40 H260 L272 30 L284 40 H400"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
 
       <p className="relative z-10 text-xs text-primario-texto/75">{INSTITUCION.sedeNota}</p>
     </aside>
