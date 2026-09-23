@@ -46,20 +46,20 @@ export function Tarjeta({
     // superficie y por el espacio, nada mas (`DESIGN.md`, seccion 6).
     <section className={cx('rounded-xl bg-fondo', className)}>
       {(titulo || acciones) && (
-        <header className="flex flex-wrap items-start justify-between gap-2 px-5 pt-5">
-          <div>
-            {titulo && <h2 className="text-lg font-medium text-texto">{titulo}</h2>}
+        <header className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2 px-6 pt-6">
+          <div className="min-w-0">
+            {titulo && <h2 className="text-lg font-medium tracking-tight text-texto">{titulo}</h2>}
             {ayuda && <p className="mt-1 max-w-prose text-sm text-texto-suave">{ayuda}</p>}
           </div>
           {acciones}
         </header>
       )}
-      <div className="p-5">{children}</div>
+      <div className="p-6">{children}</div>
     </section>
   );
 }
 
-/** Encabezado de pantalla. El `h1` toma peso 500 y tracking normal de `globals.css`. */
+/** Encabezado de pantalla: titular `.display`, como los de la portada. */
 export function Encabezado({
   titulo,
   descripcion,
@@ -72,10 +72,10 @@ export function Encabezado({
   requisitos?: readonly string[];
 }) {
   return (
-    <header className="flex flex-wrap items-start justify-between gap-3">
+    <header className="flex flex-wrap items-end justify-between gap-4 pb-2">
       <div className="min-w-0">
-        <h1 className="text-2xl text-texto">{titulo}</h1>
-        {descripcion && <p className="mt-2 max-w-prose text-sm text-texto-suave">{descripcion}</p>}
+        <h1 className="display text-3xl text-texto sm:text-4xl">{titulo}</h1>
+        {descripcion && <p className="mt-3 max-w-2xl text-base leading-llano text-texto-suave">{descripcion}</p>}
         {requisitos && <Requisito ids={requisitos} />}
       </div>
       {acciones && <div className="flex flex-wrap gap-2">{acciones}</div>}
@@ -263,9 +263,9 @@ export function Indicador({
   nota?: string;
 }) {
   return (
-    <div className="rounded-xl bg-fondo px-5 py-5">
+    <div className="rounded-xl bg-fondo p-6">
       <p className="text-sm text-texto-suave">{etiqueta}</p>
-      <p className="mt-2 text-3xl font-medium tabular-nums text-texto">
+      <p className="display mt-3 text-4xl text-texto tabular-nums">
         {valor}
         {unidad && <span className="ml-1 text-sm font-normal text-texto-suave">{unidad}</span>}
       </p>
@@ -283,7 +283,7 @@ export function Indicador({
  */
 export function Requisito({ ids }: { ids: readonly string[] }) {
   return (
-    <span className="mt-1.5 inline-flex flex-wrap gap-1 align-middle">
+    <span className="mt-3 inline-flex flex-wrap gap-1 align-middle">
       {ids.map((id) => (
         <span
           key={id}

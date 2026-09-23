@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { clockStatus, elapsedLabel, type ClockStatus } from '@/lib/tiempo';
-import { Insignia, type Tono } from '@/components/ui/primitivos';
+import { cx } from '@/components/ui/primitivos';
 
 /**
- * Relojes clinicos — RF-21.
+ * Relojes clinicos, RF-21.
  *
  * Dos cosas que el documento pide y que aqui se cumplen en el comportamiento, no en el
  * texto:
@@ -39,7 +39,7 @@ export function RelojLocal() {
   }, [tick]);
   return (
     <span
-      className="rounded bg-superficie px-2 py-1.5 font-mono text-xs tabular-nums text-texto-suave"
+      className="hidden px-2 font-mono text-sm tabular-nums text-texto-suave sm:inline"
       title="Hora local de la sede. Las marcas de tiempo se guardan en UTC."
     >
       {texto}
@@ -47,11 +47,12 @@ export function RelojLocal() {
   );
 }
 
-const TONO_RELOJ: Record<ClockStatus, Tono> = {
-  en_meta: 'info',
-  por_vencer: 'aviso',
-  vencido: 'peligro',
-  cumplido: 'exito',
+/** Color de texto y de punto por estado. El texto del estado siempre acompaña al color. */
+const TONO_RELOJ: Record<ClockStatus, { texto: string; punto: string }> = {
+  en_meta: { texto: 'text-info', punto: 'bg-info' },
+  por_vencer: { texto: 'text-aviso', punto: 'bg-aviso' },
+  vencido: { texto: 'text-peligro', punto: 'bg-peligro' },
+  cumplido: { texto: 'text-exito', punto: 'bg-exito' },
 };
 
 const TEXTO_RELOJ: Record<ClockStatus, string> = {
@@ -82,17 +83,19 @@ export function Cronometro({
     setEstado(goalMinutes ? clockStatus(from, goalMinutes, completedAt) : completedAt ? 'cumplido' : 'en_meta');
   }, [tick, from, goalMinutes, completedAt]);
 
+  // Etiqueta arriba, cifra grande en medio, estado en una sola linea abajo: se lee de lejos
+  // y nada se parte en dos renglones dentro de una pastilla.
   return (
-    <div className="flex items-center gap-3">
-      <span className="font-mono text-xl font-medium tabular-nums text-texto">{texto}</span>
-      <div className="leading-tight">
-        <div className="text-xs text-texto-suave">{etiqueta}</div>
-        {goalMinutes !== undefined && (
-          <Insignia tono={TONO_RELOJ[estado]}>
-            meta {goalMinutes} min · {TEXTO_RELOJ[estado]}
-          </Insignia>
-        )}
-      </div>
+    <div className="min-w-0">
+      <div className="text-xs text-texto-suave">{etiqueta}</div>
+      <div className="display mt-1 text-3xl text-texto tabular-nums">{texto}</div>
+      {goalMinutes !== undefined && (
+        <div className={cx('mt-1.5 flex items-center gap-1.5 text-xs font-medium', TONO_RELOJ[estado].texto)}>
+          <span aria-hidden className={cx('size-1.5 shrink-0 rounded-full', TONO_RELOJ[estado].punto)} />
+          {TEXTO_RELOJ[estado]}
+          <span className="font-normal text-texto-suave">· meta {goalMinutes} min</span>
+        </div>
+      )}
     </div>
   );
 }

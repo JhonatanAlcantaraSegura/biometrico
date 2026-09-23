@@ -4,8 +4,8 @@
  * Misma paleta que el panel (ver `app/globals.css`): monocromo mas el Azul Electrico en la
  * accion primaria. Lo que la portada agrega encima es un lenguaje editorial propio:
  *
- * - Geist (servida desde el dominio por `next/font`) en lugar de la sans de sistema, con
- *   tracking negativo solo en los titulares grandes.
+ * - Titulares mas grandes y apretados que los del panel (la fuente, Geist, es la misma en
+ *   todo el producto: ver `--font-sans` en `app/globals.css`).
  * - Fotografia a sangre con dominante azul (biometria, ambulancia, pantallas clinicas,
  *   personal): la imagen carga el peso visual, como en `DESIGN.md`, y su azul es el mismo
  *   registro que el Azul Electrico, asi que no compite con la accion primaria.
@@ -16,31 +16,16 @@
 .tema-publico {
   background-color: var(--color-lienzo);
   color: var(--color-texto);
-  font-family: var(--font-geist), var(--font-sans);
 }
 
-.tema-publico code,
-.tema-publico .font-mono {
-  font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
-}
-
-/* Titulares de portada: mas apretados que el cuerpo, y sin viudas. */
+/* Titulares de portada: un punto mas apretados que los del panel (`.display` en globals). */
 .tema-publico .display {
-  font-weight: 500;
   letter-spacing: -0.03em;
   line-height: 1.04;
-  text-wrap: balance;
 }
 
 .tema-publico p {
   text-wrap: pretty;
-}
-
-/* Sin la espera de doble toque en moviles: cada toque es un toque. */
-.tema-publico a,
-.tema-publico button,
-.tema-publico summary {
-  touch-action: manipulation;
 }
 
 /*

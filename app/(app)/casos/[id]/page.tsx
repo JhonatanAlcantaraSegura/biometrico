@@ -7,6 +7,7 @@
  */
 import { useParams } from "next/navigation";
 import { useState } from "react";
+import { CircleCheck } from "lucide-react";
 import { Insignia, Boton, Tarjeta, Vacio, Campo, Requisito, claseCampo } from "@/components/ui/primitivos";
 import { Cronometro } from "@/components/dominio/relojes";
 import { actions, caseOfEncounter, encounterById, useAppState, userById } from "@/lib/estado/tienda";
@@ -46,8 +47,8 @@ export default function PuestoMedicoPage() {
   const reperfusion = c.milestones.find((m) => m.type === "reperfusion" && m.status === "realizado")?.occurred_at;
 
   return (
-    <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
-      <div className="space-y-5">
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="space-y-6">
         <Tarjeta titulo="Cronologia del ECG" ayuda="Cada hora se guarda con responsable y fuente." acciones={<Requisito ids={["RF-04"]} />}>
           <ul className="space-y-2">
             {ECG_STEPS.map((step) => {
@@ -66,7 +67,8 @@ export default function PuestoMedicoPage() {
                     </p>
                   </div>
                   <div className="flex gap-2">
-                    <Boton tono={done ? "exito" : "neutro"} onClick={() => actions.recordMilestone(c.case_id, step.type, "realizado")}>
+                    <Boton onClick={() => actions.recordMilestone(c.case_id, step.type, "realizado")}>
+                      {done && <CircleCheck className="size-4 text-exito" aria-hidden />}
                       {done ? "Registrado" : "Registrar"}
                     </Boton>
                     {!done && (
@@ -192,11 +194,11 @@ export default function PuestoMedicoPage() {
         </Tarjeta>
       </div>
 
-      <div className="space-y-5">
+      <div className="space-y-6">
         <Tarjeta titulo="Relojes clinicos" acciones={<Requisito ids={["RF-21"]} />}>
           <div className="space-y-4">
-            <Cronometro from={encounter.arrival_at} goalMinutes={10} completedAt={ecgAcquired} etiqueta="llegada -> ECG adquirido" />
-            {c.diagnosis_at && <Cronometro from={c.diagnosis_at} goalMinutes={90} completedAt={reperfusion} etiqueta="hora cero -> reperfusion" />}
+            <Cronometro from={encounter.arrival_at} goalMinutes={10} completedAt={ecgAcquired} etiqueta="Llegada → ECG adquirido" />
+            {c.diagnosis_at && <Cronometro from={c.diagnosis_at} goalMinutes={90} completedAt={reperfusion} etiqueta="Hora cero → reperfusion" />}
             <p className="text-xs text-texto-suave">
               Origen de tiempo: reloj del servidor del prototipo. Metas configurables por sede; un aviso nunca cambia el
               plan clinico ni retrasa la intervencion.
@@ -206,7 +208,7 @@ export default function PuestoMedicoPage() {
 
         <Tarjeta titulo="Sesion activa" acciones={<Requisito ids={["RF-22"]} />}>
           <p className="text-sm">
-            {me?.name} — <span className="text-texto-suave">{me?.role.replace(/_/g, " ")}</span>
+            {me?.name} <span className="text-texto-suave">· {me?.role.replace(/_/g, " ")}</span>
           </p>
           <p className="mt-2 text-xs text-texto-suave">
             Cambia de rol en la barra superior para comprobar que las acciones criticas se deshabilitan segun el permiso.

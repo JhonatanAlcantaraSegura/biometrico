@@ -6,7 +6,7 @@
  * RF-21 temporizadores. Las notificaciones externas llevan datos minimos.
  */
 import Link from "next/link";
-import { Insignia, Boton, Tarjeta, Vacio, Requisito } from "@/components/ui/primitivos";
+import { Insignia, Boton, Encabezado, Tarjeta, Vacio } from "@/components/ui/primitivos";
 import { Cronometro } from "@/components/dominio/relojes";
 import { actions, alertsOfCase, encounterById, resourcesOfCase, useAppState } from "@/lib/estado/tienda";
 import { localTime, minutesBetween } from "@/lib/tiempo";
@@ -21,14 +21,12 @@ export default function CoordinacionPage() {
   const activeCases = state.cases.filter((c) => c.code_state === "activo");
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl text-texto">Coordinacion del Codigo Infarto</h1>
-          <p className="text-sm text-texto-suave">{activeCases.length} codigos activos · avisos con datos minimos, acuse y escalamiento.</p>
-        </div>
-        <Requisito ids={["RF-18", "RF-19", "RF-21"]} />
-      </div>
+    <div className="space-y-8">
+      <Encabezado
+        titulo="Coordinacion del Codigo Infarto"
+        descripcion={`${activeCases.length} codigos activos. Avisos con datos minimos, acuse y escalamiento.`}
+        requisitos={["RF-18", "RF-19", "RF-21"]}
+      />
 
       {activeCases.length === 0 && (
         <Tarjeta>
@@ -114,8 +112,8 @@ export default function CoordinacionPage() {
               </div>
 
               <div className="space-y-4 rounded bg-superficie p-3">
-                <Cronometro from={encounter.arrival_at} etiqueta="desde la llegada" />
-                {c.diagnosis_at && <Cronometro from={c.diagnosis_at} goalMinutes={90} etiqueta="desde la hora cero" />}
+                <Cronometro from={encounter.arrival_at} etiqueta="Desde la llegada" />
+                {c.diagnosis_at && <Cronometro from={c.diagnosis_at} goalMinutes={90} etiqueta="Desde la hora cero" />}
                 <p className="text-xs text-texto-suave">
                   Un aviso sin acuse escala al siguiente destinatario configurado. Ningun escalamiento retrasa la
                   atencion ni cambia la ruta elegida por el medico.

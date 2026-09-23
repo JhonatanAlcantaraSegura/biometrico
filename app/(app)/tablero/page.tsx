@@ -6,14 +6,17 @@
  * identidad provisional/confirmada y fallos de integracion, sin recarga manual.
  */
 import Link from "next/link";
-import { Insignia, Tarjeta, InsigniaIdentidad, InsigniaTriage, Requisito, InsigniaEstadoClinico } from "@/components/ui/primitivos";
+import { Encabezado, Insignia, Tarjeta, InsigniaIdentidad, InsigniaTriage, Requisito, InsigniaEstadoClinico, cx } from "@/components/ui/primitivos";
 import { Cronometro } from "@/components/dominio/relojes";
+import { INTEGRACIONES } from "@/components/layout/shell";
 import { activeEncounters, caseOfEncounter, patientById, resourcesOfCase, useAppState } from "@/lib/estado/tienda";
 import { localTime } from "@/lib/tiempo";
 
 /** Metas de referencia del protocolo IMSS; se configuran por sede (RF-28). */
 const GOAL_ECG_MIN = 10;
 const GOAL_PCI_MIN = 90;
+
+const TEXTO_INTEGRACION = { ok: "operando", lento: "lenta", caido: "caida" } as const;
 
 export default function CasosPage() {
   const state = useAppState();
@@ -23,19 +26,13 @@ export default function CasosPage() {
   const pendingWrites = state.outbox.filter((o) => o.sync_state !== "sincronizado").length;
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl text-texto">Casos activos</h1>
-          <p className="text-sm text-texto-suave">
-            {encounters.length} episodios en piso · el estado de identidad no detiene ninguna transicion clinica.
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          {pendingWrites > 0 && <Insignia tono="aviso">{pendingWrites} escrituras pendientes de sincronizar</Insignia>}
-          <Requisito ids={["RF-25", "RF-21"]} />
-        </div>
-      </div>
+    <div className="space-y-8">
+      <Encabezado
+        titulo="Casos activos"
+        descripcion={`${encounters.length} episodios en piso. El estado de identidad no detiene ninguna transicion clinica.`}
+        requisitos={["RF-25", "RF-21"]}
+        acciones={pendingWrites > 0 ? <Insignia tono="aviso">{pendingWrites} escrituras pendientes de sincronizar</Insignia> : undefined}
+      />
 
       <div className="grid gap-4 xl:grid-cols-2">
         {encounters.map((e) => {
@@ -48,15 +45,15 @@ export default function CasosPage() {
             <Link
               key={e.encounter_id}
               href={`/casos/${e.encounter_id}`}
-              className="block rounded-xl bg-fondo p-5 transition-colors hover:bg-borde-suave"
+              className="group flex flex-col rounded-xl bg-fondo p-6 transition-colors hover:bg-borde-suave"
             >
-              <div className="flex flex-wrap items-start justify-between gap-2">
-                <div>
-                  <p className="font-mono text-sm font-medium">{e.temporary_id}</p>
-                  <p className="text-sm text-texto-suave">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="font-mono text-xs text-texto-suave">{e.temporary_id}</p>
+                  <p className="mt-1 text-lg font-medium tracking-tight text-texto">
                     {patient ? patient.display_name : "Paciente sin identificar"}
-                    {!e.conscious && <span className="ml-2 text-aviso">· no puede participar</span>}
                   </p>
+                  {!e.conscious && <p className="text-sm text-aviso">No puede participar en su identificacion</p>}
                 </div>
                 <div className="flex flex-wrap justify-end gap-1.5">
                   <InsigniaTriage prioridad={e.triage?.priority} />
@@ -65,24 +62,27 @@ export default function CasosPage() {
                 </div>
               </div>
 
-              <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                <Cronometro from={e.arrival_at} goalMinutes={GOAL_ECG_MIN} completedAt={ecgAcquired} etiqueta="llegada -> ECG adquirido" />
+              <div className="mt-6 grid gap-6 border-t border-borde-suave pt-5 sm:grid-cols-2">
+                <Cronometro from={e.arrival_at} goalMinutes={GOAL_ECG_MIN} completedAt={ecgAcquired} etiqueta="Llegada → ECG adquirido" />
                 {c?.diagnosis_at ? (
                   <Cronometro
                     from={c.diagnosis_at}
                     goalMinutes={GOAL_PCI_MIN}
                     completedAt={c.milestones.find((m) => m.type === "reperfusion" && m.status === "realizado")?.occurred_at}
-                    etiqueta="hora cero -> reperfusion"
+                    etiqueta="Hora cero → reperfusion"
                   />
                 ) : (
-                  <div className="text-sm text-texto-suave">Hora cero clinica sin registrar</div>
+                  <div>
+                    <div className="text-xs text-texto-suave">Hora cero → reperfusion</div>
+                    <div className="mt-2 text-sm text-texto-suave">Hora cero clinica sin registrar</div>
+                  </div>
                 )}
               </div>
 
-              <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-texto-suave">
+              <div className="mt-auto flex flex-wrap items-center gap-2 pt-5 text-xs text-texto-suave">
                 <span>Llegada {localTime(e.arrival_at)}</span>
-                <span>·</span>
-                <span>{c?.diagnosis ? c.diagnosis : "sin diagnostico documentado"}</span>
+                <span aria-hidden>·</span>
+                <span className="mr-auto">{c?.diagnosis ? c.diagnosis : "sin diagnostico documentado"}</span>
                 {c?.code_state === "activo" && <Insignia tono="peligro">Codigo activo</Insignia>}
                 {c?.code_state === "cancelado" && <Insignia tono="neutro">Codigo cancelado</Insignia>}
                 {resources.map((r) => (
@@ -96,17 +96,28 @@ export default function CasosPage() {
         })}
       </div>
 
-      <Tarjeta titulo="Fallos de integracion visibles en el tablero" acciones={<Requisito ids={["RNF-03", "CA-06", "CA-07"]} />}>
-        <div className="flex flex-wrap gap-2">
-          {Object.entries(state.integrations).map(([k, v]) => (
-            <Insignia key={k} tono={v === "exito" ? "exito" : v === "lento" ? "aviso" : "peligro"}>
-              {k}: {v}
-            </Insignia>
-          ))}
-        </div>
-        <p className="mt-3 text-sm text-texto-suave">
-          Ningun fallo externo bloquea esta pantalla. Las escrituras al ECE se encolan con llave idempotente y se
-          reintentan desde Calidad y administracion.
+      <Tarjeta titulo="Integraciones" ayuda="Ningun fallo externo bloquea esta pantalla." acciones={<Requisito ids={["RNF-03", "CA-06", "CA-07"]} />}>
+        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {INTEGRACIONES.map(({ clave, etiqueta }) => {
+            const v = state.integrations[clave];
+            return (
+              <li key={clave} className="rounded bg-superficie px-4 py-3">
+                <p className="text-sm font-medium text-texto">{etiqueta}</p>
+                <p
+                  className={cx(
+                    "mt-1 flex items-center gap-1.5 text-xs font-medium",
+                    v === "ok" ? "text-exito" : v === "lento" ? "text-aviso" : "text-peligro",
+                  )}
+                >
+                  <span aria-hidden className={cx("size-1.5 rounded-full", v === "ok" ? "bg-exito" : v === "lento" ? "bg-aviso" : "bg-peligro")} />
+                  {TEXTO_INTEGRACION[v]}
+                </p>
+              </li>
+            );
+          })}
+        </ul>
+        <p className="mt-4 text-sm text-texto-suave">
+          Las escrituras al ECE se encolan con llave idempotente y se reintentan desde Calidad y administracion.
         </p>
       </Tarjeta>
     </div>

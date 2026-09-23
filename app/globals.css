@@ -83,11 +83,14 @@
   --radius-2xl: 0.75rem;
 
   /*
-   * Tipografia sans de SISTEMA, sin carga por red: esto se enseña en salas de hospital
-   * donde a veces no hay internet. Dos pesos nada mas, 400 y 500; tracking normal siempre.
+   * Geist en TODO el producto (portada y panel), servida desde el propio dominio por
+   * `next/font` en `app/layout.tsx`: se descarga al compilar, asi que funciona en una sala sin
+   * internet. La sans de sistema queda como respaldo. Dos pesos nada mas, 400 y 500.
    */
   --font-sans:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    var(--font-geist), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
 
   /*
    * Escala 12 / 14 / 16 / 17 / 22 / 28 / 32 / 40. Casi todo vive en 14 px; el titulo de
@@ -130,6 +133,9 @@
 :root {
   color-scheme: light;
 
+  /* Deslizadores y casillas nativos en Carbon: el azul queda solo para la accion primaria. */
+  accent-color: var(--color-texto);
+
   /*
    * WCAG 1.4.4 — Tipografia raiz RELATIVA. `100%` hereda la preferencia del navegador:
    * 16 px por omision, 20 px si la persona la subio. Un valor absoluto en pixeles la
@@ -165,15 +171,14 @@ body {
 }
 
 /*
- * Titulos: la misma sans, peso 500, tracking normal. `h1` es siempre el titulo de pantalla;
- * `.titulo` marca a mano los encabezados de seccion del sitio publico.
+ * Titulos: peso 500. `h1` es siempre el titulo de pantalla; los grandes llevan ademas
+ * `.display`.
  *
  * Va en `@layer base` A PROPOSITO: en CSS moderno una regla sin capa le gana a TODA
  * utilidad de Tailwind sin importar la especificidad.
  */
 @layer base {
-  h1,
-  .titulo {
+  h1 {
     font-weight: 500;
     letter-spacing: normal;
   }
@@ -183,6 +188,17 @@ body {
   b {
     font-weight: 500;
   }
+}
+
+/*
+ * Titular grande (titulos de pantalla y de seccion): mas apretado que el cuerpo y sin
+ * viudas. Lo comparten la portada y el panel.
+ */
+.display {
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+  text-wrap: balance;
 }
 
 /* Rotulo sobre el titulo de seccion. Sin versalitas: minusculas tranquilas. */
@@ -216,9 +232,18 @@ textarea {
   min-height: 2.75rem;
 }
 
+/* Sin la espera de doble toque en moviles: cada toque es un toque. */
+a,
+button,
+summary,
+select,
+[role='button'] {
+  touch-action: manipulation;
+}
+
 /*
- * Movimiento del sitio publico y de la pantalla de acceso. Solo opacidad y trazo: nada se
- * desplaza ni se escala (`DESIGN.md`). Todo muere con la regla de movimiento reducido de
+ * Aparicion por opacidad (acceso, menu de usuario, avisos). Nada se desplaza ni se escala
+ * (`DESIGN.md`). Todo muere con la regla de movimiento reducido de
  * abajo, y como las animaciones terminan en el estado normal del elemento, sin animacion se
  * ve igual.
  */
@@ -230,23 +255,6 @@ textarea {
     opacity: 1;
   }
 }
-@keyframes latido {
-  0%,
-  100% {
-    opacity: 0.55;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-@keyframes trazo {
-  from {
-    stroke-dashoffset: 600;
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
-}
 
 .aparecer {
   animation: aparecer 480ms ease-out both;
@@ -256,13 +264,6 @@ textarea {
 }
 .aparecer-3 {
   animation: aparecer 480ms ease-out 240ms both;
-}
-.latido {
-  animation: latido 3200ms ease-in-out infinite;
-}
-.trazo-ecg {
-  stroke-dasharray: 600;
-  animation: trazo 2400ms ease-out both;
 }
 
 /* WCAG 2.3.3 — Movimiento reducido. Gana a cualquier utilidad de transicion o animacion. */
