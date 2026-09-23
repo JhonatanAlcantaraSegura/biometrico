@@ -150,7 +150,7 @@ export default function Calidad() {
           </li>
           <li>
             La autenticacion es simulada en el navegador, con cuentas de demostracion y sin servidor. El
-            "ver como" es una simulacion de permisos, no un control de acceso.
+            &quot;ver como&quot; es una simulacion de permisos, no un control de acceso.
           </li>
         </ul>
       </Tarjeta>

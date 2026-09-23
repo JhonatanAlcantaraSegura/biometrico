@@ -277,8 +277,8 @@ function ResultadoIntento() {
       {intento.fallo === 'prueba_de_vida' && (
         <p className="rounded-lg border border-aviso/40 bg-aviso-suave p-3 text-sm leading-llano text-aviso">
           La prueba de vida rechazó la captura. Apagarla en la consola biométrica haría que este mismo
-          intento pasara — junto con una fotografía impresa. Si en un piloto alguien la apaga "para que
-          funcione", eso es un hallazgo, no una configuración.
+          intento pasara — junto con una fotografía impresa. Si en un piloto alguien la apaga &quot;para que
+          funcione&quot;, eso es un hallazgo, no una configuración.
         </p>
       )}
 

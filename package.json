@@ -10,7 +10,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "contraste": "node --experimental-strip-types scripts/contraste.mts",
     "probar:motor": "node --experimental-strip-types --import ./scripts/alias.mjs scripts/probar-motor.mts",
@@ -27,6 +27,8 @@
     "@types/node": "24.10.1",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.3.6",
     "tailwindcss": "4.3.3",
     "typescript": "5.9.3"
   }
