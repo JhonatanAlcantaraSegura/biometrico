@@ -54,7 +54,7 @@ export default function PuestoMedicoPage() {
               const m = c.milestones.find((x) => x.type === step.type);
               const done = m?.status === "realizado";
               return (
-                <li key={step.type} className="flex flex-wrap items-center justify-between gap-2 rounded border border-borde-suave bg-superficie px-3 py-2">
+                <li key={step.type} className="flex flex-wrap items-center justify-between gap-2 rounded bg-superficie px-3 py-2">
                   <div>
                     <p className="text-sm font-medium">{step.label}</p>
                     <p className="text-xs text-texto-suave">
@@ -94,7 +94,7 @@ export default function PuestoMedicoPage() {
               </p>
               <p className="text-sm">
                 <span className="text-texto-suave">Diagnostico: </span>
-                <span className="font-semibold">{c.diagnosis}</span>
+                <span className="font-medium">{c.diagnosis}</span>
               </p>
               <p className="text-sm text-texto-suave">
                 Hora cero clinica: {localTime(c.diagnosis_at)} · responsable {userById(state, c.responsible_physician)?.name ?? "sin dato"}

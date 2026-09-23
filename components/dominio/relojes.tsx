@@ -39,7 +39,7 @@ export function RelojLocal() {
   }, [tick]);
   return (
     <span
-      className="rounded-md border border-borde-suave bg-superficie px-2 py-1.5 font-mono text-xs tabular-nums text-texto-suave"
+      className="rounded bg-superficie px-2 py-1.5 font-mono text-xs tabular-nums text-texto-suave"
       title="Hora local de la sede. Las marcas de tiempo se guardan en UTC."
     >
       {texto}
@@ -84,7 +84,7 @@ export function Cronometro({
 
   return (
     <div className="flex items-center gap-3">
-      <span className="font-mono text-xl font-bold tabular-nums text-texto">{texto}</span>
+      <span className="font-mono text-xl font-medium tabular-nums text-texto">{texto}</span>
       <div className="leading-tight">
         <div className="text-xs text-texto-suave">{etiqueta}</div>
         {goalMinutes !== undefined && (

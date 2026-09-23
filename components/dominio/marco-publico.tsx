@@ -15,9 +15,9 @@ import { cx } from '@/components/ui/primitivos';
  * expediente. Abrirle el tablero operativo de urgencias no le sirve y ademas le da una
  * impresion equivocada: que el sistema ya existe y ya opera.
  *
- * La clase `.tema-publico` cambia la paleta completa (ver `app/tema-publico.css`) sin que
- * ninguna pantalla lleve un condicional de tema: `bg-lienzo` sigue diciendo `bg-lienzo` y
- * es la variable la que cambia de valor.
+ * Sigue `DESIGN.md`: encabezado blanco sin borde, secciones con mucho aire, y el Azul
+ * Electrico solo en la accion primaria ("Acceso del personal"). `.tema-publico` es el
+ * punto de enganche del tema (ver `app/tema-publico.css`).
  */
 
 export interface AnclaPublica {
@@ -79,14 +79,13 @@ export function MarcoPublico({
         Saltar al contenido
       </a>
 
-      <header className="sticky top-0 z-30 border-b border-borde-suave bg-fondo">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-3">
+      {/* Vidrio esmerilado: blanco al 75 % sobre el contenido que pasa por debajo. */}
+      <header className="sticky top-0 z-30 bg-fondo/75 backdrop-blur-md">
+        <div className="mx-auto flex max-w-[86rem] flex-wrap items-center gap-3 px-4 py-3">
           <Link href="/" className="flex items-center gap-2.5">
-            <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-primario-suave">
-              <Activity className="size-6 text-primario-oscuro" aria-hidden />
-            </span>
+            <Activity className="size-5 shrink-0 text-texto" aria-hidden />
             <span className="leading-tight">
-              <span className="block text-base font-bold text-texto">{INSTITUCION.marca}</span>
+              <span className="block text-base font-medium text-texto">{INSTITUCION.marca}</span>
               <span className="block text-xs text-texto-suave">Propuesta tecnica · {INSTITUCION.documentoFuente}</span>
             </span>
           </Link>
@@ -96,7 +95,7 @@ export function MarcoPublico({
             onClick={() => setAbierto((v) => !v)}
             aria-expanded={abierto}
             aria-controls="menu-publico"
-            className="ml-auto rounded-md p-2 text-texto hover:bg-superficie md:hidden"
+            className="ml-auto rounded p-2 text-texto transition-colors hover:bg-superficie lg:hidden"
           >
             {abierto ? <X className="size-5" aria-hidden /> : <Menu className="size-5" aria-hidden />}
             <span className="sr-only">{abierto ? 'Cerrar menu' : 'Abrir menu'}</span>
@@ -106,7 +105,7 @@ export function MarcoPublico({
             id="menu-publico"
             aria-label="Secciones de la propuesta"
             className={cx(
-              'w-full flex-wrap items-center gap-1 md:ml-auto md:flex md:w-auto',
+              'w-full flex-wrap items-center gap-0.5 lg:ml-auto lg:flex lg:w-auto',
               abierto ? 'flex' : 'hidden',
             )}
           >
@@ -117,10 +116,8 @@ export function MarcoPublico({
                 onClick={() => setAbierto(false)}
                 aria-current={activa === a.id ? 'true' : undefined}
                 className={cx(
-                  'control flex items-center rounded-md px-3 text-sm',
-                  activa === a.id
-                    ? 'bg-primario-suave font-semibold text-primario-oscuro'
-                    : 'text-texto-suave hover:bg-superficie hover:text-texto',
+                  'control flex items-center rounded px-3 text-sm font-medium text-texto transition-colors',
+                  activa === a.id ? 'bg-superficie' : 'hover:bg-superficie',
                 )}
               >
                 {a.etiqueta}
@@ -128,7 +125,7 @@ export function MarcoPublico({
             ))}
             <Link
               href="/acceso"
-              className="control ml-1 flex items-center gap-2 rounded-md border border-primario bg-primario px-4 text-sm font-semibold text-primario-texto hover:bg-primario-oscuro"
+              className="control ml-1 flex items-center gap-2 rounded bg-primario px-5 text-sm font-medium text-primario-texto transition-colors hover:bg-primario-oscuro"
             >
               <LockKeyhole className="size-4" aria-hidden />
               Acceso del personal
@@ -154,7 +151,7 @@ export function AvisoPrototipo({ className }: { className?: string }) {
   return (
     <div
       className={cx(
-        'flex items-start gap-3 rounded-xl border border-aviso/40 bg-aviso-suave p-4',
+        'flex items-start gap-3 rounded bg-aviso-suave p-4',
         className,
       )}
     >
@@ -171,9 +168,8 @@ export function AvisoPrototipo({ className }: { className?: string }) {
 /**
  * Banda de seccion del sitio publico.
  *
- * El rotulo se escribe en minusculas y con acentos, y son las VERSALITAS de `.rotulo` las
- * que lo ponen en mayusculas. Asi el lector de pantalla lee "lo que resuelve" como palabra
- * y no deletrea las letras, que es lo que hacen algunos con texto capturado en mayusculas.
+ * Una seccion por mensaje, con aire generoso arriba y abajo: el espacio en blanco hace de
+ * separador, sin lineas. El rotulo va en minusculas tranquilas, sin versalitas.
  */
 export function BandaPublica({
   id,
@@ -198,28 +194,28 @@ export function BandaPublica({
       aria-labelledby={`${id}-titulo`}
       // El desfase del encabezado fijo lo pone `scroll-padding-top` en `html`, UNA vez. Un
       // `scroll-mt-*` aqui se sumaria a aquel y dejaria el titulo medio salto mas abajo.
-      className={fondo === 'sutil' ? 'bg-lienzo-sutil' : 'bg-lienzo'}
+      className={fondo === 'sutil' ? 'banda-sutil bg-lienzo-sutil' : 'bg-lienzo'}
     >
-      <div className="mx-auto max-w-6xl px-4 py-14 sm:py-seccion">
+      <div className="mx-auto max-w-6xl px-4 py-16 sm:py-seccion-lg">
         <div className="max-w-3xl">
-          {Icono && (
-            <span className="mb-4 grid size-12 place-items-center rounded-xl bg-primario-suave">
-              <Icono className="size-6 text-primario-oscuro" aria-hidden />
-            </span>
-          )}
-          {rotulo && <p className="rotulo mb-3">{rotulo}</p>}
-          <h2 id={`${id}-titulo`} className="titulo text-2xl text-texto">
+          {Icono && <Icono className="mb-5 size-6 text-texto" aria-hidden />}
+          {rotulo && <p className="rotulo mb-2">{rotulo}</p>}
+          <h2 id={`${id}-titulo`} className="titulo text-3xl text-texto">
             {titulo}
           </h2>
-          {descripcion && <p className="mt-4 text-lg leading-relajado text-texto-suave">{descripcion}</p>}
+          {descripcion && <p className="mt-4 text-base leading-relajado text-texto-suave">{descripcion}</p>}
         </div>
-        <div className="mt-10">{children}</div>
+        <div className="mt-12">{children}</div>
       </div>
     </section>
   );
 }
 
-/** Tarjeta de contenido del sitio publico, con la sombra del tema calido. */
+/**
+ * Tarjeta de contenido del sitio publico. Sin borde ni sombra: Ceniza Clara sobre una banda
+ * blanca y blanca sobre una banda Ceniza (`in-[.banda-sutil]`), para que siempre haya un
+ * cambio de superficie que la delimite.
+ */
 export function TarjetaPublica({
   titulo,
   children,
@@ -230,8 +226,8 @@ export function TarjetaPublica({
   className?: string;
 }) {
   return (
-    <div className={cx('sombra-publica rounded-xl border border-borde-suave bg-fondo p-5', className)}>
-      {titulo && <h3 className="mb-2 text-base font-semibold text-texto">{titulo}</h3>}
+    <div className={cx('rounded-xl bg-lienzo-sutil p-6 in-[.banda-sutil]:bg-fondo', className)}>
+      {titulo && <h3 className="mb-2 text-lg font-medium text-texto">{titulo}</h3>}
       {children}
     </div>
   );
@@ -239,9 +235,9 @@ export function TarjetaPublica({
 
 export function PieDelSitio() {
   return (
-    <footer className="border-t border-borde-suave bg-fondo">
-      <div className="mx-auto max-w-6xl px-4 py-8 text-sm text-texto-suave">
-        <p className="font-semibold text-texto">
+    <footer className="bg-lienzo-sutil">
+      <div className="mx-auto max-w-6xl px-4 py-12 text-sm text-texto-suave">
+        <p className="font-medium text-texto">
           {INSTITUCION.sedeNombre} — {INSTITUCION.sedeDependencia}
         </p>
         <p className="mt-1">{INSTITUCION.sedeNota}</p>

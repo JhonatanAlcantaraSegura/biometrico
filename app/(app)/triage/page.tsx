@@ -72,8 +72,9 @@ export default function TriagePage() {
                     key={p}
                     type="button"
                     onClick={() => setPriority(p)}
-                    className={`rounded-md border px-4 py-2 text-sm font-semibold capitalize transition ${
-                      priority === p ? "border-info bg-info/20 text-info" : "border-borde-suave bg-superficie text-texto-suave hover:text-texto"
+                    aria-pressed={priority === p}
+                    className={`rounded px-5 py-2 text-sm font-medium capitalize transition-colors ${
+                      priority === p ? "bg-texto text-primario-texto" : "bg-superficie text-texto hover:bg-borde-suave"
                     }`}
                   >
                     {p}
@@ -89,8 +90,9 @@ export default function TriagePage() {
                     key={s}
                     type="button"
                     onClick={() => toggleSymptom(s)}
-                    className={`rounded-md border px-3 py-2 text-sm transition ${
-                      symptoms.includes(s) ? "border-peligro bg-peligro/15 text-peligro" : "border-borde-suave bg-superficie text-texto-suave hover:text-texto"
+                    aria-pressed={symptoms.includes(s)}
+                    className={`rounded px-4 py-2 text-sm transition-colors ${
+                      symptoms.includes(s) ? "bg-peligro text-primario-texto" : "bg-superficie text-texto hover:bg-borde-suave"
                     }`}
                   >
                     {s}
@@ -137,7 +139,7 @@ export default function TriagePage() {
           <Tarjeta titulo="Episodio creado" acciones={<Requisito ids={["RF-02", "RF-04"]} />}>
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
-                <p className="font-mono text-2xl font-bold">{created.temporary_id}</p>
+                <p className="font-mono text-2xl font-medium">{created.temporary_id}</p>
                 <p className="mt-1 text-sm text-texto-suave">
                   Llegada registrada: {localDateTime(created.arrival_at)} · <InsigniaTriage prioridad={created.triage?.priority} />
                 </p>
@@ -171,7 +173,7 @@ export default function TriagePage() {
         <Tarjeta titulo="Ultimos episodios del turno" acciones={<Requisito ids={["RF-25"]} />}>
           <ul className="space-y-2">
             {state.encounters.slice(0, 6).map((e) => (
-              <li key={e.encounter_id} className="flex items-center justify-between gap-2 rounded border border-borde-suave bg-superficie px-3 py-2">
+              <li key={e.encounter_id} className="flex items-center justify-between gap-2 rounded bg-superficie px-3 py-2">
                 <span className="font-mono text-xs">{e.temporary_id}</span>
                 <InsigniaTriage prioridad={e.triage?.priority} />
               </li>

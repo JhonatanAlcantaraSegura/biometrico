@@ -42,22 +42,24 @@ export function Tarjeta({
   className?: string;
 }) {
   return (
-    <section className={cx('rounded-xl border border-borde-suave bg-fondo shadow-suave', className)}>
+    // Sin borde ni sombra: la tarjeta blanca se separa del lienzo Ceniza por el cambio de
+    // superficie y por el espacio, nada mas (`DESIGN.md`, seccion 6).
+    <section className={cx('rounded-xl bg-fondo', className)}>
       {(titulo || acciones) && (
-        <header className="flex flex-wrap items-start justify-between gap-2 border-b border-borde-suave px-4 py-3">
+        <header className="flex flex-wrap items-start justify-between gap-2 px-5 pt-5">
           <div>
-            {titulo && <h2 className="text-base font-semibold text-texto">{titulo}</h2>}
-            {ayuda && <p className="mt-0.5 max-w-prose text-sm text-texto-suave">{ayuda}</p>}
+            {titulo && <h2 className="text-lg font-medium text-texto">{titulo}</h2>}
+            {ayuda && <p className="mt-1 max-w-prose text-sm text-texto-suave">{ayuda}</p>}
           </div>
           {acciones}
         </header>
       )}
-      <div className="p-4">{children}</div>
+      <div className="p-5">{children}</div>
     </section>
   );
 }
 
-/** Encabezado de pantalla. El `h1` va en serif por la regla de `globals.css`. */
+/** Encabezado de pantalla. El `h1` toma peso 500 y tracking normal de `globals.css`. */
 export function Encabezado({
   titulo,
   descripcion,
@@ -73,7 +75,7 @@ export function Encabezado({
     <header className="flex flex-wrap items-start justify-between gap-3">
       <div className="min-w-0">
         <h1 className="text-2xl text-texto">{titulo}</h1>
-        {descripcion && <p className="mt-1 max-w-prose text-sm text-texto-suave">{descripcion}</p>}
+        {descripcion && <p className="mt-2 max-w-prose text-sm text-texto-suave">{descripcion}</p>}
         {requisitos && <Requisito ids={requisitos} />}
       </div>
       {acciones && <div className="flex flex-wrap gap-2">{acciones}</div>}
@@ -83,21 +85,25 @@ export function Encabezado({
 
 /* ----------------------------------------------------------------- Insignia */
 
+/**
+ * Insignias sin borde: fondo tenue y texto del tono. El azul no aparece aqui — esta
+ * reservado a la accion primaria —, asi que `primario` es el gris de Carbon.
+ */
 const TONO_INSIGNIA: Record<Tono, string> = {
-  peligro: 'border-peligro/40 bg-peligro-suave text-peligro',
-  aviso: 'border-aviso/40 bg-aviso-suave text-aviso',
-  exito: 'border-exito/40 bg-exito-suave text-exito',
-  info: 'border-info/40 bg-info-suave text-info',
-  atencion: 'border-atencion/40 bg-atencion-suave text-atencion',
-  neutro: 'border-borde-suave bg-superficie text-texto-suave',
-  primario: 'border-primario/30 bg-primario-suave text-primario-oscuro',
+  peligro: 'bg-peligro-suave text-peligro',
+  aviso: 'bg-aviso-suave text-aviso',
+  exito: 'bg-exito-suave text-exito',
+  info: 'bg-info-suave text-info',
+  atencion: 'bg-atencion-suave text-atencion',
+  neutro: 'bg-superficie text-texto-suave',
+  primario: 'bg-superficie text-texto',
 };
 
 export function Insignia({ tono = 'neutro', children }: { tono?: Tono; children: ReactNode }) {
   return (
     <span
       className={cx(
-        'inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-semibold',
+        'inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-medium',
         TONO_INSIGNIA[tono],
       )}
     >
@@ -108,14 +114,19 @@ export function Insignia({ tono = 'neutro', children }: { tono?: Tono; children:
 
 /* -------------------------------------------------------------------- Boton */
 
+/**
+ * Botones de `DESIGN.md`: rectangulo de 4 px, peso 500, sin sombra, y el hover solo cambia
+ * de color. El Azul Electrico es exclusivo de la accion primaria; la secundaria es Ceniza
+ * Clara con texto Carbon.
+ */
 const TONO_BOTON: Record<Tono, string> = {
-  peligro: 'border-peligro bg-peligro text-primario-texto hover:bg-texto hover:border-texto',
-  aviso: 'border-aviso bg-aviso-suave text-aviso hover:bg-aviso hover:text-primario-texto',
-  exito: 'border-exito bg-exito-suave text-exito hover:bg-exito hover:text-primario-texto',
-  info: 'border-primario bg-primario text-primario-texto hover:bg-texto hover:border-texto',
-  atencion: 'border-atencion bg-atencion-suave text-atencion hover:bg-atencion hover:text-primario-texto',
-  neutro: 'border-borde bg-fondo text-texto hover:bg-superficie',
-  primario: 'border-primario bg-primario text-primario-texto hover:bg-texto hover:border-texto',
+  peligro: 'bg-peligro text-primario-texto hover:bg-texto',
+  aviso: 'bg-aviso-suave text-aviso hover:bg-aviso hover:text-primario-texto',
+  exito: 'bg-exito-suave text-exito hover:bg-exito hover:text-primario-texto',
+  info: 'bg-primario text-primario-texto hover:bg-primario-oscuro',
+  atencion: 'bg-atencion-suave text-atencion hover:bg-atencion hover:text-primario-texto',
+  neutro: 'bg-superficie text-texto hover:bg-borde-suave',
+  primario: 'bg-primario text-primario-texto hover:bg-primario-oscuro',
 };
 
 export function Boton({
@@ -151,10 +162,10 @@ export function Boton({
       aria-busy={cargando || undefined}
       title={title}
       className={cx(
-        'inline-flex min-h-control items-center justify-center gap-2 rounded-md border px-4 py-2',
-        'text-sm font-semibold transition-colors',
+        'inline-flex min-h-control items-center justify-center gap-2 rounded border-0 px-5 py-2',
+        'text-sm font-medium transition-colors',
         'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foco',
-        'disabled:cursor-not-allowed disabled:border-borde disabled:bg-superficie disabled:text-texto-suave',
+        'disabled:cursor-not-allowed disabled:bg-superficie disabled:text-texto-suave',
         TONO_BOTON[tono],
         className,
       )}
@@ -169,7 +180,7 @@ export function EnlaceBoton({ href, children }: { href: string; children: ReactN
   return (
     <Link
       href={href}
-      className="control inline-flex items-center gap-2 rounded-md border border-borde bg-fondo px-4 py-2 text-sm font-semibold text-texto transition-colors hover:bg-superficie"
+      className="control inline-flex items-center gap-2 rounded bg-superficie px-5 py-2 text-sm font-medium text-texto transition-colors hover:bg-borde-suave"
     >
       {children}
     </Link>
@@ -206,16 +217,16 @@ export function Campo({
   return (
     <Envoltura className="block">
       {htmlFor ? (
-        <label htmlFor={htmlFor} className="mb-1 block text-sm font-semibold text-texto">
+        <label htmlFor={htmlFor} className="mb-1 block text-sm font-medium text-texto">
           {etiqueta}
         </label>
       ) : (
-        <span className="mb-1 block text-sm font-semibold text-texto">{etiqueta}</span>
+        <span className="mb-1 block text-sm font-medium text-texto">{etiqueta}</span>
       )}
       {children}
       {ayuda && <span className="mt-1 block text-sm text-texto-suave">{ayuda}</span>}
       {error && (
-        <span role="alert" className="mt-1 block text-sm font-semibold text-peligro">
+        <span role="alert" className="mt-1 block text-sm font-medium text-peligro">
           {error}
         </span>
       )}
@@ -224,7 +235,7 @@ export function Campo({
 }
 
 export const claseCampo =
-  'min-h-control w-full rounded-md border border-borde bg-fondo px-3 py-2 text-sm text-texto ' +
+  'min-h-control w-full rounded border border-borde bg-fondo px-3 py-2 text-sm text-texto ' +
   'placeholder:text-texto-suave focus-visible:outline focus-visible:outline-2 ' +
   'focus-visible:outline-offset-2 focus-visible:outline-foco ' +
   'disabled:cursor-not-allowed disabled:bg-superficie disabled:text-texto-suave';
@@ -236,7 +247,7 @@ export const claseCampo =
  * tenga alergias. La diferencia entre las dos frases es un evento adverso.
  */
 export function Vacio({ children = 'sin datos disponibles' }: { children?: ReactNode }) {
-  return <span className="text-sm italic text-texto-suave">{children}</span>;
+  return <span className="text-sm text-texto-suave">{children}</span>;
 }
 
 /** Indicador numerico para los tableros de calidad. */
@@ -252,9 +263,9 @@ export function Indicador({
   nota?: string;
 }) {
   return (
-    <div className="rounded-lg border border-borde-suave bg-fondo px-3 py-3 shadow-suave">
-      <p className="text-xs font-semibold uppercase tracking-wide text-texto-suave">{etiqueta}</p>
-      <p className="mt-1 text-2xl font-bold tabular-nums text-texto">
+    <div className="rounded-xl bg-fondo px-5 py-5">
+      <p className="text-sm text-texto-suave">{etiqueta}</p>
+      <p className="mt-2 text-3xl font-medium tabular-nums text-texto">
         {valor}
         {unidad && <span className="ml-1 text-sm font-normal text-texto-suave">{unidad}</span>}
       </p>
@@ -349,10 +360,10 @@ export function Tabla({ cabeceras, children }: { cabeceras: readonly string[]; c
   return (
     <div className="overflow-x-auto">
       <table className="w-full min-w-[40rem] text-left text-sm">
-        <thead className="border-b border-borde-suave text-xs uppercase tracking-wide text-texto-suave">
+        <thead className="border-b border-borde-suave text-xs text-texto-suave">
           <tr>
             {cabeceras.map((c) => (
-              <th key={c} scope="col" className="py-2 pr-3 font-semibold">
+              <th key={c} scope="col" className="py-2 pr-3 font-medium">
                 {c}
               </th>
             ))}
@@ -369,14 +380,14 @@ export function Tabla({ cabeceras, children }: { cabeceras: readonly string[]; c
 type TonoBanda = 'info' | 'exito' | 'aviso' | 'peligro';
 
 const ESTILO_BANDA: Record<TonoBanda, { clase: string; Icono: LucideIcon }> = {
-  info: { clase: 'border-info bg-info-suave text-info', Icono: Info },
-  exito: { clase: 'border-exito bg-exito-suave text-exito', Icono: CircleCheck },
-  aviso: { clase: 'border-aviso bg-aviso-suave text-aviso', Icono: TriangleAlert },
-  peligro: { clase: 'border-peligro bg-peligro-suave text-peligro', Icono: OctagonAlert },
+  info: { clase: 'bg-info-suave text-info', Icono: Info },
+  exito: { clase: 'bg-exito-suave text-exito', Icono: CircleCheck },
+  aviso: { clase: 'bg-aviso-suave text-aviso', Icono: TriangleAlert },
+  peligro: { clase: 'bg-peligro-suave text-peligro', Icono: OctagonAlert },
 };
 
 /**
- * Mensaje en linea con borde lateral, icono y texto. `alerta` lo anuncia de inmediato
+ * Mensaje en linea sobre fondo tenue, con icono y texto (sin borde: `DESIGN.md`). `alerta` lo anuncia de inmediato
  * (`role="alert"`): se reserva para errores que la persona tiene que leer AHORA, como un
  * acceso rechazado. El resto se anuncia con cortesia (`role="status"`).
  */
@@ -400,11 +411,11 @@ export function Banda({
   return (
     <div
       role={alerta ? 'alert' : 'status'}
-      className={cx('flex items-start gap-3 rounded-lg border-l-4 px-4 py-3 text-sm', estilo.clase, className)}
+      className={cx('flex items-start gap-3 rounded px-4 py-3 text-sm', estilo.clase, className)}
     >
       <Simbolo className="mt-0.5 size-5 shrink-0" aria-hidden />
       <div className="min-w-0 leading-llano">
-        {titulo && <p className="font-semibold">{titulo}</p>}
+        {titulo && <p className="font-medium">{titulo}</p>}
         <div className={titulo ? 'mt-0.5' : ''}>{children}</div>
       </div>
     </div>
@@ -428,7 +439,7 @@ export function Avatar({ nombre, className }: { nombre: string; className?: stri
     <span
       aria-hidden
       className={cx(
-        'grid size-9 shrink-0 place-items-center rounded-full bg-primario text-xs font-bold tracking-wide text-primario-texto',
+        'grid size-9 shrink-0 place-items-center rounded-full bg-texto text-xs font-medium text-primario-texto',
         className,
       )}
     >
@@ -444,7 +455,7 @@ export function Avatar({ nombre, className }: { nombre: string; className?: stri
  * hidratar. El pulso se apaga con movimiento reducido (regla global de `globals.css`).
  */
 export function Esqueleto({ className }: { className?: string }) {
-  return <span aria-hidden className={cx('block animate-pulse rounded-md bg-lienzo-sutil', className)} />;
+  return <span aria-hidden className={cx('block animate-pulse rounded bg-borde-suave', className)} />;
 }
 
 /**
@@ -455,7 +466,7 @@ export function PantallaCarga({ mensaje }: { mensaje: string }) {
   return (
     <main className="mx-auto flex max-w-5xl flex-col gap-5 px-4 py-10">
       <p role="status" aria-live="polite" className="flex items-center gap-2 text-sm text-texto-suave">
-        <LoaderCircle className="size-4 animate-spin text-primario" aria-hidden />
+        <LoaderCircle className="size-4 animate-spin text-texto-suave" aria-hidden />
         {mensaje}
       </p>
       <Esqueleto className="h-9 w-2/3 max-w-md" />
@@ -487,11 +498,11 @@ export function EstadoVacio({
   accion?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-borde-suave bg-lienzo px-6 py-10 text-center">
-      <span className="grid size-12 place-items-center rounded-full bg-primario-suave">
-        <Icono className="size-6 text-primario-oscuro" aria-hidden />
+    <div className="flex flex-col items-center gap-2 rounded-xl bg-lienzo-sutil px-6 py-12 text-center">
+      <span className="grid size-12 place-items-center rounded-full bg-fondo">
+        <Icono className="size-6 text-texto-suave" aria-hidden />
       </span>
-      <p className="text-base font-semibold text-texto">{titulo}</p>
+      <p className="text-base font-medium text-texto">{titulo}</p>
       {children && <div className="max-w-prose text-sm text-texto-suave">{children}</div>}
       {accion && <div className="mt-2">{accion}</div>}
     </div>

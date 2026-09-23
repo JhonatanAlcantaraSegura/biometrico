@@ -67,7 +67,7 @@ export default function IdentidadPage() {
             {METHODS.map((m) => {
               const blocked = m.requiresConscious && !encounter.conscious;
               return (
-                <li key={m.value} className="flex flex-wrap items-center justify-between gap-3 rounded border border-borde-suave bg-superficie px-3 py-3">
+                <li key={m.value} className="flex flex-wrap items-center justify-between gap-3 rounded bg-superficie px-3 py-3">
                   <div className="min-w-[240px] flex-1">
                     <p className="text-sm font-medium">{m.label}</p>
                     <p className="text-xs text-texto-suave">{m.note}</p>
@@ -109,7 +109,7 @@ export default function IdentidadPage() {
           ) : (
             <div className="space-y-3">
               {latest.candidates.map((cand) => (
-                <div key={cand.patient_id} className="flex flex-wrap items-center justify-between gap-3 rounded border border-borde-suave bg-superficie px-3 py-3">
+                <div key={cand.patient_id} className="flex flex-wrap items-center justify-between gap-3 rounded bg-superficie px-3 py-3">
                   <div>
                     <p className="font-mono text-sm">{cand.masked_name}</p>
                     <p className="text-xs text-texto-suave">
@@ -161,7 +161,7 @@ export default function IdentidadPage() {
           ) : (
             <ul className="space-y-3">
               {evidence.map((ev) => (
-                <li key={ev.evidence_id} className="rounded border border-borde-suave bg-superficie px-3 py-2">
+                <li key={ev.evidence_id} className="rounded bg-superficie px-3 py-2">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <span className="text-sm font-medium">{ev.method.replace(/_/g, " ")}</span>
                     <Insignia tono={RESULT_TONE[ev.result]}>{ev.result.replace(/_/g, " ")}</Insignia>
