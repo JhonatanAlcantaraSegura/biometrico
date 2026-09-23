@@ -191,6 +191,34 @@ export function PieDelSitio() {
           </p>
         </div>
       </div>
+
+      {/*
+        Creditos de las fotografias de la portada (`public/imagenes`), tomados del origen de
+        cada descarga. Mantener al dia si se cambia una foto.
+      */}
+      <div className="mx-auto max-w-[86rem] px-4 pb-12 text-xs leading-llano text-texto-suave sm:px-6">
+        <p>
+          Fotografias: biometria de retina, rawpixel.com / Wit (Rawpixel Ltd.). Ambulancia,{' '}
+          <a
+            href="https://unsplash.com/photos/vGu08RYjO-s"
+            className="underline underline-offset-2 transition-colors hover:text-texto"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Camilo Jimenez en Unsplash
+          </a>
+          . Pantallas clinicas y personal clinico,{' '}
+          <a
+            href="https://www.magnific.com/"
+            className="underline underline-offset-2 transition-colors hover:text-texto"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            magnific.com
+          </a>
+          .
+        </p>
+      </div>
     </footer>
   );
 }

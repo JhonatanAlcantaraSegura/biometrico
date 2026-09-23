@@ -6,8 +6,9 @@
  *
  * - Geist (servida desde el dominio por `next/font`) en lugar de la sans de sistema, con
  *   tracking negativo solo en los titulares grandes.
- * - Fotografia a sangre en escala de grises: la imagen carga el peso visual, como en
- *   `DESIGN.md`, y el gris no compite con el azul.
+ * - Fotografia a sangre con dominante azul (biometria, ambulancia, pantallas clinicas,
+ *   personal): la imagen carga el peso visual, como en `DESIGN.md`, y su azul es el mismo
+ *   registro que el Azul Electrico, asi que no compite con la accion primaria.
  * - Entradas al hacer scroll (`.revelar`), solo opacidad y un desplazamiento corto. Los
  *   estados de hover siguen siendo solo de color.
  */
