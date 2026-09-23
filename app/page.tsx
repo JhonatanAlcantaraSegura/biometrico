@@ -24,6 +24,9 @@ import { InsigniaIdentidad, cx } from '@/components/ui/primitivos';
 import { AvisoPrototipo, MarcoPublico, type AnclaPublica } from '@/components/dominio/marco-publico';
 import { Revelar } from '@/components/dominio/revelar';
 import retinaBiometrica from '@/public/imagenes/hero-biometria-retina.jpg';
+import ambulancia from '@/public/imagenes/recorrido-ambulancia.jpg';
+import pantallasClinicas from '@/public/imagenes/demostracion-pantallas-clinicas.jpg';
+import personalClinico from '@/public/imagenes/cierre-personal-clinico.jpg';
 
 /**
  * Sitio publico de la propuesta, en la raiz `/`.
@@ -39,19 +42,11 @@ import retinaBiometrica from '@/public/imagenes/hero-biometria-retina.jpg';
  * en letra chica es una propuesta que se aprueba por error.
  *
  * Lenguaje visual: la base de `DESIGN.md` (monocromo, Azul Electrico solo en la accion
- * primaria, fotografia a sangre con tipografia blanca encima) con una capa editorial propia
+ * primaria, fotografia a sangre con tipografia blanca encima; las cuatro fotos viven en
+ * `public/imagenes` y comparten la dominante azul del hero) con una capa editorial propia
  * de la portada: Geist, titulares grandes, una familia de maquetacion distinta por seccion y
  * entradas al hacer scroll. Ver `app/tema-publico.css`.
  */
-
-/**
- * Fotografia de MARCADOR DE POSICION (picsum.photos), siempre en escala de grises para que
- * no compita con la paleta. Sustituir por fotografia propia de la sede, con permiso, antes
- * de presentar la propuesta fuera del equipo. El patron permitido esta en `next.config.ts`.
- */
-function foto(semilla: string, ancho: number, alto: number): string {
-  return `https://picsum.photos/seed/${semilla}/${ancho}/${alto}?grayscale`;
-}
 
 const ANCLAS: readonly AnclaPublica[] = [
   { id: 'regla', etiqueta: 'La regla invariable' },
@@ -343,11 +338,12 @@ export default function SitioPublico() {
               </p>
               <div className="relative mt-10 hidden aspect-[4/5] overflow-hidden rounded-xl bg-superficie lg:block">
                 <Image
-                  src={foto('sala-urgencias-monitor', 1000, 1250)}
-                  alt="Fotografia ilustrativa en escala de grises"
+                  src={ambulancia}
+                  alt="Ambulancia en movimiento con las luces de emergencia encendidas"
                   fill
+                  placeholder="blur"
                   sizes="(min-width: 1024px) 36vw, 0px"
-                  className="object-cover"
+                  className="object-cover object-[82%_center]"
                 />
               </div>
             </div>
@@ -378,56 +374,45 @@ export default function SitioPublico() {
       </section>
 
       {/* ------------------------------------------------ limite de identidad */}
-      {/* Imagen y texto enfrentados; debajo, las insignias REALES del sistema, no un dibujo. */}
+      {/*
+        Sin fotografia a proposito: el hero ya carga la imagen de biometria. Aqui el visual es
+        el propio sistema, con las insignias REALES de identidad y no un dibujo de ellas.
+      */}
       <section id="identidad" aria-labelledby="identidad-titulo" className="bg-lienzo">
-        <div className={cx(contenedor, 'pb-24 sm:pb-36')}>
-          <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
-            <Revelar className="relative aspect-[4/3] overflow-hidden rounded-xl bg-superficie lg:col-span-7">
-              <Image
-                src={foto('huella-lector-biometrico', 1600, 1200)}
-                alt="Fotografia ilustrativa en escala de grises"
-                fill
-                sizes="(min-width: 1024px) 55vw, 100vw"
-                className="object-cover"
-              />
-            </Revelar>
+        <div className={cx(contenedor, 'grid gap-12 pb-24 sm:pb-36 lg:grid-cols-12 lg:gap-16')}>
+          <Revelar className="lg:col-span-7">
+            <p className="rotulo">El limite que cambia el alcance</p>
+            <h2 id="identidad-titulo" className="display mt-3 max-w-3xl text-3xl text-texto md:text-5xl">
+              <span translate="no">World ID</span> no identifica a un paciente inconsciente.
+            </h2>
+            <dl className="mt-14 grid gap-10 sm:grid-cols-2">
+              <div className="border-t border-texto pt-6">
+                <dt className="text-base font-medium text-texto">Lo que World ID si hace</dt>
+                <dd className="mt-3 text-sm leading-relajado text-texto-suave">
+                  Demuestra humanidad y unicidad de forma anonima. No entrega nombre ni expediente, y
+                  requiere que la persona use su aplicacion. Sirve como factor voluntario{' '}
+                  <strong>si antes se vinculo</strong> con el identificador del hospital.
+                </dd>
+              </div>
+              <div className="border-t border-texto pt-6">
+                <dt className="text-base font-medium text-texto">Lo que hace falta y no existe todavia</dt>
+                <dd className="mt-3 text-sm leading-relajado text-texto-suave">
+                  Un motor de busqueda 1:N contratado, validado y autorizado, con pruebas de falsos
+                  positivos y negativos en poblacion real. Un nullifier de un solo uso no sirve como llave
+                  persistente del expediente.
+                </dd>
+              </div>
+            </dl>
+          </Revelar>
 
-            <Revelar retraso={120} className="lg:col-span-5">
-              <p className="rotulo">El limite que cambia el alcance</p>
-              <h2 id="identidad-titulo" className="display mt-3 text-3xl text-texto md:text-4xl">
-                <span translate="no">World ID</span> no identifica a un paciente inconsciente.
-              </h2>
-              <dl className="mt-10 space-y-8">
-                <div>
-                  <dt className="text-base font-medium text-texto">Lo que World ID si hace</dt>
-                  <dd className="mt-2 text-sm leading-relajado text-texto-suave">
-                    Demuestra humanidad y unicidad de forma anonima. No entrega nombre ni expediente, y
-                    requiere que la persona use su aplicacion. Sirve como factor voluntario{' '}
-                    <strong>si antes se vinculo</strong> con el identificador del hospital.
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-base font-medium text-texto">Lo que hace falta y no existe todavia</dt>
-                  <dd className="mt-2 text-sm leading-relajado text-texto-suave">
-                    Un motor de busqueda 1:N contratado, validado y autorizado, con pruebas de falsos
-                    positivos y negativos en poblacion real. Un nullifier de un solo uso no sirve como llave
-                    persistente del expediente.
-                  </dd>
-                </div>
-              </dl>
-            </Revelar>
-          </div>
-
-          <Revelar className="mt-16 grid gap-8 rounded-xl bg-lienzo-sutil p-8 sm:p-12 lg:grid-cols-12 lg:items-center">
-            <div className="lg:col-span-7">
-              <h3 className="text-xl font-medium text-texto">Mientras no exista</h3>
-              <p className="mt-3 max-w-2xl text-base leading-relajado text-texto-suave">
-                Se atiende con identificador temporal y se concilia despues. Si la persona no puede
-                confirmar su identidad, incluso un unico candidato queda <strong>provisional</strong>: no se
-                fusionan episodios ni se escribe sobre un expediente candidato.
-              </p>
-            </div>
-            <ul aria-label="Estados de identidad del sistema" className="flex flex-wrap gap-3 lg:col-span-5 lg:justify-end">
+          <Revelar retraso={120} className="self-end rounded-xl bg-lienzo-sutil p-8 sm:p-10 lg:col-span-5">
+            <h3 className="text-xl font-medium text-texto">Mientras no exista</h3>
+            <p className="mt-3 text-base leading-relajado text-texto-suave">
+              Se atiende con identificador temporal y se concilia despues. Si la persona no puede confirmar
+              su identidad, incluso un unico candidato queda <strong>provisional</strong>: no se fusionan
+              episodios ni se escribe sobre un expediente candidato.
+            </p>
+            <ul aria-label="Estados de identidad del sistema" className="mt-8 flex flex-wrap gap-3">
               <li>
                 <InsigniaIdentidad estado="provisional" />
               </li>
@@ -479,9 +464,10 @@ export default function SitioPublico() {
                   {grande && (
                     <>
                       <Image
-                        src={foto('simulador-fallos-servidores', 1600, 1100)}
+                        src={pantallasClinicas}
                         alt=""
                         fill
+                        placeholder="blur"
                         sizes="(min-width: 1024px) 60vw, 100vw"
                         className="-z-20 object-cover"
                       />
@@ -595,11 +581,12 @@ export default function SitioPublico() {
       {/* Cierra con el mismo recurso que abre: fotografia a sangre y tipografia blanca. */}
       <section aria-labelledby="cierre-titulo" className="relative isolate overflow-hidden bg-texto">
         <Image
-          src={foto('hospital-pasillo-guardia', 2400, 1200)}
+          src={personalClinico}
           alt=""
           fill
+          placeholder="blur"
           sizes="100vw"
-          className="-z-20 object-cover"
+          className="-z-20 object-cover object-[60%_center]"
         />
         <div aria-hidden className="absolute inset-0 -z-10 bg-texto/75" />
         <Revelar className={cx(contenedor, 'py-28 sm:py-44')}>
