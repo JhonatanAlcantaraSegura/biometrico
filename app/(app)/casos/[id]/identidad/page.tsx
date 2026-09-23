@@ -60,8 +60,8 @@ export default function IdentidadPage() {
   );
 
   return (
-    <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_380px]">
-      <div className="space-y-5">
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
+      <div className="space-y-6">
         <Tarjeta titulo="Metodos disponibles" ayuda="Ningun metodo es obligatorio para recibir atencion." acciones={<Requisito ids={["RF-05", "RF-08"]} />}>
           <ul className="space-y-2">
             {METHODS.map((m) => {
@@ -154,7 +154,7 @@ export default function IdentidadPage() {
         )}
       </div>
 
-      <div className="space-y-5">
+      <div className="space-y-6">
         <Tarjeta titulo="Evidencia de identidad" ayuda="Sin plantilla biometrica cruda en la aplicacion." acciones={<Requisito ids={["RF-05", "seccion 6"]} />}>
           {evidence.length === 0 ? (
             <Vacio>Sin intentos registrados.</Vacio>

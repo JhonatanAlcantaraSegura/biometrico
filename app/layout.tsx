@@ -28,9 +28,9 @@ export const viewport: Viewport = {
 };
 
 /*
- * Geist para el sitio publico (ver `.tema-publico` en `app/tema-publico.css`). `next/font` la
- * descarga al compilar y la sirve desde el propio dominio: el navegador no pide nada a
- * Google, asi que la portada sigue funcionando en una sala sin internet.
+ * Geist en todo el producto, portada y panel (ver `--font-sans` en `app/globals.css`).
+ * `next/font` la descarga al compilar y la sirve desde el propio dominio: el navegador no
+ * pide nada a Google, asi que todo sigue funcionando en una sala sin internet.
  */
 const geist = Geist({ subsets: ['latin'], variable: '--font-geist', display: 'swap' });
 const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono', display: 'swap' });

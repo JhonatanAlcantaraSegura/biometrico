@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { ShieldAlert } from 'lucide-react';
 import { NOMBRE_ROL, inicioDe, puedeVerRuta, rutaDe } from '@/lib/datos/rutas';
 import { actions, useAppState, userById } from '@/lib/estado/tienda';
-import { Boton, PantallaCarga, Tarjeta } from '@/components/ui/primitivos';
+import { Boton, PantallaCarga } from '@/components/ui/primitivos';
 
 /**
  * Guarda del panel administrado.
@@ -79,42 +79,46 @@ export function GuardaSesion({ children }: { children: React.ReactNode }) {
   const permitida = puedeVerRuta(ruta, usuario.role);
 
   if (!permitida) {
+    // Fuera del shell (la guarda lo envuelve), asi que la pantalla trae su propio lienzo y su
+    // propio `h1`: sin eso, la tarjeta blanca desaparecia sobre la pagina blanca.
     return (
-      <main className="mx-auto max-w-2xl px-4 py-10">
-        <Tarjeta
-          titulo="Esta pantalla no corresponde a su perfil"
-          ayuda="La matriz de la ERS decide que ve cada actor. No es un fallo del prototipo."
-        >
-          <div className="flex items-start gap-3">
-            <ShieldAlert className="mt-0.5 size-6 shrink-0 text-aviso" aria-hidden />
-            <div className="space-y-3 text-sm text-texto">
-              <p>
-                Su perfil activo es <strong>{NOMBRE_ROL[usuario.role]}</strong>
-                {regla ? (
-                  <>
-                    {' '}
-                    y la pantalla <strong>{regla.etiqueta}</strong> esta reservada a{' '}
-                    {regla.roles.map((r) => NOMBRE_ROL[r]).join(', ')}.
-                  </>
-                ) : (
-                  <> y esta direccion no figura en la matriz de rutas del prototipo.</>
-                )}
-              </p>
-              <p className="text-texto-suave">
-                Cambie de perfil en el encabezado para ver la misma pantalla con otros permisos, o
-                vuelva a su inicio.
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <Boton tono="primario" onClick={() => router.replace(inicioDe(usuario.role))}>
-                  Ir a mi inicio
-                </Boton>
-                <Link href="/" className="control inline-flex items-center px-2 text-sm text-texto underline">
-                  Salir al sitio de la propuesta
-                </Link>
-              </div>
-            </div>
+      <main className="grid min-h-dvh place-items-center bg-lienzo-sutil px-4 py-10">
+        <div className="w-full max-w-xl rounded-xl bg-fondo p-8 sm:p-10">
+          <ShieldAlert className="size-7 text-aviso" aria-hidden />
+          <h1 className="display mt-6 text-3xl text-texto">Esta pantalla no corresponde a su perfil</h1>
+          <p className="mt-3 text-base leading-llano text-texto-suave">
+            La matriz de la ERS decide que ve cada actor. No es un fallo del prototipo.
+          </p>
+          <div className="mt-6 space-y-3 text-sm leading-llano text-texto">
+            <p>
+              Su perfil activo es <strong>{NOMBRE_ROL[usuario.role]}</strong>
+              {regla ? (
+                <>
+                  {' '}
+                  y la pantalla <strong>{regla.etiqueta}</strong> esta reservada a{' '}
+                  {regla.roles.map((r) => NOMBRE_ROL[r]).join(', ')}.
+                </>
+              ) : (
+                <> y esta direccion no figura en la matriz de rutas del prototipo.</>
+              )}
+            </p>
+            <p className="text-texto-suave">
+              Cambie de perfil en el encabezado para ver la misma pantalla con otros permisos, o vuelva a su
+              inicio.
+            </p>
           </div>
-        </Tarjeta>
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <Boton tono="primario" onClick={() => router.replace(inicioDe(usuario.role))}>
+              Ir a mi inicio
+            </Boton>
+            <Link
+              href="/"
+              className="control inline-flex items-center px-2 text-sm text-texto-suave underline underline-offset-2 transition-colors hover:text-texto"
+            >
+              Salir al sitio de la propuesta
+            </Link>
+          </div>
+        </div>
       </main>
     );
   }

@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -31,6 +32,7 @@ import {
 } from '@/lib/estado/sesion';
 import { actions } from '@/lib/estado/tienda';
 import { Avatar, Banda, Campo, claseCampo, cx } from '@/components/ui/primitivos';
+import retinaBiometrica from '@/public/imagenes/hero-biometria-retina.jpg';
 
 /**
  * Pantalla de acceso con credenciales, adaptada del login de URIS-CITAS (DIF).
@@ -175,7 +177,7 @@ export default function Acceso() {
         <div className="mx-auto my-auto w-full max-w-md py-8">
           <div className="aparecer">
             <p className="rotulo">Acceso del personal · {INSTITUCION.sedeCodigo}</p>
-            <h1 className="mt-2 text-3xl text-texto">Iniciar sesion</h1>
+            <h1 className="display mt-2 text-3xl text-texto sm:text-4xl">Iniciar sesion</h1>
             <p className="mt-2 text-sm leading-llano text-texto-suave">
               Entre con su correo institucional. La sesion dura un turno ({DURACION_SESION_MIN / 60} h) y se
               cierra sola al vencer.
@@ -320,7 +322,20 @@ export default function Acceso() {
  */
 function PanelMarca() {
   return (
-    <aside className="relative hidden overflow-hidden bg-texto text-primario-texto lg:flex lg:flex-col lg:justify-between lg:p-10">
+    // La misma fotografia del hero de la portada: quien entra al sistema viene de ahi, y la
+    // pantalla de acceso debe sentirse parte del mismo producto. El velo Carbon garantiza el
+    // contraste del texto blanco.
+    <aside className="relative isolate hidden overflow-hidden bg-texto text-primario-texto lg:flex lg:flex-col lg:justify-between lg:p-12">
+      <Image
+        src={retinaBiometrica}
+        alt=""
+        fill
+        preload
+        placeholder="blur"
+        sizes="42vw"
+        className="-z-20 object-cover object-[70%_center]"
+      />
+      <div aria-hidden className="absolute inset-0 -z-10 bg-texto/70" />
       <Link href="/" className="relative z-10 flex items-center gap-3">
         <Activity className="size-6" aria-hidden />
         <span className="leading-tight">
@@ -332,7 +347,7 @@ function PanelMarca() {
       </Link>
 
       <div className="relative z-10">
-        <p className="titulo max-w-md text-3xl leading-ajustado">
+        <p className="display max-w-md text-4xl">
           Identificar a la persona no puede retrasar la atencion del infarto.
         </p>
         <ul className="mt-8 space-y-4 text-sm text-primario-texto/90">
@@ -350,24 +365,6 @@ function PanelMarca() {
           </li>
         </ul>
       </div>
-
-      {/* Trazo de ECG decorativo: se dibuja una vez y se queda quieto. */}
-      <svg
-        aria-hidden
-        viewBox="0 0 400 80"
-        className="pointer-events-none absolute inset-x-0 top-1/3 h-24 w-full text-primario-texto"
-        strokeOpacity={0.22}
-        fill="none"
-      >
-        <path
-          className="trazo-ecg"
-          d="M0 40 H120 L135 40 L145 18 L155 62 L165 8 L178 70 L188 40 H260 L272 30 L284 40 H400"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
 
       <p className="relative z-10 text-xs text-primario-texto/75">{INSTITUCION.sedeNota}</p>
     </aside>

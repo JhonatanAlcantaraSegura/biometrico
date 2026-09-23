@@ -6,7 +6,7 @@
  * RF-20 hitos de la ruta elegida por el medico.
  */
 import { useState } from "react";
-import { Insignia, Boton, Tarjeta, Vacio, Campo, Requisito, claseCampo } from "@/components/ui/primitivos";
+import { Insignia, Boton, Encabezado, Tarjeta, Vacio, Campo, claseCampo } from "@/components/ui/primitivos";
 import { actions, encounterById, resourcesOfCase, useAppState, userById } from "@/lib/estado/tienda";
 import { localTime } from "@/lib/tiempo";
 
@@ -22,16 +22,12 @@ export default function HemodinamiaPage() {
   const requests = state.cases.filter((c) => c.code_state === "activo");
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl text-texto">Hemodinamia y traslado</h1>
-          <p className="text-sm text-texto-suave">
-            Solicitudes abiertas: {requests.length}. Rechazar no bloquea la atencion; obliga a documentar el escalamiento.
-          </p>
-        </div>
-        <Requisito ids={["RF-19", "RF-20", "CA-10"]} />
-      </div>
+    <div className="space-y-8">
+      <Encabezado
+        titulo="Hemodinamia y traslado"
+        descripcion={`Solicitudes abiertas: ${requests.length}. Rechazar no bloquea la atencion; obliga a documentar el escalamiento.`}
+        requisitos={["RF-19", "RF-20", "CA-10"]}
+      />
 
       {!canDecide && (
         <Tarjeta>

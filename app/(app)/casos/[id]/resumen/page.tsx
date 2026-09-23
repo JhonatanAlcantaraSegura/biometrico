@@ -43,8 +43,8 @@ export default function ResumenPage() {
   const confirmed = encounter.identity_state === "confirmada";
 
   return (
-    <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
-      <div className="space-y-5">
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="space-y-6">
         {!confirmed && (
           <Tarjeta titulo="Expediente no disponible" acciones={<Requisito ids={["RF-13", "CA-03"]} />}>
             <p className="text-sm text-aviso">
@@ -122,7 +122,7 @@ export default function ResumenPage() {
         )}
       </div>
 
-      <div className="space-y-5">
+      <div className="space-y-6">
         <Tarjeta titulo="Procedencia del resumen" acciones={<Requisito ids={["RF-13", "RF-14"]} />}>
           {snapshot ? (
             <div className="space-y-2 text-sm">
