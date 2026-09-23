@@ -32,6 +32,7 @@ export function GuardaSesion({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     actions.restaurarSesion();
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- marca de "restauracion completada": sin ella la guarda redirige antes de rehidratar
     setRestaurada(true);
   }, []);
 

@@ -108,10 +108,12 @@ export function Shell({ children }: { children: React.ReactNode }) {
   // navegador deben ser identicos. La preferencia entra despues, en un efecto.
   useEffect(() => {
     const guardado = leer<Record<string, boolean>>(CLAVE_MENU);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- hidratacion: la preferencia del menu vive en localStorage, no se lee en el render
     if (guardado) setGruposAbiertos(guardado);
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- cerrar el menu movil al navegar por la aplicacion
     setMenuAbierto(false);
   }, [ruta]);
 
@@ -126,6 +128,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
     );
     if (!dentro) return;
     const clave = claveDe(rol, dentro.grupo);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- abrir el grupo que contiene la ruta activa; derivarlo dejaria el grupo abierto para siempre
     setGruposAbiertos((previo) => (previo[clave] ? previo : { ...previo, [clave]: true }));
   }, [ruta, rol, gruposOrdenados]);
 

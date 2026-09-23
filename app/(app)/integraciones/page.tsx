@@ -61,6 +61,7 @@ export default function Integraciones() {
   const state = useAppState();
   // `hayAlmacenamiento` toca `localStorage`, asi que se consulta despues del primer render.
   const [almacenamiento, setAlmacenamiento] = useState<boolean | null>(null);
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- hidratacion: leer localStorage durante el render rompe el HTML del servidor
   useEffect(() => setAlmacenamiento(hayAlmacenamiento()), []);
 
   if (!state) return null;

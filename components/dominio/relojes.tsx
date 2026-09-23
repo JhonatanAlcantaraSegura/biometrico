@@ -34,6 +34,7 @@ export function RelojLocal() {
   const tick = useTick();
   const [texto, setTexto] = useState<string>('--:--:--');
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- la hora debe aparecer al montar, no un segundo despues: derivarla del tick la retrasaria
     setTexto(new Date().toLocaleTimeString('es-MX'));
   }, [tick]);
   return (
@@ -76,6 +77,7 @@ export function Cronometro({
   const [estado, setEstado] = useState<ClockStatus>('en_meta');
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- el cronometro debe arrancar al montar, no un segundo despues (RF-21)
     setTexto(elapsedLabel(from, completedAt));
     setEstado(goalMinutes ? clockStatus(from, goalMinutes, completedAt) : completedAt ? 'cumplido' : 'en_meta');
   }, [tick, from, goalMinutes, completedAt]);

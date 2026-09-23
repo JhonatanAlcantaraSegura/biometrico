@@ -71,18 +71,21 @@ export default function Acceso() {
       return;
     }
     const motivo = new URLSearchParams(window.location.search).get('motivo');
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- el motivo llega por la URL y solo existe despues de hidratar
     if (motivo === 'expirada') setAviso('Su sesion vencio al terminar el turno. Vuelva a entrar para continuar.');
     if (motivo === 'salida') setAviso('Sesion cerrada. El equipo queda listo para la siguiente persona.');
   }, [router]);
 
   // El bloqueo vive en `localStorage` y se consulta por correo, despues de hidratar.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- hidratacion: la consulta toca localStorage, no puede ir en el render
     setBloqueadoHasta(correo ? bloqueoVigente(correo) : null);
   }, [correo]);
 
   // Cuenta regresiva real, de un segundo: "espere 5 minutos" sin reloj obliga a adivinar.
   useEffect(() => {
     if (!bloqueadoHasta) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- reinicio sincrono del conteo; sin el, el numero anterior persistiria un segundo mas
       setRestante(0);
       return;
     }
