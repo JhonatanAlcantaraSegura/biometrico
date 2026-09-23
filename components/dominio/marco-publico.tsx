@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { Activity, LockKeyhole, Menu, TriangleAlert, X, type LucideIcon } from 'lucide-react';
+import { Activity, LockKeyhole, Menu, TriangleAlert, X } from 'lucide-react';
 import { INSTITUCION } from '@/lib/datos/institucion';
 import { cx } from '@/components/ui/primitivos';
 
@@ -15,9 +15,8 @@ import { cx } from '@/components/ui/primitivos';
  * expediente. Abrirle el tablero operativo de urgencias no le sirve y ademas le da una
  * impresion equivocada: que el sistema ya existe y ya opera.
  *
- * Sigue `DESIGN.md`: encabezado blanco sin borde, secciones con mucho aire, y el Azul
- * Electrico solo en la accion primaria ("Acceso del personal"). `.tema-publico` es el
- * punto de enganche del tema (ver `app/tema-publico.css`).
+ * Sigue `DESIGN.md` (monocromo, Azul Electrico solo en la accion primaria, sin sombras) con
+ * el lenguaje editorial de `app/tema-publico.css` encima.
  */
 
 export interface AnclaPublica {
@@ -32,7 +31,7 @@ const SIN_ANCLAS: readonly AnclaPublica[] = [];
  *
  * `IntersectionObserver` y no un calculo de `scroll`: el segundo obliga a leer el layout en
  * cada evento y en un equipo modesto eso se nota. Si la API no existe, el menu simplemente
- * no resalta nada — se degrada sin romperse.
+ * no resalta nada: se degrada sin romperse.
  */
 function useSeccionActiva(anclas: readonly AnclaPublica[]): string | null {
   const [activa, setActiva] = useState<string | null>(null);
@@ -79,15 +78,15 @@ export function MarcoPublico({
         Saltar al contenido
       </a>
 
-      {/* Vidrio esmerilado: blanco al 75 % sobre el contenido que pasa por debajo. */}
+      {/*
+        Vidrio esmerilado: blanco al 75 % sobre lo que pasa por debajo. Una sola linea en
+        escritorio: las seis anclas solo caben a partir de `xl`; por debajo, menu plegado.
+      */}
       <header className="sticky top-0 z-30 bg-fondo/75 backdrop-blur-md">
-        <div className="mx-auto flex max-w-[86rem] flex-wrap items-center gap-3 px-4 py-3">
-          <Link href="/" className="flex items-center gap-2.5">
+        <div className="mx-auto flex max-w-[86rem] flex-wrap items-center gap-3 px-4 py-3 sm:px-6">
+          <Link href="/" className="control flex items-center gap-2.5 rounded">
             <Activity className="size-5 shrink-0 text-texto" aria-hidden />
-            <span className="leading-tight">
-              <span className="block text-base font-medium text-texto">{INSTITUCION.marca}</span>
-              <span className="block text-xs text-texto-suave">Propuesta tecnica · {INSTITUCION.documentoFuente}</span>
-            </span>
+            <span translate="no" className="text-base font-medium text-texto">{INSTITUCION.marca}</span>
           </Link>
 
           <button
@@ -95,7 +94,7 @@ export function MarcoPublico({
             onClick={() => setAbierto((v) => !v)}
             aria-expanded={abierto}
             aria-controls="menu-publico"
-            className="ml-auto rounded p-2 text-texto transition-colors hover:bg-superficie lg:hidden"
+            className="ml-auto rounded p-2 text-texto transition-colors hover:bg-superficie xl:hidden"
           >
             {abierto ? <X className="size-5" aria-hidden /> : <Menu className="size-5" aria-hidden />}
             <span className="sr-only">{abierto ? 'Cerrar menu' : 'Abrir menu'}</span>
@@ -105,7 +104,7 @@ export function MarcoPublico({
             id="menu-publico"
             aria-label="Secciones de la propuesta"
             className={cx(
-              'w-full flex-wrap items-center gap-0.5 lg:ml-auto lg:flex lg:w-auto',
+              'w-full flex-col gap-0.5 pb-2 xl:ml-auto xl:flex xl:w-auto xl:flex-row xl:items-center xl:pb-0',
               abierto ? 'flex' : 'hidden',
             )}
           >
@@ -125,16 +124,18 @@ export function MarcoPublico({
             ))}
             <Link
               href="/acceso"
-              className="control ml-1 flex items-center gap-2 rounded bg-primario px-5 text-sm font-medium text-primario-texto transition-colors hover:bg-primario-oscuro"
+              className="control mt-2 flex items-center justify-center gap-2 rounded bg-primario px-5 text-sm font-medium text-primario-texto transition-colors hover:bg-primario-oscuro active:bg-primario-oscuro xl:mt-0 xl:ml-2"
             >
               <LockKeyhole className="size-4" aria-hidden />
-              Acceso del personal
+              Entrar al prototipo
             </Link>
           </nav>
         </div>
       </header>
 
-      <main id="contenido">{children}</main>
+      <main id="contenido" className="w-full max-w-full overflow-x-clip">
+        {children}
+      </main>
 
       <PieDelSitio />
     </div>
@@ -147,88 +148,18 @@ export function MarcoPublico({
  * Un prototipo convincente puede hacer parecer resueltas decisiones que siguen abiertas.
  * Decirlo una vez en una reunion no basta: la captura de pantalla circula sola.
  */
-export function AvisoPrototipo({ className }: { className?: string }) {
+export function AvisoPrototipo({ className, children }: { className?: string; children?: React.ReactNode }) {
   return (
-    <div
-      className={cx(
-        'flex items-start gap-3 rounded bg-aviso-suave p-4',
-        className,
-      )}
-    >
+    <div className={cx('flex items-start gap-3 rounded bg-aviso-suave p-4 sm:p-5', className)}>
       <TriangleAlert className="mt-0.5 size-5 shrink-0 text-aviso" aria-hidden />
-      <p className="text-sm leading-llano text-aviso">
-        <strong>Prototipo de propuesta, no producto.</strong> Datos sinteticos, sin expediente
-        clinico real, sin motor biometrico y con un acceso simulado en el navegador. La sede, las cifras y el alcance son
-        propuestas por validar.
-      </p>
-    </div>
-  );
-}
-
-/**
- * Banda de seccion del sitio publico.
- *
- * Una seccion por mensaje, con aire generoso arriba y abajo: el espacio en blanco hace de
- * separador, sin lineas. El rotulo va en minusculas tranquilas, sin versalitas.
- */
-export function BandaPublica({
-  id,
-  rotulo,
-  titulo,
-  descripcion,
-  Icono,
-  fondo = 'base',
-  children,
-}: {
-  id: string;
-  rotulo?: string;
-  titulo: string;
-  descripcion?: string;
-  Icono?: LucideIcon;
-  fondo?: 'base' | 'sutil';
-  children: React.ReactNode;
-}) {
-  return (
-    <section
-      id={id}
-      aria-labelledby={`${id}-titulo`}
-      // El desfase del encabezado fijo lo pone `scroll-padding-top` en `html`, UNA vez. Un
-      // `scroll-mt-*` aqui se sumaria a aquel y dejaria el titulo medio salto mas abajo.
-      className={fondo === 'sutil' ? 'banda-sutil bg-lienzo-sutil' : 'bg-lienzo'}
-    >
-      <div className="mx-auto max-w-6xl px-4 py-16 sm:py-seccion-lg">
-        <div className="max-w-3xl">
-          {Icono && <Icono className="mb-5 size-6 text-texto" aria-hidden />}
-          {rotulo && <p className="rotulo mb-2">{rotulo}</p>}
-          <h2 id={`${id}-titulo`} className="titulo text-3xl text-texto">
-            {titulo}
-          </h2>
-          {descripcion && <p className="mt-4 text-base leading-relajado text-texto-suave">{descripcion}</p>}
-        </div>
-        <div className="mt-12">{children}</div>
+      <div className="text-sm leading-llano text-aviso">
+        <p>
+          <strong>Prototipo de propuesta, no producto.</strong> Datos sinteticos, sin expediente
+          clinico real, sin motor biometrico y con un acceso simulado en el navegador. La sede, las
+          cifras y el alcance son propuestas por validar.
+        </p>
+        {children}
       </div>
-    </section>
-  );
-}
-
-/**
- * Tarjeta de contenido del sitio publico. Sin borde ni sombra: Ceniza Clara sobre una banda
- * blanca y blanca sobre una banda Ceniza (`in-[.banda-sutil]`), para que siempre haya un
- * cambio de superficie que la delimite.
- */
-export function TarjetaPublica({
-  titulo,
-  children,
-  className,
-}: {
-  titulo?: string;
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <div className={cx('rounded-xl bg-lienzo-sutil p-6 in-[.banda-sutil]:bg-fondo', className)}>
-      {titulo && <h3 className="mb-2 text-lg font-medium text-texto">{titulo}</h3>}
-      {children}
     </div>
   );
 }
@@ -236,16 +167,29 @@ export function TarjetaPublica({
 export function PieDelSitio() {
   return (
     <footer className="bg-lienzo-sutil">
-      <div className="mx-auto max-w-6xl px-4 py-12 text-sm text-texto-suave">
-        <p className="font-medium text-texto">
-          {INSTITUCION.sedeNombre} — {INSTITUCION.sedeDependencia}
-        </p>
-        <p className="mt-1">{INSTITUCION.sedeNota}</p>
-        <p className="mt-4">
-          Derivado de la {INSTITUCION.documentoFuente}. El documento fuente vive en{' '}
-          <code className="text-texto">docs/ERS_Biometria_Codigo_Infarto.md</code> y la trazabilidad
-          requisito por requisito en <code className="text-texto">docs/02-TRAZABILIDAD.md</code>.
-        </p>
+      <div className="mx-auto grid max-w-[86rem] gap-10 px-4 py-16 text-sm text-texto-suave sm:px-6 md:grid-cols-12">
+        <div className="md:col-span-5">
+          <p className="flex items-center gap-2.5 text-base font-medium text-texto">
+            <Activity className="size-5" aria-hidden />
+            <span translate="no">{INSTITUCION.marca}</span>
+          </p>
+          <p className="mt-3 max-w-sm">{INSTITUCION.lema}.</p>
+        </div>
+        <div className="md:col-span-4">
+          <p className="font-medium text-texto">
+            {INSTITUCION.sedeNombre}, {INSTITUCION.sedeDependencia}
+          </p>
+          <p className="mt-1">{INSTITUCION.sedeNota}</p>
+        </div>
+        <div className="md:col-span-3">
+          <p className="font-medium text-texto">Documento fuente</p>
+          <p className="mt-1">{INSTITUCION.documentoFuente}</p>
+          <p className="mt-3">
+            <code className="text-xs text-texto">docs/ERS_Biometria_Codigo_Infarto.md</code>
+            <br />
+            <code className="text-xs text-texto">docs/02-TRAZABILIDAD.md</code>
+          </p>
+        </div>
       </div>
     </footer>
   );

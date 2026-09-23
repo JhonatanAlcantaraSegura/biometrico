@@ -1,13 +1,77 @@
 /*
  * Tema del SITIO PUBLICO.
  *
- * Desde la adopcion de `DESIGN.md` el sitio publico y el panel comparten una sola paleta
- * (ver `app/globals.css`): un sistema monocromo mas un azul no deja lugar a un segundo
- * acento. La clase `.tema-publico` se conserva como punto unico de enganche del marco
- * publico, por si alguna vez las dos mitades vuelven a necesitar valores propios.
+ * Misma paleta que el panel (ver `app/globals.css`): monocromo mas el Azul Electrico en la
+ * accion primaria. Lo que la portada agrega encima es un lenguaje editorial propio:
+ *
+ * - Geist (servida desde el dominio por `next/font`) en lugar de la sans de sistema, con
+ *   tracking negativo solo en los titulares grandes.
+ * - Fotografia a sangre en escala de grises: la imagen carga el peso visual, como en
+ *   `DESIGN.md`, y el gris no compite con el azul.
+ * - Entradas al hacer scroll (`.revelar`), solo opacidad y un desplazamiento corto. Los
+ *   estados de hover siguen siendo solo de color.
  */
 
 .tema-publico {
   background-color: var(--color-lienzo);
   color: var(--color-texto);
+  font-family: var(--font-geist), var(--font-sans);
+}
+
+.tema-publico code,
+.tema-publico .font-mono {
+  font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* Titulares de portada: mas apretados que el cuerpo, y sin viudas. */
+.tema-publico .display {
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.04;
+  text-wrap: balance;
+}
+
+.tema-publico p {
+  text-wrap: pretty;
+}
+
+/* Sin la espera de doble toque en moviles: cada toque es un toque. */
+.tema-publico a,
+.tema-publico button,
+.tema-publico summary {
+  touch-action: manipulation;
+}
+
+/*
+ * Entrada al hacer scroll. `components/dominio/revelar.tsx` marca como `oculto` solo lo que
+ * esta fuera de la pantalla al montar, y nunca con movimiento reducido: sin JavaScript o
+ * con `reduce`, todo se ve desde el principio.
+ */
+.revelar {
+  transition:
+    opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--retraso, 0ms);
+}
+
+.revelar[data-estado='oculto'] {
+  opacity: 0;
+  transform: translateY(1.5rem);
+}
+
+/*
+ * Imagen del hero: entra desde una escala apenas mayor, una sola vez. Acompaña la carga de
+ * la fotografia en lugar de dejarla aparecer de golpe.
+ */
+@keyframes asentar {
+  from {
+    transform: scale(1.06);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.asentar {
+  animation: asentar 2.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
