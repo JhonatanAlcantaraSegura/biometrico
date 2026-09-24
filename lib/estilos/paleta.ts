@@ -59,11 +59,19 @@ export const SISTEMA = {
 } as const;
 
 /**
- * Tema del sitio publico. Desde la adopcion de `DESIGN.md` es la MISMA paleta: un sistema
- * monocromo no tiene margen para dos acentos. Se conserva el nombre para que
- * `npm run contraste` siga recorriendo los dos temas si algun dia vuelven a separarse.
+ * Tema del sitio publico. La misma paleta monocroma que el panel, con UNA diferencia: los
+ * fondos blancos no son blanco puro sino Blanco Carbon (`#f8f9fb`), un casi blanco con el
+ * subtono azul del Carbon (#171a20) para que el fondo pertenezca a la paleta. La banda
+ * (`lienzoSutil`) baja a `#e8ebef` con el mismo subtono: con `#f4f4f4` las tarjetas
+ * `#f8f9fb` quedaban a 1.04:1 de la banda y no se distinguian; asi quedan a 1.14:1.
+ * Se declara aqui para que `npm run contraste` lo mida; el CSS vive en `app/tema-publico.css`.
  */
-export const PUBLICO = SISTEMA;
+export const PUBLICO = {
+  ...SISTEMA,
+  fondo: '#f8f9fb',
+  lienzo: '#f8f9fb',
+  lienzoSutil: '#e8ebef',
+} as const;
 
 export type TokenDeColor = keyof typeof SISTEMA;
 

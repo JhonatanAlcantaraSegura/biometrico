@@ -13,12 +13,15 @@ export function Revelar({
   children,
   como: Etiqueta = 'div',
   retraso = 0,
+  duracion,
   className,
 }: {
   children: ReactNode;
   como?: ElementType;
   /** Milisegundos de espera, para escalonar elementos hermanos. */
   retraso?: number;
+  /** Milisegundos que dura la entrada. Sin valor, la de `.revelar` (900 ms). */
+  duracion?: number;
   className?: string;
 }) {
   const ref = useRef<HTMLElement>(null);
@@ -48,7 +51,14 @@ export function Revelar({
     <Etiqueta
       ref={ref}
       className={className ? `revelar ${className}` : 'revelar'}
-      style={retraso ? ({ '--retraso': `${retraso}ms` } as React.CSSProperties) : undefined}
+      style={
+        retraso || duracion
+          ? ({
+              ...(retraso ? { '--retraso': `${retraso}ms` } : {}),
+              ...(duracion ? { '--duracion': `${duracion}ms` } : {}),
+            } as React.CSSProperties)
+          : undefined
+      }
     >
       {children}
     </Etiqueta>
