@@ -100,22 +100,28 @@ export function CapturaBiometrica({ encounterId, conscious }: { encounterId: str
         </p>
       )}
 
-      <div className="grid gap-4 sm:grid-cols-3">
-        <Campo etiqueta="Punto de control" htmlFor="sel-punto" ayuda={punto?.ubicacion}>
-          <select
-            id="sel-punto"
-            value={puntoId}
-            onChange={(e) => setPuntoId(e.target.value)}
-            className={claseCampo}
-            disabled={ocupado}
-          >
-            {puntos.map((p) => (
-              <option key={p.punto_id} value={p.punto_id}>
-                {p.nombre} · {NOMBRE_ESTADO_DISPOSITIVO[p.estado]}
-              </option>
-            ))}
-          </select>
-        </Campo>
+      {/*
+        El punto de control va a todo lo ancho: su opcion ("Urgencias — triage · Degradado") no
+        cabe en un tercio y el selector la cortaba. Modalidad y escenario comparten la fila.
+      */}
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="sm:col-span-2">
+          <Campo etiqueta="Punto de control" htmlFor="sel-punto" ayuda={punto?.ubicacion}>
+            <select
+              id="sel-punto"
+              value={puntoId}
+              onChange={(e) => setPuntoId(e.target.value)}
+              className={claseCampo}
+              disabled={ocupado}
+            >
+              {puntos.map((p) => (
+                <option key={p.punto_id} value={p.punto_id}>
+                  {p.nombre} · {NOMBRE_ESTADO_DISPOSITIVO[p.estado]}
+                </option>
+              ))}
+            </select>
+          </Campo>
+        </div>
 
         <Campo
           etiqueta="Modalidad"
@@ -231,7 +237,7 @@ function ResultadoIntento() {
       <div className="flex flex-wrap items-center gap-2">
         <Insignia tono={tono}>{intento.resultado.replace(/_/g, ' ')}</Insignia>
         {intento.fallo && <Insignia tono="peligro">{NOMBRE_FALLO[intento.fallo]}</Insignia>}
-        <span className="font-mono text-sm tabular-nums text-texto">
+        <span className="text-sm font-medium tabular-nums text-texto">
           {total} ms
           <span className="text-texto-suave"> extremo a extremo, sin confirmación humana</span>
         </span>
@@ -306,7 +312,7 @@ function Etapa({
   return (
     <div className="rounded bg-superficie px-2.5 py-2">
       <dt className="text-xs font-medium text-texto-suave">{nombre}</dt>
-      <dd className="mt-0.5 font-mono text-base tabular-nums text-texto">
+      <dd className="mt-0.5 text-lg font-medium tabular-nums text-texto">
         {ms === undefined ? <span className="text-sm text-texto-suave">{ausente}</span> : `${ms} ms`}
       </dd>
       <dd className="mt-0.5 text-xs text-texto-suave">{responsable}</dd>
@@ -318,7 +324,7 @@ function Dato({ etiqueta, valor }: { etiqueta: string; valor: string }) {
   return (
     <p className={cx('rounded bg-superficie px-2.5 py-1.5')}>
       <span className="text-texto-suave">{etiqueta}: </span>
-      <span className="font-mono font-medium tabular-nums text-texto">{valor}</span>
+      <span className="font-medium tabular-nums text-texto">{valor}</span>
     </p>
   );
 }

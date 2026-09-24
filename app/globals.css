@@ -72,6 +72,19 @@
   --color-foco: #3e6ae1;
 
   /*
+   * Rellenos de ESTADO para graficas (no para texto). Son los pasos de estado de referencia
+   * de la skill `dataviz`, validados con su `validate_palette.js` en el orden
+   * bueno > aviso > critico: separacion CVD 11.3 y vision normal 27.6 entre vecinos. El ambar
+   * es claro a proposito (lo que lo separa del verde es la luminosidad); por eso queda bajo
+   * 3:1 sobre blanco y SIEMPRE va con etiqueta de texto, hueco de 2 px y vista de tabla.
+   * Los tonos de texto (`peligro`, `aviso`, `exito`) no sirven como relleno vecino: rojo y
+   * ambar oscuros quedan a 7.7 de vision normal.
+   */
+  --color-grafica-bueno: #0ca30c;
+  --color-grafica-aviso: #fab219;
+  --color-grafica-critico: #d03b3b;
+
+  /*
    * Radios: 0 por omision, 4 px en todo lo interactivo, 12 px en superficies grandes. Se
    * redefine la escala de Tailwind para que `rounded-md` y `rounded-lg` caigan en los 4 px y
    * `rounded-xl` / `rounded-2xl` en los 12 px, sin ningun valor intermedio.
@@ -232,6 +245,28 @@ textarea {
   min-height: 2.75rem;
 }
 
+/*
+ * Flecha propia en TODOS los selectores: la del navegador queda pegada al borde derecho y,
+ * segun el sistema, casi lo toca. Esta vive a 12 px del borde y el relleno derecho le
+ * reserva su hueco para que el texto nunca pase por debajo. Sin capa a proposito: le gana
+ * al `px-*` del control. Los selectores con flecha propia (simulador) llevan `.sin-flecha`.
+ * En modo de alto contraste vuelve la flecha nativa.
+ */
+select:not([multiple]):not(.sin-flecha) {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235c5e62' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+  padding-right: 2.5rem;
+}
+@media (forced-colors: active) {
+  select:not([multiple]):not(.sin-flecha) {
+    appearance: auto;
+    background-image: none;
+  }
+}
+
 /* Sin la espera de doble toque en moviles: cada toque es un toque. */
 a,
 button,
@@ -242,8 +277,8 @@ select,
 }
 
 /*
- * Aparicion por opacidad (acceso, menu de usuario, avisos) y el trazo de ECG de la pantalla
- * de acceso. Nada se desplaza ni se escala (`DESIGN.md`). Todo muere con la regla de movimiento reducido de
+ * Aparicion por opacidad (acceso, menu de usuario, avisos) y el trazo de ECG en bucle de la
+ * portada y el acceso. Nada se desplaza ni se escala (`DESIGN.md`). Todo muere con la regla de movimiento reducido de
  * abajo, y como las animaciones terminan en el estado normal del elemento, sin animacion se
  * ve igual.
  */
@@ -253,14 +288,6 @@ select,
   }
   to {
     opacity: 1;
-  }
-}
-@keyframes trazo {
-  from {
-    stroke-dashoffset: 600;
-  }
-  to {
-    stroke-dashoffset: 0;
   }
 }
 
@@ -273,9 +300,97 @@ select,
 .aparecer-3 {
   animation: aparecer 480ms ease-out 240ms both;
 }
-.trazo-ecg {
-  stroke-dasharray: 600;
-  animation: trazo 2400ms ease-out both;
+
+/*
+ * Movimiento del panel, siempre sutil y siempre con motivo:
+ *
+ * - `.entrar`: la pantalla aparece al navegar (opacidad y 8 px). Dice "cambio de vista".
+ * - `.pulso-vivo`: punto que late en lo que esta ocurriendo AHORA (codigo activo). Solo
+ *   opacidad, lento, para que no se lea como alarma.
+ * - `.crecer-x` / `.crecer-y`: las barras de las graficas crecen desde su linea base una
+ *   vez, al montar. Con `--retraso` se escalonan.
+ *
+ * Todo muere con la regla de movimiento reducido de abajo y termina en el estado normal del
+ * elemento: sin animacion se ve igual.
+ */
+@keyframes entrar {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes pulso-vivo {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+@keyframes crecer-x {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes crecer-y {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.entrar {
+  animation: entrar 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.pulso-vivo {
+  animation: pulso-vivo 1.8s ease-in-out infinite;
+}
+.crecer-x,
+.crecer-y {
+  transform-box: fill-box;
+  animation: crecer-x 700ms cubic-bezier(0.16, 1, 0.3, 1) var(--retraso, 0ms) both;
+}
+.crecer-x {
+  transform-origin: left center;
+}
+.crecer-y {
+  transform-origin: center bottom;
+  animation-name: crecer-y;
+}
+
+/*
+ * Trazo de ECG en bucle, compartido por el hero de la portada y la pantalla de acceso. Con `pathLength="100"`: se dibuja (100 -> 0), se sostiene y se borra desde el inicio
+ * (0 -> -100), como el barrido de un monitor. El hueco del patron (100) oculta el trazo en los
+ * dos extremos, asi que el salto del bucle no se ve. El valor base (0) es el trazo completo:
+ * con movimiento reducido, la regla de `globals.css` quita la animacion y queda quieto.
+ */
+@keyframes trazo-continuo {
+  0% {
+    stroke-dashoffset: 100;
+  }
+  55%,
+  75% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -100;
+  }
+}
+
+.trazo-ecg-continuo {
+  stroke-dasharray: 100 100;
+  stroke-dashoffset: 0;
+  animation: trazo-continuo 4.4s ease-in-out infinite;
 }
 
 /* WCAG 2.3.3 — Movimiento reducido. Gana a cualquier utilidad de transicion o animacion. */

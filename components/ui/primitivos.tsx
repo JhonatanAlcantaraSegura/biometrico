@@ -24,7 +24,7 @@ export function cx(...partes: (string | false | null | undefined)[]): string {
   return partes.filter(Boolean).join(' ');
 }
 
-export type Tono = 'peligro' | 'aviso' | 'exito' | 'info' | 'atencion' | 'neutro' | 'primario';
+export type Tono = 'peligro' | 'aviso' | 'exito' | 'info' | 'atencion' | 'neutro' | 'primario' | 'contorno';
 
 /* ------------------------------------------------------------------ Tarjeta */
 
@@ -97,6 +97,7 @@ const TONO_INSIGNIA: Record<Tono, string> = {
   atencion: 'bg-atencion-suave text-atencion',
   neutro: 'bg-superficie text-texto-suave',
   primario: 'bg-superficie text-texto',
+  contorno: 'bg-fondo text-texto-suave',
 };
 
 export function Insignia({ tono = 'neutro', children }: { tono?: Tono; children: ReactNode }) {
@@ -116,17 +117,28 @@ export function Insignia({ tono = 'neutro', children }: { tono?: Tono; children:
 
 /**
  * Botones de `DESIGN.md`: rectangulo de 4 px, peso 500, sin sombra, y el hover solo cambia
- * de color. El Azul Electrico es exclusivo de la accion primaria; la secundaria es Ceniza
- * Clara con texto Carbon.
+ * de color. Ningun boton es rojo ni un bloque de color de estado:
+ *
+ * - `primario` / `info`: Azul Electrico, la accion principal de su bloque (una por bloque).
+ * - `peligro`: Carbon macizo. Pesa lo que una accion destructiva debe pesar sin gritar en
+ *   rojo; el motivo obligatorio y el texto del boton dicen el riesgo.
+ * - `exito` / `aviso` / `atencion`: Ceniza Clara con el TEXTO del tono. Una pista de estado,
+ *   no un bloque de color que compita con la accion principal.
+ * - `neutro`: Ceniza Clara con texto Carbon.
+ * - `contorno`: blanco con texto Carbon, para acciones que viven sobre una fila Ceniza: un
+ *   boton Ceniza sobre fondo Ceniza se lee como texto suelto.
+ *
+ * Contraste medido sobre `#f4f4f4`: aviso 6.45, exito 5.17, atencion 6.46 (WCAG AA).
  */
 const TONO_BOTON: Record<Tono, string> = {
-  peligro: 'bg-peligro text-primario-texto hover:bg-texto',
-  aviso: 'bg-aviso-suave text-aviso hover:bg-aviso hover:text-primario-texto',
-  exito: 'bg-exito-suave text-exito hover:bg-exito hover:text-primario-texto',
+  peligro: 'bg-texto text-primario-texto hover:bg-texto-suave',
+  aviso: 'bg-superficie text-aviso hover:bg-borde-suave',
+  exito: 'bg-superficie text-exito hover:bg-borde-suave',
   info: 'bg-primario text-primario-texto hover:bg-primario-oscuro',
-  atencion: 'bg-atencion-suave text-atencion hover:bg-atencion hover:text-primario-texto',
+  atencion: 'bg-superficie text-atencion hover:bg-borde-suave',
   neutro: 'bg-superficie text-texto hover:bg-borde-suave',
   primario: 'bg-primario text-primario-texto hover:bg-primario-oscuro',
+  contorno: 'bg-fondo text-texto hover:bg-borde-suave',
 };
 
 export function Boton({
@@ -347,6 +359,8 @@ const TEXTO_ESTADO: Record<EncounterState, string> = {
 export function InsigniaEstadoClinico({ estado }: { estado: EncounterState }) {
   return (
     <Insignia tono={estado === 'codigo_activo' ? 'peligro' : 'primario'}>
+      {/* Codigo activo esta pasando AHORA: el punto late (se apaga con movimiento reducido). */}
+      {estado === 'codigo_activo' && <span aria-hidden className="pulso-vivo size-1.5 rounded-full bg-peligro" />}
       {TEXTO_ESTADO[estado]}
     </Insignia>
   );

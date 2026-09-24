@@ -290,7 +290,7 @@ export default function SitioPublico() {
 
         {/*
           Trazo de ECG justo arriba del ojo: el mismo de la pantalla de acceso (`app/acceso`), en
-          bucle continuo (`.trazo-ecg-continuo` en `app/tema-publico.css`). Decorativo.
+          bucle continuo (`.trazo-ecg-continuo` en `app/globals.css`). Decorativo.
           Se ancla a la FOTO, no al texto. Con la foto a lo ancho (`object-cover`, pantalla de 3:2
           o mas ancha), su ancho es el de la seccion y queda centrada en vertical, asi que un punto
           de la foto en (x, y) cae en `left: x %` y `top: 50 % + (y - 0.5) * 100vw / 1.5`. El borde

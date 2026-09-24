@@ -119,7 +119,7 @@ export default function IdentidadPage() {
                     </p>
                   </div>
                   <Boton
-                    tono="exito"
+                    tono="contorno"
                     disabled={!canReconcile || !reason.trim()}
                     title={!canReconcile ? "Rol sin permiso de conciliacion (RF-22)" : !reason.trim() ? "Escriba el motivo de la corroboracion" : undefined}
                     onClick={() => actions.confirmIdentity(encounter.encounter_id, cand.patient_id, reason)}

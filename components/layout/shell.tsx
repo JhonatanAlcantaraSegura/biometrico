@@ -179,12 +179,14 @@ export function Shell({ children }: { children: React.ReactNode }) {
       )}
 
       {/*
-        Barra lateral a toda la altura, con la marca arriba. En escritorio es una columna fija
-        de la rejilla (`sticky` + `h-dvh`), asi que el blanco llega siempre hasta abajo.
+        Barra lateral Carbon a toda la altura, con la marca arriba. Es la pieza oscura del panel,
+        como el hero y el cierre de la portada; el trabajo vive en claro a la derecha. El texto
+        sigue `IA_BRAIN/jerarquia-de-color.md`: blanco pleno para lo activo, 80 % para el resto
+        (nunca menos en texto chico). En escritorio es una columna fija (`sticky` + `h-dvh`).
       */}
       <aside
         className={cx(
-          'no-imprimir fixed inset-y-0 left-0 z-50 w-[17rem] flex-col bg-fondo lg:sticky lg:top-0 lg:z-auto lg:flex lg:h-dvh',
+          'no-imprimir fixed inset-y-0 left-0 z-50 w-[17rem] flex-col bg-texto text-primario-texto lg:sticky lg:top-0 lg:z-auto lg:flex lg:h-dvh',
           menuAbierto ? 'flex' : 'hidden',
         )}
       >
@@ -192,12 +194,12 @@ export function Shell({ children }: { children: React.ReactNode }) {
             propuesta y quien esta con un paciente enfrente no debe salirse del sistema
             por tocar el encabezado. */}
         <Link href="/tablero" className="flex h-16 shrink-0 items-center gap-3 px-6">
-          <Activity className="size-5 shrink-0 text-texto" aria-hidden />
+          <Activity className="size-5 shrink-0" aria-hidden />
           <span className="leading-tight">
-            <span translate="no" className="block text-base font-medium text-texto">
+            <span translate="no" className="block text-base font-medium">
               {INSTITUCION.marca}
             </span>
-            <span className="block text-xs text-texto-suave">
+            <span className="block text-xs text-primario-texto/80">
               {INSTITUCION.sedeCodigo} · {INSTITUCION.sedeDependencia}
             </span>
           </span>
@@ -217,7 +219,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
                     onClick={() => alternarGrupo(g.grupo)}
                     aria-expanded={abierto}
                     aria-controls={idLista}
-                    className="flex min-h-control w-full items-center gap-2 rounded px-3 text-xs font-medium text-texto-suave transition-colors hover:bg-superficie hover:text-texto"
+                    className="flex min-h-control w-full items-center gap-2 rounded px-3 text-xs font-medium text-primario-texto/80 transition-colors hover:bg-primario-texto/10 hover:text-primario-texto"
                   >
                     <ChevronDown
                       className={cx('size-4 shrink-0 transition-transform', abierto ? '' : '-rotate-90')}
@@ -228,7 +230,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
                     <span className="ml-auto text-xs font-medium tabular-nums">{g.rutas.length}</span>
                   </button>
                 ) : (
-                  <p className="px-3 pb-2 text-xs font-medium text-texto-suave">{g.grupo}</p>
+                  <p className="px-3 pb-2 text-xs font-medium text-primario-texto/80">{g.grupo}</p>
                 )}
 
                 <ul id={idLista} className={cx('space-y-0.5', abierto ? 'block' : 'hidden')}>
@@ -244,11 +246,13 @@ export function Shell({ children }: { children: React.ReactNode }) {
                           href={m.patron}
                           aria-current={activo ? 'page' : undefined}
                           className={cx(
-                            'flex min-h-control items-center gap-3 rounded px-3 text-sm transition-colors',
+                            'relative flex min-h-control items-center gap-3 rounded px-3 text-sm transition-colors',
                             plegable ? 'ml-3' : '',
+                            // Activo: velo blanco al 10 %, texto pleno y un filete blanco a la
+                            // izquierda. El filete y `aria-current` lo dicen sin depender del fondo.
                             activo
-                              ? 'bg-superficie font-medium text-texto'
-                              : 'text-texto-suave hover:bg-superficie hover:text-texto',
+                              ? 'bg-primario-texto/10 font-medium text-primario-texto before:absolute before:inset-y-2.5 before:left-0 before:w-0.5 before:rounded-full before:bg-primario-texto'
+                              : 'text-primario-texto/80 hover:bg-primario-texto/10 hover:text-primario-texto',
                           )}
                         >
                           <Icono className="size-4 shrink-0" aria-hidden />
@@ -268,7 +272,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
           pantallas se ven; que un rol no vea el resumen clinico no es un error de la
           demostracion, es la seccion 2 de la ERS aplicada.
         */}
-        <p className="shrink-0 px-6 pb-6 text-xs leading-comodo text-texto-suave">
+        <p className="shrink-0 border-t border-primario-texto/10 px-6 pt-4 pb-6 text-xs leading-comodo text-primario-texto/80">
           El menu se filtra por perfil segun la matriz de la ERS. Esto es presentacion: en el sistema
           real la garantia de acceso vive en el servidor (RF-22).
         </p>
@@ -324,7 +328,10 @@ export function Shell({ children }: { children: React.ReactNode }) {
         </header>
 
         <main id="contenido" className="min-w-0 flex-1 px-4 pt-8 pb-12 lg:px-10 lg:pt-10">
-          <div className="mx-auto flex max-w-7xl flex-col gap-6">{children}</div>
+          {/* `key` por ruta: cada pantalla nueva entra con `.entrar`, la misma se queda quieta. */}
+          <div key={ruta} className="entrar mx-auto flex max-w-7xl flex-col gap-6">
+            {children}
+          </div>
         </main>
 
         <footer className="no-imprimir px-4 pb-8 text-xs text-texto-suave lg:px-10">
@@ -425,7 +432,7 @@ function BarraIntegraciones({ salud }: { salud: IntegrationHealth }) {
               id={`int-${clave}`}
               value={valor}
               onChange={(e) => actions.setIntegration(clave, e.target.value as IntegrationStatus)}
-              className="min-h-0 cursor-pointer appearance-none self-stretch rounded-r border-0 bg-transparent pr-6 pl-1 text-xs text-texto-suave"
+              className="sin-flecha min-h-0 cursor-pointer appearance-none self-stretch rounded-r border-0 bg-transparent pr-6 pl-1 text-xs text-texto-suave"
             >
               {ESTADOS.map((s) => (
                 <option key={s} value={s}>

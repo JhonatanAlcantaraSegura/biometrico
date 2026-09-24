@@ -15,6 +15,7 @@
  * resultado: son hipotesis de linea base y este prototipo no puede medirlas.
  */
 import { Encabezado, Indicador, Requisito, Tarjeta } from '@/components/ui/primitivos';
+import { BarraDePartes, BarrasHorizontales, type DatoBarra } from '@/components/dominio/graficas';
 import { useAppState, type AppState } from '@/lib/estado/tienda';
 import { METAS } from '@/lib/datos/institucion';
 import { minutesBetween } from '@/lib/tiempo';
@@ -44,6 +45,30 @@ function metricasClinicas(s: AppState) {
   return { llegadaAEcg, ecgSinDocumentar, horaCeroAActivacion };
 }
 
+/**
+ * Tiempos por caso para las graficas: el valor es `null` cuando falta el dato (se escribe
+ * "sin dato", no se dibuja como cero). Cubre TODOS los casos del turno, no solo los activos.
+ */
+function tiemposPorCaso(s: AppState) {
+  const ecg: DatoBarra[] = [];
+  const activacion: DatoBarra[] = [];
+  for (const c of s.cases) {
+    const enc = s.encounters.find((e) => e.encounter_id === c.encounter_id);
+    if (!enc) continue;
+    const paciente = s.patients.find((p) => p.patient_id === enc.patient_id);
+    const etiqueta = paciente ? paciente.display_name : 'Sin identificar';
+    const adquirido = c.milestones.find((m) => m.type === 'ecg_adquirido' && m.status === 'realizado')?.occurred_at;
+    ecg.push({ clave: c.case_id, etiqueta, detalle: enc.temporary_id, valor: adquirido ? minutesBetween(enc.arrival_at, adquirido) : null });
+    activacion.push({
+      clave: c.case_id,
+      etiqueta,
+      detalle: enc.temporary_id,
+      valor: c.diagnosis_at && c.activated_at ? minutesBetween(c.diagnosis_at, c.activated_at) : null,
+    });
+  }
+  return { ecg, activacion };
+}
+
 /** Las metricas de identificacion se reportan SEPARADAS de las clinicas. */
 function metricasIdentidad(s: AppState) {
   const total = s.evidence.length;
@@ -64,6 +89,8 @@ export default function Calidad() {
   const identidad = metricasIdentidad(state);
   const medianaEcg = mediana(clinicas.llegadaAEcg);
   const medianaActivacion = mediana(clinicas.horaCeroAActivacion);
+  const porCaso = tiemposPorCaso(state);
+  const resultados = (...r: string[]) => state.evidence.filter((e) => r.includes(e.result)).length;
 
   return (
     <>
@@ -103,6 +130,24 @@ export default function Calidad() {
         </div>
       </Tarjeta>
 
+      <div className="grid gap-6 xl:grid-cols-2">
+        <Tarjeta titulo="Llegada a ECG por caso" ayuda="Todos los casos del turno. Sin ECG documentado se escribe, no se imputa.">
+          <BarrasHorizontales
+            datos={porCaso.ecg}
+            meta={METAS.ecgMinutos}
+            unidad="min"
+            descripcion={`Minutos de llegada a ECG por caso frente a la meta de ${METAS.ecgMinutos} minutos`}
+          />
+        </Tarjeta>
+        <Tarjeta titulo="Hora cero a activacion por caso" ayuda="Intervalo propio: no se suma al de interpretacion ni al de tratamiento.">
+          <BarrasHorizontales
+            datos={porCaso.activacion}
+            unidad="min"
+            descripcion="Minutos de la hora cero clinica a la activacion del codigo, por caso"
+          />
+        </Tarjeta>
+      </div>
+
       <Tarjeta
         titulo="Indicadores de identificacion"
         ayuda="Atender sin biometria nunca es un fallo del proceso: es una de las rutas previstas."
@@ -128,6 +173,17 @@ export default function Calidad() {
             nota="Ruta prevista, no incidencia"
           />
         </div>
+
+        <h3 className="mt-8 mb-4 text-sm font-medium text-texto">Resultados de los intentos de identificacion</h3>
+        <BarraDePartes
+          descripcion="Intentos de identificacion del turno por resultado"
+          segmentos={[
+            { clave: 'confirmado', etiqueta: 'Confirmado', valor: resultados('confirmado'), relleno: 'bueno' },
+            { clave: 'sin_confirmar', etiqueta: 'Sin confirmar', valor: resultados('provisional', 'baja_confianza'), relleno: 'aviso' },
+            { clave: 'ambiguo', etiqueta: 'Ambiguo (bloquea apertura)', valor: resultados('coincidencias_multiples'), relleno: 'critico' },
+            { clave: 'sin_resultado', etiqueta: 'Sin resultado', valor: resultados('sin_coincidencia', 'proveedor_no_disponible'), relleno: 'neutro' },
+          ]}
+        />
       </Tarjeta>
 
       <Tarjeta
