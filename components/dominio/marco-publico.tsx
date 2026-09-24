@@ -164,31 +164,59 @@ export function AvisoPrototipo({ className, children }: { className?: string; ch
   );
 }
 
+/** Rotulo de columna del pie: etiqueta en tono suave y un filete, como el del hero. */
+function RotuloPie({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="flex items-center gap-3 text-xs font-medium tracking-wide text-texto-suave uppercase">
+      {children}
+      <span aria-hidden className="h-px w-8 bg-texto/25" />
+    </p>
+  );
+}
+
+const claseEnlacePie =
+  'underline decoration-texto/40 underline-offset-2 transition-colors hover:text-texto hover:decoration-texto';
+
+/**
+ * Pie sobre la banda clara (`bg-lienzo-sutil`) con la jerarquia por tono de
+ * `IA_BRAIN/jerarquia-de-color.md`: en cada columna un solo dato en pleno (marca, sede, version)
+ * y el resto en tono suave. Los pares Peltre sobre banda y sobre `bg-fondo` (recuadros de las
+ * rutas) ya los mide `npm run contraste`. El unico bloque oscuro es el cuadro de la marca.
+ */
 export function PieDelSitio() {
   return (
-    <footer className="bg-lienzo-sutil">
-      <div className="mx-auto grid max-w-[86rem] gap-10 px-4 py-16 text-sm text-texto-suave sm:px-6 md:grid-cols-12">
+    <footer className="bg-lienzo-sutil text-sm text-texto-suave">
+      <div className="mx-auto grid max-w-[86rem] gap-12 px-4 pt-16 pb-12 sm:px-6 sm:pt-20 md:grid-cols-12">
         <div className="md:col-span-5">
-          <p className="flex items-center gap-2.5 text-base font-medium text-texto">
-            <Activity className="size-5" aria-hidden />
-            <span translate="no">{INSTITUCION.marca}</span>
+          <p className="flex items-center gap-3">
+            <span aria-hidden className="grid size-10 place-items-center rounded-lg bg-texto text-primario-texto">
+              <Activity className="size-5" strokeWidth={2} />
+            </span>
+            <span translate="no" className="text-lg font-medium text-texto">
+              {INSTITUCION.marca}
+            </span>
           </p>
-          <p className="mt-3 max-w-sm">{INSTITUCION.lema}.</p>
+          <p className="mt-5 max-w-sm leading-relajado">{INSTITUCION.lema}.</p>
         </div>
+
         <div className="md:col-span-4">
-          <p className="font-medium text-texto">
+          <RotuloPie>Sede</RotuloPie>
+          <p className="mt-4 text-base font-medium text-texto">
             {INSTITUCION.sedeNombre}, {INSTITUCION.sedeDependencia}
           </p>
-          <p className="mt-1">{INSTITUCION.sedeNota}</p>
+          <p className="mt-2 max-w-sm leading-relajado">{INSTITUCION.sedeNota}</p>
         </div>
+
         <div className="md:col-span-3">
-          <p className="font-medium text-texto">Documento fuente</p>
-          <p className="mt-1">{INSTITUCION.documentoFuente}</p>
-          <p className="mt-3">
-            <code className="text-xs text-texto">docs/ERS_Biometria_Codigo_Infarto.md</code>
-            <br />
-            <code className="text-xs text-texto">docs/02-TRAZABILIDAD.md</code>
-          </p>
+          <RotuloPie>Documento fuente</RotuloPie>
+          <p className="mt-4 text-base font-medium text-texto">{INSTITUCION.documentoFuente}</p>
+          <ul className="mt-4 flex flex-col items-start gap-2">
+            {['docs/ERS_Biometria_Codigo_Infarto.md', 'docs/02-TRAZABILIDAD.md'].map((ruta) => (
+              <li key={ruta}>
+                <code className="rounded bg-fondo px-2 py-1 text-xs break-all">{ruta}</code>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
 
@@ -196,28 +224,26 @@ export function PieDelSitio() {
         Creditos de las fotografias de la portada (`public/imagenes`), tomados del origen de
         cada descarga. Mantener al dia si se cambia una foto.
       */}
-      <div className="mx-auto max-w-[86rem] px-4 pb-12 text-xs leading-llano text-texto-suave sm:px-6">
-        <p>
-          Fotografias: biometria de retina, rawpixel.com / Wit (Rawpixel Ltd.). Ambulancia,{' '}
-          <a
-            href="https://unsplash.com/photos/vGu08RYjO-s"
-            className="underline underline-offset-2 transition-colors hover:text-texto"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Camilo Jimenez en Unsplash
-          </a>
-          . Pantallas clinicas y personal clinico,{' '}
-          <a
-            href="https://www.magnific.com/"
-            className="underline underline-offset-2 transition-colors hover:text-texto"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            magnific.com
-          </a>
-          .
-        </p>
+      <div className="mx-auto max-w-[86rem] px-4 pb-12 sm:px-6">
+        <div className="flex flex-col gap-4 border-t border-texto/10 pt-8 text-xs leading-llano md:flex-row md:items-start md:justify-between md:gap-12">
+          <p className="max-w-3xl">
+            Fotografias: biometria de retina, rawpixel.com / Wit (Rawpixel Ltd.). Ambulancia,{' '}
+            <a
+              href="https://unsplash.com/photos/vGu08RYjO-s"
+              className={claseEnlacePie}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Camilo Jimenez en Unsplash
+            </a>
+            . Pantallas clinicas y personal clinico,{' '}
+            <a href="https://www.magnific.com/" className={claseEnlacePie} rel="noopener noreferrer" target="_blank">
+              magnific.com
+            </a>
+            .
+          </p>
+          <p className="shrink-0 font-medium text-texto">Prototipo de propuesta, no producto.</p>
+        </div>
       </div>
     </footer>
   );

@@ -14,6 +14,11 @@
  */
 
 .tema-publico {
+  /* Blanco Carbon: casi blanco con el subtono azul del Carbon. Ver `PUBLICO` en `lib/estilos/paleta.ts`. */
+  --color-fondo: #f8f9fb;
+  --color-lienzo: #f8f9fb;
+  /* Banda con el mismo subtono, para que las tarjetas `bg-fondo` se separen de ella. */
+  --color-lienzo-sutil: #e8ebef;
   background-color: var(--color-lienzo);
   color: var(--color-texto);
 }
@@ -35,8 +40,8 @@
  */
 .revelar {
   transition:
-    opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity var(--duracion, 0.9s) cubic-bezier(0.16, 1, 0.3, 1),
+    transform var(--duracion, 0.9s) cubic-bezier(0.16, 1, 0.3, 1);
   transition-delay: var(--retraso, 0ms);
 }
 
@@ -60,4 +65,30 @@
 
 .asentar {
   animation: asentar 2.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/*
+ * Trazo de ECG del hero: el mismo dibujo que `.trazo-ecg` de la pantalla de acceso, pero en
+ * bucle. Con `pathLength="100"`: se dibuja (100 -> 0), se sostiene y se borra desde el inicio
+ * (0 -> -100), como el barrido de un monitor. El hueco del patron (100) oculta el trazo en los
+ * dos extremos, asi que el salto del bucle no se ve. El valor base (0) es el trazo completo:
+ * con movimiento reducido, la regla de `globals.css` quita la animacion y queda quieto.
+ */
+@keyframes trazo-continuo {
+  0% {
+    stroke-dashoffset: 100;
+  }
+  55%,
+  75% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -100;
+  }
+}
+
+.trazo-ecg-continuo {
+  stroke-dasharray: 100 100;
+  stroke-dashoffset: 0;
+  animation: trazo-continuo 4.4s ease-in-out infinite;
 }
