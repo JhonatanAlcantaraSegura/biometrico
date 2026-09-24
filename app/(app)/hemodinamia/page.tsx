@@ -55,7 +55,7 @@ export default function HemodinamiaPage() {
             key={c.case_id}
             titulo={`${encounter.temporary_id} · ${c.diagnosis ?? "sin diagnostico"}`}
             ayuda={`Ruta indicada por el medico: ${c.route.replace(/_/g, " ")}`}
-            acciones={<Insignia tono="peligro">Codigo activo {localTime(c.activated_at)}</Insignia>}
+            acciones={<Insignia tono="peligro"><span aria-hidden className="pulso-vivo size-1.5 rounded-full bg-peligro" />Codigo activo {localTime(c.activated_at)}</Insignia>}
           >
             <div className="space-y-4">
               {/* Datos minimos: el equipo receptor no necesita el expediente completo. */}

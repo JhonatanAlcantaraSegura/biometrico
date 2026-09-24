@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -32,7 +31,6 @@ import {
 } from '@/lib/estado/sesion';
 import { actions } from '@/lib/estado/tienda';
 import { Avatar, Banda, Campo, claseCampo, cx } from '@/components/ui/primitivos';
-import retinaBiometrica from '@/public/imagenes/hero-biometria-retina.jpg';
 
 /**
  * Pantalla de acceso con credenciales, adaptada del login de URIS-CITAS (DIF).
@@ -322,23 +320,16 @@ export default function Acceso() {
  */
 function PanelMarca() {
   return (
-    // La misma fotografia del hero de la portada: quien entra al sistema viene de ahi, y la
-    // pantalla de acceso debe sentirse parte del mismo producto. El velo Carbon garantiza el
-    // contraste del texto blanco.
+    // Fondo Carbon liso, como el cierre de la portada. La jerarquia del texto sigue
+    // `IA_BRAIN/jerarquia-de-color.md`: blanco pleno para lo que importa, 80 % para el apoyo y
+    // 60 % solo en la parte de contexto del titular (texto grande).
     <aside className="relative isolate hidden overflow-hidden bg-texto text-primario-texto lg:flex lg:flex-col lg:justify-between lg:p-12">
-      <Image
-        src={retinaBiometrica}
-        alt=""
-        fill
-        placeholder="blur"
-        sizes="42vw"
-        className="-z-20 object-cover object-[70%_center]"
-      />
-      <div aria-hidden className="absolute inset-0 -z-10 bg-texto/70" />
       <Link href="/" className="relative z-10 flex items-center gap-3">
         <Activity className="size-6" aria-hidden />
         <span className="leading-tight">
-          <span className="block text-base font-medium">{INSTITUCION.marca}</span>
+          <span translate="no" className="block text-base font-medium">
+            {INSTITUCION.marca}
+          </span>
           <span className="block text-sm text-primario-texto/80">
             {INSTITUCION.sedeNombre} · {INSTITUCION.sedeDependencia}
           </span>
@@ -346,10 +337,29 @@ function PanelMarca() {
       </Link>
 
       <div className="relative z-10">
+        {/*
+          Trazo de ECG en bucle, el mismo del hero de la portada (`.trazo-ecg-continuo`): se
+          dibuja, se sostiene y se borra como el barrido de un monitor. Decorativo; con
+          movimiento reducido queda quieto y completo.
+        */}
+        <svg aria-hidden viewBox="0 0 400 80" fill="none" className="mb-10 w-full max-w-md text-primario-texto">
+          <path
+            className="trazo-ecg-continuo"
+            pathLength={100}
+            d="M0 40 H120 L135 40 L145 18 L155 62 L165 8 L178 70 L188 40 H260 L272 30 L284 40 H400"
+            stroke="currentColor"
+            strokeOpacity={0.35}
+            strokeWidth={2.5}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+
         <p className="display max-w-md text-4xl">
-          Identificar a la persona no puede retrasar la atencion del infarto.
+          <span className="text-primario-texto/60">Identificar a la persona</span> no puede retrasar la
+          atencion del infarto.
         </p>
-        <ul className="mt-8 space-y-4 text-sm text-primario-texto/90">
+        <ul className="mt-8 space-y-4 border-l border-primario-texto/30 pl-5 text-sm text-primario-texto/80">
           <li className="flex items-start gap-3">
             <Timer className="mt-0.5 size-5 shrink-0" aria-hidden />
             ECG en menos de {METAS.ecgMinutos} minutos, con o sin identidad confirmada.
@@ -365,25 +375,7 @@ function PanelMarca() {
         </ul>
       </div>
 
-      {/* Trazo de ECG decorativo: se dibuja una vez y se queda quieto. */}
-      <svg
-        aria-hidden
-        viewBox="0 0 400 80"
-        className="pointer-events-none absolute inset-x-0 top-1/3 h-24 w-full text-primario-texto"
-        strokeOpacity={0.22}
-        fill="none"
-      >
-        <path
-          className="trazo-ecg"
-          d="M0 40 H120 L135 40 L145 18 L155 62 L165 8 L178 70 L188 40 H260 L272 30 L284 40 H400"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-
-      <p className="relative z-10 text-xs text-primario-texto/75">{INSTITUCION.sedeNota}</p>
+      <p className="relative z-10 text-xs text-primario-texto/80">{INSTITUCION.sedeNota}</p>
     </aside>
   );
 }

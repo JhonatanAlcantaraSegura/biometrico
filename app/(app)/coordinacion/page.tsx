@@ -8,6 +8,7 @@
 import Link from "next/link";
 import { Insignia, Boton, Encabezado, Tarjeta, Vacio } from "@/components/ui/primitivos";
 import { Cronometro } from "@/components/dominio/relojes";
+import { RedDeAtencion } from "@/components/dominio/mapas";
 import { actions, alertsOfCase, encounterById, resourcesOfCase, useAppState } from "@/lib/estado/tienda";
 import { localTime, minutesBetween } from "@/lib/tiempo";
 
@@ -93,6 +94,9 @@ export default function CoordinacionPage() {
                     })}
                   </ul>
                 )}
+
+                <h3 className="pt-2 text-xs font-medium text-texto-suave">Red de atencion</h3>
+                <RedDeAtencion recursos={resources} />
 
                 <h3 className="pt-2 text-xs font-medium text-texto-suave">Recursos</h3>
                 {resources.length === 0 ? (

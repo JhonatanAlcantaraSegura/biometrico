@@ -33,14 +33,14 @@ const SOURCES: Array<{ value: Encounter["arrival_source"]; label: string }> = [
 const PRIORITIES: TriagePriority[] = ["rojo", "naranja", "amarillo", "verde"];
 
 /**
- * Prioridad elegida: se rellena con el color clinico de su insignia (mismo mapa que
- * `InsigniaTriage`). La palabra sigue escrita en el boton; el color acompaña.
+ * Punto de color de cada prioridad (mismo mapa que `InsigniaTriage`). La eleccion se marca
+ * con relleno Carbon, no con un bloque del color: la palabra y el punto dicen la prioridad.
  */
-const RELLENO_PRIORIDAD: Record<TriagePriority, string> = {
-  rojo: "bg-peligro text-primario-texto",
-  naranja: "bg-aviso text-primario-texto",
-  amarillo: "bg-atencion text-primario-texto",
-  verde: "bg-exito text-primario-texto",
+const PUNTO_PRIORIDAD: Record<TriagePriority, string> = {
+  rojo: "bg-peligro",
+  naranja: "bg-aviso",
+  amarillo: "bg-atencion",
+  verde: "bg-exito",
 };
 
 export default function TriagePage() {
@@ -89,10 +89,11 @@ export default function TriagePage() {
                       type="button"
                       onClick={() => setPriority(p)}
                       aria-pressed={priority === p}
-                      className={`rounded px-5 py-2 text-sm font-medium capitalize transition-colors ${
-                        priority === p ? RELLENO_PRIORIDAD[p] : "bg-superficie text-texto hover:bg-borde-suave"
+                      className={`inline-flex items-center gap-2 rounded px-5 py-2 text-sm font-medium capitalize transition-colors ${
+                        priority === p ? "bg-texto text-primario-texto" : "bg-superficie text-texto hover:bg-borde-suave"
                       }`}
                     >
+                      <span aria-hidden className={`size-2 rounded-full ${PUNTO_PRIORIDAD[p]}`} />
                       {p}
                     </button>
                   ))}
@@ -108,7 +109,7 @@ export default function TriagePage() {
                       onClick={() => toggleSymptom(s)}
                       aria-pressed={symptoms.includes(s)}
                       className={`rounded px-4 py-2 text-sm transition-colors ${
-                        symptoms.includes(s) ? "bg-peligro text-primario-texto" : "bg-superficie text-texto hover:bg-borde-suave"
+                        symptoms.includes(s) ? "bg-texto text-primario-texto" : "bg-superficie text-texto hover:bg-borde-suave"
                       }`}
                     >
                       {s}
@@ -141,7 +142,7 @@ export default function TriagePage() {
               </Campo>
 
               <div className="flex flex-wrap items-center gap-3">
-                <Boton tono="peligro" onClick={submit}>
+                <Boton tono="primario" onClick={submit}>
                   Crear episodio y arrancar reloj
                 </Boton>
                 <span className="text-xs text-texto-suave">

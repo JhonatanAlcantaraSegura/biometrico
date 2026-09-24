@@ -12,7 +12,7 @@
  * en menos de dos segundos", aquí se puede preguntar: ¿medido con qué dispositivo, con qué
  * umbral, con cuántos registros en la galería, y contando qué de las cuatro etapas?
  */
-import { Fingerprint, Gauge, TriangleAlert, Wrench } from 'lucide-react';
+import { Eye, Gauge, ScanFace, TriangleAlert, Wrench } from 'lucide-react';
 import {
   ESCENARIOS,
   NOMBRE_ESTADO_DISPOSITIVO,
@@ -41,14 +41,17 @@ import {
   claseCampo,
 } from '@/components/ui/primitivos';
 import { localDateTime } from '@/lib/tiempo';
+import { BarrasHorizontales } from '@/components/dominio/graficas';
+import { PlanoUrgencias } from '@/components/dominio/mapas';
 
 const ESTADOS: EstadoDispositivo[] = ['en_linea', 'degradado', 'fuera_de_linea', 'sin_calibrar'];
 
-const TONO_ESTADO: Record<EstadoDispositivo, 'exito' | 'aviso' | 'peligro'> = {
-  en_linea: 'exito',
-  degradado: 'aviso',
-  fuera_de_linea: 'peligro',
-  sin_calibrar: 'aviso',
+/** Punto de color del estado del dispositivo (mismos rellenos que el plano). */
+const PUNTO_ESTADO: Record<EstadoDispositivo, string> = {
+  en_linea: 'bg-grafica-bueno',
+  degradado: 'bg-grafica-aviso',
+  sin_calibrar: 'bg-grafica-critico',
+  fuera_de_linea: 'bg-grafica-critico',
 };
 
 const ETAPAS: EtapaMedicion[] = ['captura_ms', 'comparacion_ms', 'confirmacion_humana_ms', 'consulta_ece_ms'];
@@ -152,6 +155,8 @@ export default function ConsolaBiometrica() {
         ayuda="Cuatro estaciones de escritorio y una de alta concurrencia, según el inventario de la presentación. Modelo y serie son marcadores de posición: no hay compra ni prueba de compatibilidad."
         acciones={<Requisito ids={['RF-31', 'CA-13']} />}
       >
+        <PlanoUrgencias puntos={puntos} />
+        <h3 className="mt-8 mb-3 text-sm font-medium text-texto">Inventario y estado de cada punto</h3>
         <ul className="space-y-3">
           {puntos.map((p) => (
             <li key={p.punto_id} className="rounded bg-superficie p-3">
@@ -174,8 +179,9 @@ export default function ConsolaBiometrica() {
                   </p>
                 </div>
 
+                {/* Un solo indicador de estado: el punto de color y el selector, que ya lo nombra. */}
                 <div className="flex flex-wrap items-center gap-2">
-                  <Insignia tono={TONO_ESTADO[p.estado]}>{NOMBRE_ESTADO_DISPOSITIVO[p.estado]}</Insignia>
+                  <span aria-hidden className={`size-2.5 shrink-0 rounded-full ${PUNTO_ESTADO[p.estado]}`} />
                   <label className="sr-only" htmlFor={`estado-${p.punto_id}`}>
                     Estado simulado de {p.nombre}
                   </label>
@@ -183,7 +189,7 @@ export default function ConsolaBiometrica() {
                     id={`estado-${p.punto_id}`}
                     value={p.estado}
                     onChange={(e) => actions.setEstadoDispositivo(p.punto_id, e.target.value as EstadoDispositivo)}
-                    className="min-h-control rounded-md border border-borde bg-fondo px-2 text-xs text-texto"
+                    className="min-h-control rounded border border-borde bg-fondo pl-3 text-sm text-texto"
                   >
                     {ESTADOS.map((s) => (
                       <option key={s} value={s}>
@@ -191,7 +197,7 @@ export default function ConsolaBiometrica() {
                       </option>
                     ))}
                   </select>
-                  <Boton onClick={() => actions.calibrarDispositivo(p.punto_id)}>
+                  <Boton tono="contorno" onClick={() => actions.calibrarDispositivo(p.punto_id)}>
                     <Wrench className="size-4" aria-hidden />
                     Calibrar
                   </Boton>
@@ -223,7 +229,7 @@ export default function ConsolaBiometrica() {
                     onChange={(e) => actions.setUmbral(u.clave, Number(e.target.value))}
                     className="h-2 flex-1"
                   />
-                  <span className="w-12 shrink-0 text-right font-mono text-sm tabular-nums text-texto">
+                  <span className="w-12 shrink-0 text-right text-sm font-medium tabular-nums text-texto">
                     {umbrales[u.clave].toFixed(2)}
                   </span>
                 </div>
@@ -265,7 +271,11 @@ export default function ConsolaBiometrica() {
               <li key={p.modalidad} className="rounded bg-superficie p-3">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <h3 className="text-sm font-medium text-texto">
-                    <Fingerprint className="mr-1.5 inline size-4 text-texto" aria-hidden />
+                    {p.modalidad === 'iris' ? (
+                      <Eye className="mr-1.5 inline size-4 text-texto" aria-hidden />
+                    ) : (
+                      <ScanFace className="mr-1.5 inline size-4 text-texto" aria-hidden />
+                    )}
                     {NOMBRE_MODALIDAD[p.modalidad]}
                   </h3>
                   <label className="flex items-center gap-2 text-sm text-texto">
@@ -324,6 +334,24 @@ export default function ConsolaBiometrica() {
             Sin intentos en este turno. Haga una captura desde la pestaña Identidad de cualquier episodio.
           </Vacio>
         ) : (
+          <>
+          {/* Mediana (p50) por etapa. Sin meta: la tabla de abajo es su vista de tabla. */}
+          <div className="mb-8">
+            <BarrasHorizontales
+              tabla={false}
+              unidad="ms"
+              formato={(v) => `${Math.round(v)} ms`}
+              descripcion="Latencia mediana por etapa de la identificacion biometrica, en milisegundos"
+              datos={ETAPAS.map((etapa) => ({
+                clave: etapa,
+                etiqueta: NOMBRE_ETAPA[etapa],
+                valor: percentil(
+                  mediciones.map((m) => msDe(m, etapa)).filter((v): v is number => v !== undefined),
+                  0.5,
+                ),
+              }))}
+            />
+          </div>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[44rem] text-left text-sm">
               <thead className="border-b border-borde-suave text-xs text-texto-suave">
@@ -361,7 +389,7 @@ export default function ConsolaBiometrica() {
                       <td className="py-2 pr-3 font-medium text-texto">{NOMBRE_ETAPA[etapa]}</td>
                       <td className="py-2 pr-3 tabular-nums text-texto-suave">{valores.length}</td>
                       {[p50, p95, p99].map((v, i) => (
-                        <td key={i} className="py-2 pr-3 font-mono tabular-nums text-texto">
+                        <td key={i} className="py-2 pr-3 tabular-nums text-texto">
                           {v === null ? <span className="text-texto-suave">sin dato</span> : `${Math.round(v)} ms`}
                         </td>
                       ))}
@@ -372,6 +400,7 @@ export default function ConsolaBiometrica() {
               </tbody>
             </table>
           </div>
+          </>
         )}
 
         <p className="mt-3 flex items-start gap-2 text-sm leading-llano text-texto-suave">
@@ -407,11 +436,11 @@ export default function ConsolaBiometrica() {
                   <td className="py-2 pr-3 text-xs text-texto-suave">
                     {ESCENARIOS.find((e) => e.clave === m.escenario)?.nombre ?? m.escenario}
                   </td>
-                  <td className="py-2 pr-3 font-mono text-xs tabular-nums text-texto">
+                  <td className="py-2 pr-3 text-xs tabular-nums text-texto">
                     {m.calidad === 0 ? '—' : m.calidad.toFixed(2)}
                   </td>
-                  <td className="py-2 pr-3 font-mono text-xs tabular-nums text-texto">{m.captura_ms} ms</td>
-                  <td className="py-2 pr-3 font-mono text-xs tabular-nums text-texto">
+                  <td className="py-2 pr-3 text-xs tabular-nums text-texto">{m.captura_ms} ms</td>
+                  <td className="py-2 pr-3 text-xs tabular-nums text-texto">
                     {m.comparacion_ms === undefined ? '—' : `${m.comparacion_ms} ms`}
                   </td>
                   <td className="py-2">

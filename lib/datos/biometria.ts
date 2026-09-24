@@ -330,7 +330,7 @@ export const ESCENARIOS: readonly DescripcionEscenario[] = [
     nombre: 'Prueba de vida no superada',
     detalle: 'La captura se rechaza antes de comparar. Si la prueba de vida está apagada, pasa.',
     esperado:
-      'Con prueba de vida activa se rechaza. Apagarla para "que funcione" es exactamente el atajo que un piloto debe detectar.',
+      'Con prueba de vida activa se rechaza. Apagarla para “que funcione” es exactamente el atajo que un piloto debe detectar.',
   },
 ];
 

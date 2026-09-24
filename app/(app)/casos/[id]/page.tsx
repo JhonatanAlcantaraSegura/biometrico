@@ -67,12 +67,12 @@ export default function PuestoMedicoPage() {
                     </p>
                   </div>
                   <div className="flex gap-2">
-                    <Boton onClick={() => actions.recordMilestone(c.case_id, step.type, "realizado")}>
+                    <Boton tono="contorno" onClick={() => actions.recordMilestone(c.case_id, step.type, "realizado")}>
                       {done && <CircleCheck className="size-4 text-exito" aria-hidden />}
                       {done ? "Registrado" : "Registrar"}
                     </Boton>
                     {!done && (
-                      <Boton onClick={() => actions.recordMilestone(c.case_id, step.type, "no_realizado")} title="Distinto de 'no documentado'">
+                      <Boton tono="contorno" onClick={() => actions.recordMilestone(c.case_id, step.type, "no_realizado")} title="Distinto de 'no documentado'">
                         No realizado
                       </Boton>
                     )}
@@ -126,7 +126,7 @@ export default function PuestoMedicoPage() {
           {c.code_state === "activo" ? (
             <div className="space-y-4">
               <div className="flex flex-wrap items-center gap-2">
-                <Insignia tono="peligro">Codigo activo desde {localTime(c.activated_at)}</Insignia>
+                <Insignia tono="peligro"><span aria-hidden className="pulso-vivo size-1.5 rounded-full bg-peligro" />Codigo activo desde {localTime(c.activated_at)}</Insignia>
                 <Insignia tono="info">Ruta: {c.route.replace(/_/g, " ")}</Insignia>
               </div>
               <Campo etiqueta="Cambiar ruta clinica" ayuda="La decision terapeutica es del medico; el sistema solo la registra.">
@@ -161,7 +161,7 @@ export default function PuestoMedicoPage() {
                 </select>
               </Campo>
               <Boton
-                tono="peligro"
+                tono="primario"
                 disabled={!isPhysician || !c.diagnosis}
                 title={!c.diagnosis ? "Primero registre diagnostico y hora cero" : isPhysician ? undefined : "Rol sin facultad de activacion"}
                 onClick={() => actions.activateCode(c.case_id, route)}
