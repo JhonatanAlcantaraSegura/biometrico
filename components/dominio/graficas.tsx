@@ -85,18 +85,25 @@ function Globo({
   etiqueta,
   className,
   claro = false,
+  envolver = false,
 }: {
   valor: string;
   etiqueta: string;
   className?: string;
   /** Sobre una superficie Carbon el globo va en blanco para no perderse. */
   claro?: boolean;
+  /**
+   * Con ancla a la izquierda (fila entera, no un punto centrado) el globo puede acercarse al
+   * borde: aqui se parte en vez de desbordar la pantalla, acotado al ancho de su contenedor.
+   */
+  envolver?: boolean;
 }) {
   return (
     <span
       role="tooltip"
       className={cx(
-        'pointer-events-none absolute z-10 rounded px-2.5 py-1.5 text-xs whitespace-nowrap',
+        'pointer-events-none absolute z-10 rounded px-2.5 py-1.5 text-xs',
+        envolver ? 'max-w-full break-words' : 'whitespace-nowrap',
         claro ? 'bg-fondo text-texto' : 'bg-texto text-primario-texto',
         className,
       )}
@@ -240,12 +247,17 @@ export function BarrasHorizontales({
                       style={{ width: pct(d.valor), ['--retraso' as string]: `${i * 70}ms` }}
                     />
                   )}
-                  <span className="ml-2 text-xs whitespace-nowrap text-texto tabular-nums">
+                  <span className="ml-2 min-w-0 text-xs text-texto tabular-nums">
                     {texto}
                     {d.estado === 'en_curso' && d.valor !== null && <span className="text-texto-suave"> · en curso</span>}
                   </span>
                   {activo === d.clave && (
-                    <Globo valor={texto} etiqueta={`${d.etiqueta} · ${nota}`} className="bottom-full left-0 mb-1" />
+                    <Globo
+                      valor={texto}
+                      etiqueta={`${d.etiqueta} · ${nota}`}
+                      className="bottom-full left-0 mb-1"
+                      envolver
+                    />
                   )}
                 </span>
               </li>

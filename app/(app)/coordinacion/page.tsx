@@ -52,7 +52,7 @@ export default function CoordinacionPage() {
               </Link>
             }
           >
-            <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
+            <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
               <div className="space-y-3">
                 <h3 className="text-xs font-medium text-texto-suave">Avisos enviados</h3>
                 {alerts.length === 0 ? (
