@@ -130,7 +130,7 @@ export default function Calidad() {
         </div>
       </Tarjeta>
 
-      <div className="grid gap-6 xl:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
         <Tarjeta titulo="Llegada a ECG por caso" ayuda="Todos los casos del turno. Sin ECG documentado se escribe, no se imputa.">
           <BarrasHorizontales
             datos={porCaso.ecg}

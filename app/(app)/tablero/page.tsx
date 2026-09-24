@@ -189,7 +189,7 @@ export default function CasosPage() {
         })}
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
         <Tarjeta titulo="Llegada a ECG por episodio" ayuda="Minutos desde la llegada. Los episodios sin ECG siguen corriendo." acciones={<Requisito ids={["RF-04", "RF-21"]} />}>
           <BarrasHorizontales
             datos={tiemposEcg}
